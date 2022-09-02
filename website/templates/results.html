@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Results</title>
+{% endblock %}
+
+{% block customCSS %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+{% endblock %}
+
+
+{% block body %}
+    <main>
+
+        <div class="main-item movie-search">
+            <h1>This is how is gonna appear: {{url_view}}</h1>
+            <div class="button-container">
+
+                <form method="post">
+
+                    <input id="search" name="search" type="text">
+                    <input type="submit" name="search" id="search" value="Search">
+
+                    <!-- <button type="submit" value="Search Name"><a href="" id="search" name="search" value="{{search}}">Search</a></button> -->
+                    <!-- <button class="page pre-page" id="ppage" name="ppage" type="submit" value="Previous Page"></button> -->
+                    <!-- <input class="page pre-page" id="ppage" name="ppage" type="submit" value="Previous Page"/>
+                    <input class="page next-page" id="npage" name="npage" type="submit" value="Next Page"/> -->
+                    <a href=" {{ url_for('results.nextpage', search_result=search_result, page_number=page_number)}} " role="button">Next button</a>
+
+                </form>
+                
+                
+                
+            </div>
+            
+        </div>
+        
+    
+
+
+    
+        <div class="main-item movie-container">
+    
+            {% for movie in movies %}
+                <div class="movie-item">
+                    <h4 class="movie-title movie-overflow">{{movie.title}}</h4>
+                    <div class="movie-info-container">
+                        <div><img src="https://image.tmdb.org/t/p/w200{{movie.poster_path}}" alt="perroloco"></div>
+                        <p>{{movie.overview}}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </main>
+    
+
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Home</title>
+{% endblock %}
+
+{% block customCSS %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+{% endblock %}
+
+
+{% block body %}
+    <main>
+
+        <div class="main-item movie-search">
+            <h1>This is how is gonna appear: {{urlView}}</h1>
+            <div class="button-container">
+
+                <form method="post" action="/">
+
+                    <input id="search" name="search" type="text">
+                    <input type="submit" name="search" id="search" value="Search Name">
+
+                    <!-- <button type="submit" value="Search Name"><a href="" id="search" name="search" value="{{search}}">Search</a></button> -->
+                    <!-- <button class="page pre-page" id="ppage" name="ppage" type="submit" value="Previous Page"></button> -->
+                    <!-- <button class="page next-page" id="npage" name="npage" type="submit">Next Page</button> -->
+
+                </form>
+                
+            </div>
+        </div>
+        
+    </main>
+    
+
+{% endblock %}
