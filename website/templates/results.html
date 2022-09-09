@@ -62,7 +62,7 @@
                                 <!-- <p class="card-text text-truncate">{{ movie['overview'] }}</p> -->
 
                                 <!-- <a href="#" class="btn btn-primary">Check it out</a> -->
-                                <button type="button" class="btn btn-secondary mt-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="{{ movie['overview'] }}">
+                                <button type="button" class="btn btn-secondary mt-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="{% if movie['overview'] %} {{ movie['overview'] }} {% endif %}">
                                 More info
                                 </button>
 
