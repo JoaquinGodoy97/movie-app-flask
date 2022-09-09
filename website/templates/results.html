@@ -9,43 +9,73 @@
 {% endblock %}
 
 
+
 {% block body %}
-    <main>
+    <main class="container d-flex justify-content-center align-self-center">
+        <div class="column">
 
-        <div class="main-item movie-search">
-            <h1>This is how is gonna appear: {{url_view}}</h1>
-            <div class="button-container">
+            <div class="main-item movie-search d-flex mt-5 mb-3">
 
-                <form method="POST">
+                    <!-- <h1>This is how is gonna appear: {{url_view}}</h1> -->
 
-                    <input id="search" name="search" type="text">
-                    <input type="submit" name="search" id="search" value="Search">
-                    
-                    <div>
-                        <input class="npage" name="npage" id="npage" type="submit" value="Next"/>
-                        <input class="ppage" name="ppage" id="ppage" type="submit" value="Prev"/>
-                    </div>
-                    
-                </form>
+                <div class="button-container">
+
+                    <form class="form-floating" method="POST">
+
+                        <label for="search">Search Movies</label>
+
+                        <div class="input-group mb-3">
+                            <input type="text" id="search" name="search" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1">
+                            <input class="btn btn-dark" type="submit" name="search" id="search" value="Search">
+                            
+                            <input class="btn btn-primary" name="ppage" id="ppage" type="submit" value="Prev"/>
+                            <input class="btn btn-primary" name="npage" id="npage" type="submit" value="Next"/>
+                        </div>
+                        
+                    </form>
+                        
+                </div>
                 
             </div>
             
-        </div>
-    
-        <div class="main-item movie-container">
-            {% for movie in movies %}
-                
-                <div class="movie-item">
-                    <h4 class="movie-title movie-overflow">{{movie['title']}}</h4>
-                    <div class="movie-info-container">
-                        <div><img src="https://image.tmdb.org/t/p/w200{{movie['poster_path']}}" alt="perroloco"></div>
-                        <p>{{ movie['overview'] }}</p>
+            <div class="container text-center">
+
+                <div class="d-flex flex-row">
+                    <div class="d-flex justify-content-evenly w-100">
+                        {% for movie in movies %}
+
+                        <!--    
+                        <div class="movie-item">
+                            <h4 class="movie-title movie-overflow">{{movie['title']}}</h4>
+                            <div class="movie-info-container">
+                                <div><img src="https://image.tmdb.org/t/p/w200{{movie['poster_path']}}" alt="movie_cover"></div>
+                                <p>{{ movie['overview'] }}</p>
+                            </div>
+                        </div> -->
+                        
+                        <div class="card mb-3 me-5 movie-item" style="width: 18rem;">
+                            <img src="https://image.tmdb.org/t/p/w200{{movie['poster_path']}}" class="card-img-top" alt="movie_cover">
+                            <div class="card-body">
+
+                                <h5 class="card-title">{{movie['title']}}</h5>
+                                
+                                <!-- <p class="card-text text-truncate">{{ movie['overview'] }}</p> -->
+
+                                <!-- <a href="#" class="btn btn-primary">Check it out</a> -->
+                                <button type="button" class="btn btn-secondary mt-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="{{ movie['overview'] }}">
+                                More info
+                                </button>
+
+                            </div>
+                        </div>
+                    
+                        {% endfor %}
                     </div>
                 </div>
-
-            {% endfor %}
-            
+            </div>
         </div>
     </main>
+
+    
     
 {% endblock %}

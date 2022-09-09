@@ -1,7 +1,5 @@
-from urllib import response
-from flask import Flask, flash, render_template, request, redirect, url_for, Blueprint, session
+from flask import Flask, render_template, request, redirect, url_for, Blueprint
 from flask_sqlalchemy import SQLAlchemy
-import json, requests
 
 home = Blueprint('home', __name__)
 
@@ -52,6 +50,6 @@ def search(page = 1):
             print('pressed from home!')
 
 
-    return render_template('index.html', messages=search)
+    return render_template('index.html')
 
 

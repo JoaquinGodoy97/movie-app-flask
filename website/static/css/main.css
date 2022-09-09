@@ -4,18 +4,18 @@
     box-sizing: border-box;
 }
 
-body{
+/* body{
     max-width: 1500px;
     height: 200vh;
     
-}
+} */
 
 main{
-    display: flex;
+    /* display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    /* padding: 20px 0 20px 0; */
+    padding: 20px 0 20px 0; */
 }
 
 .button-container{
@@ -25,7 +25,7 @@ main{
 .button-container button{
     margin: 0 0 0 2.5px;
 }
-
+/* 
 #npage, #ppage{
     background-color: rgb(85, 85, 85);
     color: beige;
@@ -33,20 +33,20 @@ main{
     padding: 3px;
     border-radius: 5px;
     cursor: pointer;
-}
+} */
 
 
 
-
+/* 
 form #npage:hover{
     background-color: rgb(134, 134, 134);
-}
+} */
 
-.main-item{
+/* .main-item{
     display: flex;
     justify-content: center;
     margin: 20px 0 20px 0;
-}
+} */
 
 .movie-search{
     text-align: center;
@@ -56,44 +56,46 @@ form #npage:hover{
     font-family: 'Helvetica Neue';
 }
 
-.movie-container{
+/* .movie-container{
     max-width: 60%;
     height: 400px; 
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     grid-template-rows: 1fr;
     
-}
+} */
 
 .movie-item{
-    text-align: center;
-    justify-items: flex-start;
-    max-width: 200px;
-    display: block;
+    /* text-align: center; */
+    /* justify-items: flex-start; */
+    /* max-width: 200px; */
+    /* display: block; */
     
-    flex-direction: column;
+    /* flex-direction: column; */
     /* justify-content: center;
     align-items: center; */
 
     /* border: 1.5px solid rgb(97, 97, 97); */
-    margin: 0px 40px;
-    border-radius: 10px;
-    background-color: rgba(169, 175, 173, 0.342);
-    margin: 40px 20px 0 20px;
+    /* margin: 0px 40px; */
+    /* border-radius: 10px; */
+    /* background-color: rgba(169, 175, 173, 0.342); */
+    /* margin: 40px 20px 0 20px; */
 
 
     box-shadow: 0px 5px 10px 0px rgba(83, 83, 83, 0.658);
     
 }
 
-.movie-item h4{
-    /* padding: 0; */
+/* .movie-item h4{
+    padding: 0;
     margin: 10px;
     font-family: 'Courier New', Courier, monospace;
     font-weight: bold;
     color: rgb(36, 36, 36);
 }
-.movie-info-container, .movie-container p{
+*/
+
+/* .movie-info-container, .movie-container p{
     font-family: 'Open sans';
     font-size: 10px;
 
@@ -101,8 +103,6 @@ form #npage:hover{
     white-space: nowrap;
 
     overflow: hidden;
-}
+} 
 
-.movie-info-container{
-  
-}
+*/

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, url_for, redirect, session
+from flask import Blueprint, render_template, request, url_for, redirect, session, flash
 import requests, json
 
 # Blueprint #has a lot of roots inside it 
@@ -84,6 +84,7 @@ def search_list(search_result, page_num):
             print("NEXT pressed")
 
             if page_num >= len(paginate(movies)):
+                flash('You have reached the last page. Please go back if you want to look for more results.')
                 pass
             else:
                 print('increase 1')
@@ -94,6 +95,7 @@ def search_list(search_result, page_num):
             print("PREV pressed")
 
             if page_num <= 1:
+                flash('Right now you are on the first page of ' + "\"" + search_result + "\" results.") 
                 pass
             else:
                 # print('button was pressed asdasd')

@@ -13,13 +13,15 @@
     <main>
 
         <div class="main-item movie-search">
-            <h1>This is how is gonna appear: {{urlView}}</h1>
+            <!-- <h1>This is how is gonna appear: {{urlView}}</h1> -->
             <div class="button-container">
 
                 <form method="post" action="/">
 
-                    <input id="search" name="search" type="text">
-                    <input type="submit" name="search" id="search" value="Search Name">
+                    <div class="input-group mb-3">
+                        <input type="text" id="search" name="search" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1">
+                        <input class="btn btn-dark" type="submit" name="search" id="search" value="Search">
+                    </div>
 
                 </form>
                 
