@@ -110,7 +110,7 @@ def search_list(search_result, page_num):
                 return search()
                 
             else:
-                pass
+                return render_template('index.html' )
     else:
         pass
 
