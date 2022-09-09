@@ -1,7 +1,5 @@
-from urllib import response
-from flask import Flask, flash, render_template, request, redirect, url_for, Blueprint, session
+from flask import Flask, render_template, request, redirect, url_for, Blueprint
 from flask_sqlalchemy import SQLAlchemy
-import json, requests
 
 home = Blueprint('home', __name__)
 
@@ -11,13 +9,14 @@ home = Blueprint('home', __name__)
 
 
 # DATA BASE
-# app = Flask(__name__)
+# app = Flask(__name__) 
 # app.config['SECRET_KEY'] = "secretkeycreated"
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # db = SQLAlchemy(app)
 
 # r_json = API_URL + "&query=default"
 # x = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+
 def render_results(search):
     search_split_by_plus = ""
     list_without_space = search.split() #result into a list 
@@ -29,7 +28,6 @@ def render_results(search):
             search_split_by_plus += "+" # adding plus symbol
         else:
             return search_split_by_plus
-        
 
 @home.route('/', methods=['GET', 'POST'])
 def search(page = 1):
@@ -40,25 +38,18 @@ def search(page = 1):
     
     if 'search' in request.form:
         
-        # if search == None:
-        #     return redirect(url_for("home.search"))
         if search == "":
             return redirect(url_for("home.search")) # default search
 
         else:
             
             search_plus = render_results(search)
-            print(x)
-            flash(search_plus, category='success')
-            # page = session['pagetotal']
-
-            return redirect(url_for('results.search_list', search_result=search_plus, page=page))
-            # return render_template('results.html', messages=search)
+            return redirect(url_for('results.search_list', search_result=search_plus, page_num=1))
     else:
         if 'npage' in request.form:
             print('pressed from home!')
 
 
-    return render_template('index.html', messages=search)
+    return render_template('index.html')
 
 
