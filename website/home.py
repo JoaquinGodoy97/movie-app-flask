@@ -46,9 +46,7 @@ def search(page = 1):
         else:
             
             search_plus = render_results(search)
-
             return redirect(url_for('results.search_list', search_result=search_plus, page_num=1))
-            # return render_template('results.html', messages=search)
     else:
         if 'npage' in request.form:
             print('pressed from home!')

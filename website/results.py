@@ -46,9 +46,9 @@ def search_list(search_result, page_num):
     search_text = request.form.get('search')
 
     if search_result:
+
         r_json = API_URL + "&query=" + search_result  
 
-        # return app.add_url_rule(searchPlus, 'index', index)
     else:
         r_json = API_URL + "&query=default"
         search = ''
@@ -109,13 +109,6 @@ def search_list(search_result, page_num):
                 
             else:
                 pass
-                # if 'npage' or 'ppage' in request.form:
-                    # print('Go to the next page!')
-                    
-                    # movies_results = paginate(movies, counter)
-
-                    # return redirect(url_for("results.nextpage", page_number=1, search_result=search_result))
-                    # return render_template("results.html", movies=movies_results)
     else:
         pass
 
@@ -123,38 +116,14 @@ def search_list(search_result, page_num):
 
     movies_per_page_dict = movies_dict(paginate(movies))
 
-    # print(movies_per_page_dict[page_num ])
-
     movies_per_page_dict = movies_per_page_dict[page_num - 1]['movie_set']
     
-
-    # movies = Movie_pages(page, paginate(movies)) # movies separated per set
-    
-
     return render_template('results.html', url_view=r_json, movies=movies_per_page_dict, search_result=search_result, page_num=page_num)
 
 @results.route('/results/<search_result>/<page>', methods=["GET", "POST"])
 def nextpage(search_result, page):
 
-    print("the page number in nextpage is " + page)
-
-    from .home import render_results
-
-    #this is repeated could be summarised
-    
-    new_search_result = API_URL + "&query=" + search_result
-    api_data = render_results(new_search_result)
-
-    response = requests.get(new_search_result) # request.response Obj
-    movies = json.loads(response.text)
-    
-    movie_set_list = paginate(movies)
-    
-    movies_final = movie_set_list # [int(page_number) - 1]
-    # session['pagetotal'] = movies_final
-    # print(movies_final)
-
-    return render_template('results.html', url_view=api_data, movies=movies_final )
+    return render_template('results.html' )
 
 
 # def paginate(movies, counter):
