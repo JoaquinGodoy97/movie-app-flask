@@ -33,6 +33,7 @@ def movies_dict(m_p_pages):
                 'page_number': page_number,
             }
             movies_dict_list.append(movies_page)
+
             break
         
     return movies_dict_list
@@ -56,30 +57,33 @@ def search_list(search_result, page_num):
     response = requests.get(r_json) # request.response Obj
     movies = json.loads(response.text) # into a dict
 
-    npage = request.form.get('npage')
-    ppage = request.form.get('ppage')
-    
     if request.method == 'POST':
 
+        #next and prev button 
+        
+        #fixed problem of alerts
+        
         if request.form.get('npage') == 'Next':
-            print("NEXT pressed")
 
             if page_num >= len(paginate(movies)):
-                flash('You have reached the last page. Please go back if you want to look for more results.')
                 pass
+            
             else:
-                print('increase 1')
+                if page_num == len(paginate(movies)) - 1:
+                    flash('You have reached the last page. Please go back if you want to look for more results.')
+                    pass
+
                 page_num = page_num + 1
                 return redirect(url_for('results.search_list', search_result=search_result, page_num=page_num))
 
         elif request.form.get('ppage') == 'Prev':
-            print("PREV pressed")
 
-            if page_num <= 1:
-                flash('Right now you are on the first page of ' + "\"" + search_result + "\" results.") 
+            if page_num == 1:
                 pass
             else:
-                # print('button was pressed asdasd')
+                if page_num == 2:
+                    flash('Right now you are on the first page of ' + "\"" + search_result + "\" results.") 
+
                 page_num = page_num - 1
                 return redirect(url_for('results.search_list', search_result=search_result, page_num=page_num))
         else:
@@ -96,9 +100,14 @@ def search_list(search_result, page_num):
 
     print('ignore the button')
 
-    movies_per_page_dict = movies_dict(paginate(movies))
+    movies_per_page = movies_dict(paginate(movies))
 
-    movies_per_page_dict = movies_per_page_dict[page_num - 1]['movie_set']
+
+    # print(len(movies['results'])) #send the length of the results  
+    movie_pages_numb = len(movies_per_page) # page length
+
+    movies_per_page = movies_per_page[page_num - 1]['movie_set'] # movie_set by page
     
-    return render_template('results.html', url_view=r_json, movies=movies_per_page_dict, search_result=search_result, page_num=page_num)
+    return render_template('results.html', url_view=r_json, movies=movies_per_page, search_result=search_result, page_num=page_num, movie_pages_numb= movie_pages_numb)
+
 
