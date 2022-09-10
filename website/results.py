@@ -102,15 +102,14 @@ def search_list(search_result, page_num):
                 page_num = page_num - 1
                 return redirect(url_for('results.search_list', search_result=search_result, page_num=page_num))
         else:
-            pass
-
-        if 'search' in request.form:
+            if 'search' in request.form:
         
-            if search_text != "":
-                return search()
-                
-            else:
-                return render_template('index.html' )
+                if search_text != "":
+                    return search()
+                    
+                else:
+                    pass
+
     else:
         pass
 
