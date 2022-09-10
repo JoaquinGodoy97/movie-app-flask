@@ -55,25 +55,6 @@ def search_list(search_result, page_num):
     
     response = requests.get(r_json) # request.response Obj
     movies = json.loads(response.text) # into a dict
-    
-    # if r_json:
-
-    #     # response = requests.get(r_json) # request.response Obj
-    #     # movies = json.loads(response.text) # into a dict
-
-    #     # if npage:
-    #     #     print('pressed!')
-    #     #     # print(counter)
-    #     #     # counter += 2
-    #     #     # postcounter = counter + 4
-    #     #     # movies_results = movies['results'][counter:postcounter]
-            
-    #     #     # return redirect(url_for('results.search_list.page2', search_result))
-
-    #     # else:
-    #     movies_results = movies['results'][0:5]
-    # else:
-    #     pass
 
     npage = request.form.get('npage')
     ppage = request.form.get('ppage')
@@ -120,39 +101,4 @@ def search_list(search_result, page_num):
     movies_per_page_dict = movies_per_page_dict[page_num - 1]['movie_set']
     
     return render_template('results.html', url_view=r_json, movies=movies_per_page_dict, search_result=search_result, page_num=page_num)
-
-@results.route('/results/<search_result>/<page>', methods=["GET", "POST"])
-def nextpage(search_result, page):
-
-    return render_template('results.html' )
-
-
-# def paginate(movies, counter):
-
-#     print(len(movies['results'][counter:])) # 20 for "live" search if len is not the same
-
-#     def countup(counter):
-#         counter =+ 5
-#         postcounter = counter + 5
-#         return counter
-
-#     def countdown(counter):
-#         counter =- 5
-#         return counter
-
-#     # postcounter = counter + 5
-#     if 'npage' in request.form:
-#         print('nextpage inside counterfunction')
-#         print(counter)
-#         counter = countup(counter)
-#         return movies['results'][counter:postcounter]
-    
-#         # print(movies['results'][counter:postcounter])
-
-#     else:
-#         print('previus inside counterfunction')
-#         print(counter)
-#         counter = countdown(counter)
-#         return movies['results'][counter:postcounter]
-
 
