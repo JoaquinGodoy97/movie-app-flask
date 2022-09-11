@@ -28,7 +28,7 @@ def render_results(search):
         else:
             return search_split_by_plus
 
-@home.route('/', methods=['GET', 'POST'])
+@home.route('/search', methods=['GET', 'POST'])
 def search(page = 1):
     x = "***************************************************"
     search_plus = ""

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Registration</title>
+{% endblock %}
+
+{% block customCSS %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+{% endblock %}
+
+
+{% block body %}
+    <main>
+
+        <div class="main-item movie-search d-flex mt-5 mb-3">
+
+            <!-- <h1>This is how is gonna appear: {{url_view}}</h1> -->
+
+        <div class="button-container">
+
+            <form method="POST">
+
+                <div class="mb-3">
+<!-- 
+                    <input type="text" id="name" name="name" class="form-control" placeholder="Name" aria-label="Name" aria-describedby="basic-addon1">
+                    <input class="btn btn-dark" type="submit" name="name" id="name" value="Name">
+                    
+                    -->
+                    <label for="email" class="form-label">Email address</label>
+                    <input type="email" name="email" class="form-control" id="email" aria-describedby="emailHelp">
+                    <div id="emailHelp" class="form-text">Your mail will be set as your user.</div>
+                      
+                </div>
+
+                <button name="email_submit" type="submit" class="btn btn-primary">Submit</button>
+
+            </form>
+                
+        </div>
+        
+    </div>
+        
+    </main>
+
+{% endblock %}

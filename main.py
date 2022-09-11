@@ -1,9 +1,10 @@
 from website import create_app
-from flask_sqlalchemy import SQLAlchemy
+from website.utils.db import db
 
 app = create_app()
 
-SQLAlchemy(app)
+with app.app_context():  #this creates tables when the app starts
+    db.create_all()
 
 if __name__ == '__main__':
     app.run(debug=True)

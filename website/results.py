@@ -1,4 +1,3 @@
-from logging import warning
 from flask import Blueprint, render_template, request, url_for, redirect, session, flash
 import requests, json
 
@@ -94,7 +93,7 @@ def search_list(search_result, page_num):
                     return search()
                     
                 else:
-                    return render_template('index.html')
+                    return redirect(url_for("home.search"))
     else:
         pass
     
@@ -113,4 +112,9 @@ def search_list(search_result, page_num):
     
     return render_template('results.html', url_view=r_json, movies=movies_per_page, search_result=search_result, page_num=page_num, movie_pages_numb= movie_pages_numb)
 
+@results.route('/results/<search_result>/<int:page_num>/<movie_item>' , methods=["GET", "POST"])
+def add_to_wishlist(search_result, page_num, movie_item):
 
+    print(movie_item)
+    print('Added to the Wishlist.')
+    return redirect(url_for("results.search_list", search_result=search_result, page_num=page_num))
