@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect, url_for, Blueprint
-from flask_sqlalchemy import SQLAlchemy
 
 home = Blueprint('home', __name__)
 

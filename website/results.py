@@ -94,19 +94,24 @@ def search_list(search_result, page_num):
                     
                 else:
                     pass
-
     else:
         pass
+    
+    if len(movies['results']) > 0:
+        movies_per_page = movies_dict(paginate(movies))
+        movie_pages_numb = len(movies_per_page) # page length
+        movies_per_page = movies_per_page[page_num - 1]['movie_set'] # movie_set by page
 
-    print('ignore the button')
+    else:
+        movies_per_page = []
+        flash("Page not found.")
+        movie_pages_numb = 0
+        return render_template('index.html')
 
-    movies_per_page = movies_dict(paginate(movies))
 
 
     # print(len(movies['results'])) #send the length of the results  
-    movie_pages_numb = len(movies_per_page) # page length
 
-    movies_per_page = movies_per_page[page_num - 1]['movie_set'] # movie_set by page
     
     return render_template('results.html', url_view=r_json, movies=movies_per_page, search_result=search_result, page_num=page_num, movie_pages_numb= movie_pages_numb)
 
