@@ -1,3 +1,4 @@
+from logging import warning
 from flask import Blueprint, render_template, request, url_for, redirect, session, flash
 import requests, json
 
@@ -108,10 +109,7 @@ def search_list(search_result, page_num):
         movie_pages_numb = 0
         return render_template('index.html')
 
-
-
     # print(len(movies['results'])) #send the length of the results  
-
     
     return render_template('results.html', url_view=r_json, movies=movies_per_page, search_result=search_result, page_num=page_num, movie_pages_numb= movie_pages_numb)
 
