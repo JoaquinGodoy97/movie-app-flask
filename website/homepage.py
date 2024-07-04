@@ -46,7 +46,7 @@ def search():
             print('pressed from homepage!')
 
         elif request.form.get('logout') == 'Log Out':
-                flash(f'{session['username']} has been logged out', "dark")
+                flash(f"{session['username']} has been logged out", "dark")
                 return redirect(url_for('auth.logout'))
             
         elif search:

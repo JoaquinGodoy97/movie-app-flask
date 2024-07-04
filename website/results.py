@@ -114,7 +114,7 @@ def results_search_list(search_result, page_num):
 
     else:
         movies_per_page = []
-        flash("Page not found.")
+        flash("Page not found.", "warning")
         movie_pages_numb = 0
         return render_template('index.html')
 
@@ -125,5 +125,5 @@ def results_search_list(search_result, page_num):
 @results.route('/results/<search_result>/<int:page_num>/<movie_item>' , methods=["GET", "POST"])
 def add_to_wishlist(search_result, page_num, movie_item):
 
-    flash(f'Added {movie_item} to the Wishlist.', 'success')
+    flash(f"Added {movie_item} to the Wishlist.", 'success')
     return redirect(url_for("results.results_search_list", search_result=search_result, page_num=page_num))
