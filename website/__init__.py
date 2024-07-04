@@ -5,32 +5,6 @@ from website.utils.db import db, DB_NAME
 # from website.utils.db import DB_NAME, db
 from os import path #operating system
 
-# def create_app():
-#     app = Flask(__name__)
-
-#     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
-#     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-#     app.config['SECRET_KEY'] = "milanesa"
-
-#     # Initialize the SQLAlchemy instance with the app
-#     db.init_app(app)
-    
-#     from .results import results
-#     from .home import home
-#     from .auth import auth
-
-#     app.register_blueprint(results, url_prefix="/")
-#     app.register_blueprint(home, url_prefix="/home")
-#     app.register_blueprint(auth, url_prefix="/")
-
-#     return app
-
-# # For Flask CLI to detect the app
-# app = create_app()
-
-
-
-
 def create_app():
 
     app = Flask(__name__)
