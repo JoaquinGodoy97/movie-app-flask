@@ -90,7 +90,7 @@ def results_search_list(search_result, page_num):
                 return redirect(url_for('results.results_search_list', search_result=search_result, page_num=page_num))
             
         elif request.form.get('logout') == 'Log Out':
-            flash(f'{session['username']} has been logged out', "dark")
+            flash(f"{session['username']} has been logged out", "dark")
             return redirect(url_for('auth.logout'))    
         
         elif 'search' in request.form:
