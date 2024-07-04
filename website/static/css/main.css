@@ -10,13 +10,13 @@
     
 } */
 
-main{
+/* main{ */
     /* display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     padding: 20px 0 20px 0; */
-}
+/* } */
 
 .button-container{
     display: flex;
@@ -25,6 +25,11 @@ main{
 .button-container button{
     margin: 0 0 0 2.5px;
 }
+
+.input-group.search-group {
+    flex: 0 0 70%; /* Takes 70% of the container's width */
+}
+
 /* 
 #npage, #ppage{
     background-color: rgb(85, 85, 85);

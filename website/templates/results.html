@@ -23,15 +23,22 @@
                     <form class="form-floating" method="POST">
 
                         <label for="search">Search Movies</label>
-
-                        <div class="input-group mb-3">
-                            <input type="text" id="search" name="search" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1">
-                            <input class="btn btn-dark" type="submit" name="search" id="search" value="Search">
-                            
-                            <input class="btn btn-primary" name="ppage" id="ppage" type="submit" value="Prev" {% if (page_num == 1) %} disabled {% endif %}/>
-                            <input class="btn btn-primary" name="npage" id="npage" type="submit" value="Next" {% if (page_num == movie_pages_numb) %} disabled {% endif %}/>
-                        </div>
                         
+                        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+
+                            <div class="input-group mb-3">
+                                <input type="text" id="search" name="search" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1">
+                                <input class="btn btn-dark" type="submit" name="search" id="search" value="Search">
+                                
+                                <input class="btn btn-primary" name="ppage" id="ppage" type="submit" value="Prev" {% if (page_num == 1) %} disabled {% endif %}/>
+                                <input class="btn btn-primary" name="npage" id="npage" type="submit" value="Next" {% if (page_num == movie_pages_numb) %} disabled {% endif %}/>
+                            </div>
+                            <div class="input-group ms-3 mb-3">
+                                <input class="btn btn-outline-dark " name="logout" id="logout" type="submit" value="Log Out"/>
+                            </div>
+
+                        </div>
+
                     </form>
                         
                 </div>

@@ -1,23 +1,74 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from website.utils.db import db, DB_NAME
+# from main import app ??? 2024
+# from website.utils.db import DB_NAME, db
+from os import path #operating system
+
+# def create_app():
+#     app = Flask(__name__)
+
+#     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
+#     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+#     app.config['SECRET_KEY'] = "milanesa"
+
+#     # Initialize the SQLAlchemy instance with the app
+#     db.init_app(app)
+    
+#     from .results import results
+#     from .home import home
+#     from .auth import auth
+
+#     app.register_blueprint(results, url_prefix="/")
+#     app.register_blueprint(home, url_prefix="/home")
+#     app.register_blueprint(auth, url_prefix="/")
+
+#     return app
+
+# # For Flask CLI to detect the app
+# app = create_app()
+
+
+
 
 def create_app():
 
     app = Flask(__name__)
-
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:passwordtest123@localhost/moviewishlist'
-    # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+    # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:passwordtest123@localhost/moviewishlist'
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY']= "milanesa"
 
-    SQLAlchemy(app)
-    
-    from .results import results
-    from .home import home
-    from .registration import registration
+    # SQLAlchemy(app)
+    # Initialize the SQLAlchemy instance with the app
+    db.init_app(app)
 
+    from .wishlist import wishlist
+    from .results import results
+    from .homepage import homepage
+    from .auth import auth
+
+    app.register_blueprint(wishlist, url_prefix="/")
     app.register_blueprint(results, url_prefix="/") #all of the url store inside how do I access
-    app.register_blueprint(home, url_prefix="/") #all of the url store inside how do I access
-    app.register_blueprint(registration, url_prefix="/") #all of the url store inside how do I access
+    app.register_blueprint(homepage, url_prefix="/")
+    app.register_blueprint(auth, url_prefix="/")
+    
+
+    app.secret_key = 'your_secret_key'
+    # from website.models.user import User
 
     return app
+
+def create_database(app):
+    if not path.exists('website/' + DB_NAME):
+        db.create_all(app=app)
+        print('Created Database!')
+
+if __name__ == "__main__":
+        
+        app = Flask(__name__)
+        create_database(app)
+        app.run()
+#---------------------------------------------------------------------------
+
+

@@ -12,37 +12,37 @@ API_URL = BASE_URL + '/search/movie?' + API_KEY
 counter = 0
 postcounter = counter + 5
 
-def paginate(movies):
+def paginate(movies): #Paginating results
     movie_set_list = []
     movies_results = movies['results']
 
-    #make a set of 5 in t5
+    #Make a Set of 5 in 5
     for movie_set in range(0, len(movies_results), 5):
         movie_set_end = movie_set + 5
         movie_set_list.append(movies['results'][movie_set:movie_set_end])
     
     return movie_set_list
 
-def movies_dict(m_p_pages):
-    movies_dict_list = []
-    for m_p in m_p_pages:
-        for page_number in range(1, len(m_p_pages) + 1):
+def movies_dict(movies_per_pages): #Movies Per Pages
+    movies_list = []
+    for movie_set in movies_per_pages:
+        for page_number in range(1, len(movies_per_pages) + 1):
             
             movies_page = {
-                'movie_set': m_p,
+                'movie_set': movie_set,
                 'page_number': page_number,
             }
-            movies_dict_list.append(movies_page)
+            movies_list.append(movies_page)
 
             break
         
-    return movies_dict_list
+    return movies_list
 
 @results.route('/results/<search_result>/<int:page_num>' , methods=["GET", "POST"])
-def search_list(search_result, page_num):
+def results_search_list(search_result, page_num):
 
     # print("this is the page number in results" + page_num)
-    from .home import search
+    from .homepage import search
 
     search_text = request.form.get('search')
 
@@ -55,7 +55,9 @@ def search_list(search_result, page_num):
         search = ''
     
     response = requests.get(r_json) # request.response Obj
-    movies = json.loads(response.text) # into a dict
+    
+    # movies = json.loads(response.text) # into a dicts
+    movies = response.json() # same result
 
     if request.method == 'POST':
 
@@ -70,11 +72,11 @@ def search_list(search_result, page_num):
             
             else:
                 if page_num == len(paginate(movies)) - 1:
-                    flash('You have reached the last page. Please go back if you want to look for more results.')
+                    flash('You have reached the last page. Please go back if you want to look for more results.', 'warning')
                     pass
 
                 page_num = page_num + 1
-                return redirect(url_for('results.search_list', search_result=search_result, page_num=page_num))
+                return redirect(url_for('results.results_search_list', search_result=search_result, page_num=page_num))
 
         elif request.form.get('ppage') == 'Prev':
 
@@ -82,20 +84,28 @@ def search_list(search_result, page_num):
                 pass
             else:
                 if page_num == 2:
-                    flash('Right now you are on the first page of ' + "\"" + search_result + "\" results.") 
+                    flash('Right now you are on the first page of ' + "\"" + search_result + "\" results.", 'warning') 
 
                 page_num = page_num - 1
-                return redirect(url_for('results.search_list', search_result=search_result, page_num=page_num))
-        else:
-            if 'search' in request.form:
+                return redirect(url_for('results.results_search_list', search_result=search_result, page_num=page_num))
+            
+        elif request.form.get('logout') == 'Log Out':
+            flash(f'{session['username']} has been logged out', "dark")
+            return redirect(url_for('auth.logout'))    
         
+        elif 'search' in request.form:
                 if search_text != "":
                     return search()
-                    
                 else:
-                    return redirect(url_for("home.search"))
+                    return redirect(url_for("homepage.search"))
+                
+        
+        
+        else:
+            pass
     else:
-        pass
+        if "username" not in session:
+            return redirect(url_for('auth.logout'))
     
     if len(movies['results']) > 0:
         movies_per_page = movies_dict(paginate(movies))
@@ -115,6 +125,5 @@ def search_list(search_result, page_num):
 @results.route('/results/<search_result>/<int:page_num>/<movie_item>' , methods=["GET", "POST"])
 def add_to_wishlist(search_result, page_num, movie_item):
 
-    print(movie_item)
-    print('Added to the Wishlist.')
-    return redirect(url_for("results.search_list", search_result=search_result, page_num=page_num))
+    flash(f'Added {movie_item} to the Wishlist.', 'success')
+    return redirect(url_for("results.results_search_list", search_result=search_result, page_num=page_num))
