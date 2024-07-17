@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, request, url_for, redirect, session, flash
 import requests, json
+from .models.wishlist_user_data import Wishlist_user_data
+from website.utils.db import db
 
 # Blueprint #has a lot of roots inside it 
 
@@ -14,12 +16,11 @@ postcounter = counter + 5
 
 def paginate(movies): #Paginating results
     movie_set_list = []
-    movies_results = movies['results']
 
     #Make a Set of 5 in 5
-    for movie_set in range(0, len(movies_results), 5):
+    for movie_set in range(0, len(movies), 5):
         movie_set_end = movie_set + 5
-        movie_set_list.append(movies['results'][movie_set:movie_set_end])
+        movie_set_list.append(movies[movie_set:movie_set_end])
     
     return movie_set_list
 
@@ -55,23 +56,24 @@ def results_search_list(search_result, page_num):
         search = ''
     
     response = requests.get(r_json) # request.response Obj
-    
     # movies = json.loads(response.text) # into a dicts
-    movies = response.json() # same result
+    global movies
+    results = response.json() # same result
+    movies = results['results']
 
     if request.method == 'POST':
 
         #next and prev button 
         
-        #fixed problem of alerts
-        
         if request.form.get('npage') == 'Next':
 
-            if page_num >= len(paginate(movies)):
+            set_of_movies = len(paginate(movies))
+
+            if page_num >= set_of_movies:
                 pass
             
             else:
-                if page_num == len(paginate(movies)) - 1:
+                if page_num == set_of_movies - 1:
                     flash('You have reached the last page. Please go back if you want to look for more results.', 'warning')
                     pass
 
@@ -107,7 +109,7 @@ def results_search_list(search_result, page_num):
         if "username" not in session:
             return redirect(url_for('auth.logout'))
     
-    if len(movies['results']) > 0:
+    if len(movies) > 0:
         movies_per_page = movies_dict(paginate(movies))
         movie_pages_numb = len(movies_per_page) # page length
         movies_per_page = movies_per_page[page_num - 1]['movie_set'] # movie_set by page
@@ -122,8 +124,34 @@ def results_search_list(search_result, page_num):
     
     return render_template('results.html', url_view=r_json, movies=movies_per_page, search_result=search_result, page_num=page_num, movie_pages_numb= movie_pages_numb)
 
-@results.route('/results/<search_result>/<int:page_num>/<movie_item>' , methods=["GET", "POST"])
-def add_to_wishlist(search_result, page_num, movie_item):
+# ADDING ITEMS TO WISHLIST -------------------------------------------------
 
-    flash(f"Added {movie_item} to the Wishlist.", 'success')
+@results.route('/results/<search_result>/<int:page_num>/<movie_name>/<int:movie_id>' , methods=["GET", "POST"])
+def add_to_wishlist(search_result, page_num, movie_name, movie_id):
+
+    movie_exists = Wishlist_user_data.query.filter_by(user_id=session['username'], mv_id=movie_id).first()
+
+    if movie_exists:
+        flash(f"Cannot add {movie_name, movie_id } to the Wishlist. Already added.", 'danger')
+    else:
+
+        try:
+
+            user_data = Wishlist_user_data(mv_id=movie_id, title=movie_name, user_id=session['username'])
+            db.session.add(user_data)
+            db.session.commit()
+
+        except Exception as e:
+            db.session.rollback()
+            flash(f"An error occurred while saving to the database: {str(e)}", "danger")
+
+        finally:
+            db.session.close()
+
+    # if movie is not repeated then add
+    
+    flash(f"Added {movie_name, movie_id } to the Wishlist. Also this is the length of object movies.", 'success')
     return redirect(url_for("results.results_search_list", search_result=search_result, page_num=page_num))
+
+#ADD IF RESULT IS /40000 page and doesnt exist
+

@@ -1,12 +1,14 @@
 from website.utils.db import db
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
+from website.models import wishlist_user_data
+# from sqlalchemy.orm import Mapped
+# from sqlalchemy.orm import mapped_column
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100))
-    email = db.Column(db.String(120), unique=False, nullable=True)
-    password = db.Column(db.String(100))
+    username = db.Column(db.String(10), unique=True)
+    email = db.Column(db.String(30), unique=False, nullable=True)
+    password = db.Column(db.String(20))
+    wishlist_user_data = db.relationship('Wishlist_user_data', backref='user_wishlist_id', lazy=True)
 
     #how to add lists
 
@@ -14,6 +16,21 @@ class User(db.Model):
         self.username = username
         self.email = email
         self.password = password
+
+
+#limitaciones de caracteres
+#back limitacion de caracteres
+#usuario fantasma
+
+
+
+
+
+
+
+
+
+
 
 # ----------------------------------------------------------- another way of declaring models
 # class User(db.Model):

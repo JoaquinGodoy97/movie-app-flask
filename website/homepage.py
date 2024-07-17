@@ -19,16 +19,10 @@ homepage = Blueprint('homepage', __name__)
 
 
 def render_results(search):
-    search_split_by_plus = ""
     list_without_space = search.split() #result into a list 
 
-    for i in range(0,len(list_without_space)):
-        search_split_by_plus += str(list_without_space[i])
-    
-        if i < len(list_without_space) - 1:
-            search_split_by_plus += "+" # adding plus symbol
-        else:
-            return search_split_by_plus
+    search_split_by_plus = "+".join(list_without_space)
+    return search_split_by_plus
 
 @homepage.route('/search', methods=['GET', 'POST']) # change the route by "/" to make it default /search
 def search():
