@@ -2,22 +2,6 @@ from flask import Flask, render_template, request, redirect, url_for, Blueprint,
 
 homepage = Blueprint('homepage', __name__)
 
-# API_KEY = 'api_key=52495a0d2fceefe863149757f96d5d21'
-# BASE_URL = 'https://api.themoviedb.org/3'
-# API_URL = BASE_URL + '/search/movie?' + API_KEY
-
-
-# DATA BASE
-# app = Flask(__name__) 
-# app.config['SECRET_KEY'] = "secretkeycreated"
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# db = SQLAlchemy(app)
-
-# r_json = API_URL + "&query=default"
-# x = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-
-
-
 def render_results(search):
     list_without_space = search.split() #result into a list 
 
@@ -32,9 +16,6 @@ def search():
     search = request.form.get('search') ## apparently request.form .from() creates an html form for capturing the data
     
     if request.method == 'POST':
-
-        
-        
         
         if 'npage' in request.form:
             print('pressed from homepage!')

@@ -88,7 +88,7 @@ def wishlist_pages(page_num):
 
     else:
         movies_per_page = []
-        flash("Page not found.", "warning")
+        flash("No movies added.", "warning")
         movie_pages_numb = 0
         return render_template('index.html')
     

@@ -101,8 +101,6 @@ def results_search_list(search_result, page_num):
                 else:
                     return redirect(url_for("homepage.search"))
                 
-        
-        
         else:
             pass
     else:
