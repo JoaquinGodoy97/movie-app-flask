@@ -2,7 +2,8 @@ from website.utils.db import db
 # from sqlalchemy.orm import Mapped
 # from sqlalchemy.orm import mapped_column
 
-class Wishlist_user_data(db.Model):
+
+class Wishlist_user(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     mv_id = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String(150), nullable=False)

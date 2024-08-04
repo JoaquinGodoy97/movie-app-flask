@@ -21,17 +21,16 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
 
-    from .wishlist import wishlist
-    from .results import results
-    from .homepage import homepage
-    from .auth import auth
+    from .controllers.wishlist_controller import wishlist
+    from .controllers.search_controller import homepage
+    from .controllers.results_controller import results
+    from .controllers.auth_controller import auth
 
     app.register_blueprint(wishlist, url_prefix="/")
     app.register_blueprint(results, url_prefix="/") #all of the url store inside how do I access
     app.register_blueprint(homepage, url_prefix="/")
     app.register_blueprint(auth, url_prefix="/")
     
-
     app.secret_key = 'your_secret_key'
     # from website.models.user import User
 

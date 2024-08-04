@@ -34,8 +34,8 @@
                                 <input type="text" id="search" name="search" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1">
                                 <input class="btn btn-dark" type="submit" name="search" id="search" value="Search">
                                 
-                                <input class="btn btn-primary" name="ppage" id="ppage" type="submit" value="Prev" {% if (page_num == 1) %} disabled {% endif %}/>
-                                <input class="btn btn-primary" name="npage" id="npage" type="submit" value="Next" {% if (page_num == movie_pages_numb) %} disabled {% endif %}/>
+                                <input class="btn btn-primary" name="ppage" id="ppage" type="submit" value="Prev" {% if (current_page == 1) %} disabled {% endif %}/>
+                                <input class="btn btn-primary" name="npage" id="npage" type="submit" value="Next" {% if (current_page == movie_pages_numb) %} disabled {% endif %}/>
                             </div>
                             <div class="input-group ms-3 mb-3">
                                 <input class="btn btn-outline-dark " name="logout" id="logout" type="submit" value="Log Out"/>
@@ -64,7 +64,7 @@
                         <div class="card mb-3 me-5 movie-item" style="width: 12rem;">
                             
                             <div class="position-absolute top-0 end-0 translate-middle">
-                                <a type="button" href="{{ url_for('wishlist.remove_from_wishlist', page_num=page_num, movie_id=movie['mv_id']) }}" class="btn-sm" style="color: #893541;">
+                                <a type="button" href="{{ url_for('wishlist.remove_from_wishlist', current_page=current_page, movie_id=movie.mv_id, movie_name=movie.title) }}" class="btn-sm" style="color: #893541;">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="Currentcolor" class="bi bi-bookmark-x-fill" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd" d="M2 15.5V2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.439L8 13.069l-5.26 2.87A.5.5 0 0 1 2 15.5M6.854 5.146a.5.5 0 1 0-.708.708L7.293 7 6.146 8.146a.5.5 0 1 0 .708.708L8 7.707l1.146 1.147a.5.5 0 1 0 .708-.708L8.707 7l1.147-1.146a.5.5 0 0 0-.708-.708L8 6.293z"/>
                                     </svg>

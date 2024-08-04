@@ -1,36 +1,23 @@
 from website.utils.db import db
-from website.models import wishlist_user_data
-# from sqlalchemy.orm import Mapped
-# from sqlalchemy.orm import mapped_column
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(10), unique=True)
     email = db.Column(db.String(30), unique=False, nullable=True)
     password = db.Column(db.String(20))
-    wishlist_user_data = db.relationship('Wishlist_user_data', backref='user_wishlist_id', lazy=True)
+    wishlist_user = db.relationship('Wishlist_user', backref='user_wishlist_id', lazy=True)
 
-    #how to add lists
 
     def __init__(self, username, email, password):
         self.username = username
         self.email = email
         self.password = password
 
-
+# from sqlalchemy.orm import Mapped
+# from sqlalchemy.orm import mapped_column
 #limitaciones de caracteres
 #back limitacion de caracteres
 #usuario fantasma
-
-
-
-
-
-
-
-
-
-
 
 # ----------------------------------------------------------- another way of declaring models
 # class User(db.Model):
