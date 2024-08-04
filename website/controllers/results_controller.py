@@ -1,11 +1,12 @@
 from flask import session, Blueprint, request
+from website.utils.db import db
 from website.config import API_URL
 from website.models.wishlist_user_model import Wishlist_user
 from website.models.movie_model import Movies
-from website.controllers.wishlist_controller import add_to_wishlist_db
 from website.view import (alert_movie_already_added, display_current_results, database_wishlist_save_success_alert,
                         logout_redirect, display_movies, homepage_search_redirect, page_not_found, page_not_found_with_error, 
-                        first_page_warning, last_page_warning, go_to_next_page, go_to_prev_page, page_not_found_with_error_in_page)
+                        first_page_warning, last_page_warning, go_to_next_page, go_to_prev_page, page_not_found_with_error_in_page, 
+                        database_save_error_alert)
 from .search_controller import search
 import requests
 
@@ -229,3 +230,15 @@ def fetch_multiple_pages(search_query, start_page, total_pages):
 
     return all_movie_results
 
+def add_to_wishlist_db(movie_id, movie_name, user_id):
+    try:
+        user_data = Wishlist_user(mv_id=movie_id, title=movie_name, user_id=user_id)
+        db.session.add(user_data)
+        db.session.commit()
+
+    except Exception as e:
+        db.session.rollback()
+        database_save_error_alert(e)
+
+    finally:
+        db.session.close()

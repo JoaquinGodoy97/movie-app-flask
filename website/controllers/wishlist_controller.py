@@ -74,15 +74,3 @@ def remove_from_wishlist(current_page, movie_id, movie_name):
 
     return redirect(url_for("wishlist.wishlist_pages", current_page=current_page))
 
-def add_to_wishlist_db(movie_id, movie_name, user_id):
-    try:
-        user_data = Wishlist_user(mv_id=movie_id, title=movie_name, user_id=user_id)
-        db.session.add(user_data)
-        db.session.commit()
-
-    except Exception as e:
-        db.session.rollback()
-        database_save_error_alert(e)
-
-    finally:
-        db.session.close()
