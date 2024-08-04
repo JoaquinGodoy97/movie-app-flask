@@ -23,9 +23,8 @@ def results_search_list(search_result, current_page):
     Returns:
         Response: Rendered template with search results or redirect.
     """
-
     if "username" not in session:
-            logout_redirect()
+        return logout_redirect()
 
     movie_results_no_page_separation = fetch_movie_results(search_result)
 

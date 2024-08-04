@@ -1,7 +1,10 @@
-from flask import Blueprint, render_template, request, url_for, redirect, session, flash
+from flask import Blueprint, render_template, request, url_for, redirect, session
+from .results_controller import handle_form, get_set_of_movies
 from website.models.wishlist_user_model import Wishlist_user
 from website.utils.db import db
 from website.config import BASE_URL, API_KEY
+from website.view import (database_save_error_alert, session_logout_warning, logout_redirect, display_movies, wishlist_redirect, 
+                    alert_no_movie_added_wishlist, database_delete_error_alert, database_wishlist_delete_erorr_alert)
 import requests
 
 wishlist = Blueprint('wishlist', __name__)
@@ -10,12 +13,8 @@ wishlist = Blueprint('wishlist', __name__)
 def wishlist_homepage(current_page = 1):
     return redirect(url_for('wishlist.wishlist_pages', current_page=current_page))
 
-
 @wishlist.route('/wishlist/<int:current_page>', methods=["POST", "GET"])
 def wishlist_pages(current_page):
-
-    from .results_controller import handle_form, get_set_of_movies
-    from website.view import session_logout_warning, logout_redirect, display_movies, wishlist_redirect, alert_no_movie_added_wishlist
 
     if "username" not in session:
         return logout_redirect()
@@ -44,9 +43,6 @@ def wishlist_pages(current_page):
         return wishlist_redirect()
 
     if request.method == 'POST':
-
-        print('post')
-
         response = handle_form(movie_results)
 
         if response:
@@ -61,9 +57,6 @@ def wishlist_pages(current_page):
 
 @wishlist.route('/wishlist/<int:current_page>/<int:movie_id>/<movie_name>', methods=["POST", "GET"])
 def remove_from_wishlist(current_page, movie_id, movie_name):
-
-    from website.view import database_delete_error_alert, database_wishlist_delete_erorr_alert
-    
     found_movie_to_delete = Wishlist_user.query.filter_by(mv_id=str(movie_id)).first()
 
     if found_movie_to_delete:
@@ -82,9 +75,6 @@ def remove_from_wishlist(current_page, movie_id, movie_name):
     return redirect(url_for("wishlist.wishlist_pages", current_page=current_page))
 
 def add_to_wishlist_db(movie_id, movie_name, user_id):
-
-    from website.view import database_save_error_alert
-
     try:
         user_data = Wishlist_user(mv_id=movie_id, title=movie_name, user_id=user_id)
         db.session.add(user_data)
