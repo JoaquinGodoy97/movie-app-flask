@@ -17,6 +17,9 @@ def wishlist_pages(current_page):
     from .results_controller import handle_form, get_set_of_movies
     from website.view import session_logout_warning, logout_redirect, display_movies, wishlist_redirect, alert_no_movie_added_wishlist
 
+    if "username" not in session:
+        return logout_redirect()
+
     results = Wishlist_user.query.filter_by(user_id=session['username']).all()
 
     if not results:
@@ -42,7 +45,7 @@ def wishlist_pages(current_page):
 
     if request.method == 'POST':
 
-        print(movie_results)
+        print('post')
 
         response = handle_form(movie_results)
 
@@ -52,11 +55,6 @@ def wishlist_pages(current_page):
         #LOG OUT
         if request.form.get('logout') == 'Log Out':
             session_logout_warning(session['username'])
-            return logout_redirect()
-        
-    else:
-        #CHECK FOR USER IN SESSION
-        if "username" not in session:
             return logout_redirect()
         
     return display_movies(movie_results, template_success='wishlist.html', template_error='wishlist.html')
@@ -94,7 +92,7 @@ def add_to_wishlist_db(movie_id, movie_name, user_id):
 
     except Exception as e:
         db.session.rollback()
-        database_save_error_alert()
+        database_save_error_alert(e)
 
     finally:
         db.session.close()
