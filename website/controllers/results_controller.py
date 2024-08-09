@@ -1,9 +1,8 @@
 from flask import session, Blueprint, request
 from website.config import API_URL
 from website.models.wishlist_user_model import Wishlist_user
-from website.view.view import (alert_movie_already_added, display_current_results, database_wishlist_save_success_alert,
-                        logout_redirect, display_movies, homepage_search_redirect, page_not_found)
-from website.services.results_services import add_to_wishlist_db, fetch_movie_results, get_set_of_movies, fetch_multiple_pages, handle_form
+from website.view.view import (logout_redirect, display_movies, homepage_search_redirect, page_not_found)
+from website.services.results_services import fetch_movie_results, get_set_of_movies, fetch_multiple_pages, handle_form
 from website.services.auth_services import is_user_logged_in
 
 results = Blueprint('results', __name__)
@@ -59,20 +58,20 @@ def add_to_wishlist(search_result, current_page, movie_name, movie_id):
     Returns:
         Response: Rendered template with the updated results.
     """
-    # if It can be called from wishlist without affecting results would be ideal
+    # # if It can be called from wishlist without affecting results would be ideal
 
-    if is_user_logged_in(session) == False:
-        return logout_redirect()
+    # if is_user_logged_in(session) == False:
+    #     return logout_redirect()
 
-    #consultar_con_wishlist(user_id=session['username'], mv_id=movie_id, model) goes to wishlist service
-    movie_exists = Wishlist_user.query.filter_by(user_id=session['username'], mv_id=movie_id).first()
+    # #consultar_con_wishlist(user_id=session['username'], mv_id=movie_id, model) goes to wishlist service
+    # movie_exists = Wishlist_user.query.filter_by(user_id=session['username'], mv_id=movie_id).first()
 
-    # check_wishlist_for_movie_match(user, movie_id)
+    # # check_wishlist_for_movie_match(user, movie_id)
 
-    if movie_exists:
-        alert_movie_already_added(movie_name, movie_id)
-    else:
-        database_wishlist_save_success_alert(movie_name, movie_id)
-        add_to_wishlist_db(movie_id, movie_name, user_id=session['username'])
+    # if movie_exists:
+    #     alert_movie_already_added(movie_name, movie_id)
+    # else:
+    #     database_wishlist_save_success_alert(movie_name, movie_id)
+    #     add_to_wishlist_db(movie_id, movie_name, user_id=session['username'])
         
-    return display_current_results(search_result, current_page)
+    # return display_current_results(search_result, current_page)

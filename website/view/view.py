@@ -67,7 +67,7 @@ def homepage_search_redirect():
     return redirect(url_for("homepage.search"))
 
 def wishlist_redirect():
-    return redirect(url_for('wishlist.wishlist_search_list', current_page=1))
+    return redirect(url_for('wishlist.wishlist_pages', current_page=1))
 
 
 # FLASH DISPLAY ERRORS

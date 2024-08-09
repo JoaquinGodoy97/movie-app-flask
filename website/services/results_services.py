@@ -181,15 +181,3 @@ def get_set_of_movies(movie_list, current_page, search_result, current_service):
             "search_result": search_result
         }
 
-def add_to_wishlist_db(movie_id, movie_name, user_id):
-    try:
-        user_data = Wishlist_user(mv_id=movie_id, title=movie_name, user_id=user_id)
-        db.session.add(user_data)
-        db.session.commit()
-
-    except Exception as e:
-        db.session.rollback()
-        database_save_error_alert(e)
-
-    finally:
-        db.session.close()
