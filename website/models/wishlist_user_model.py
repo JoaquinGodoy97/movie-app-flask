@@ -15,3 +15,4 @@ class Wishlist_user(db.Model):
         self.mv_id = mv_id
         self.title = title
         self.user_id = user_id
+        self.search_results = ""

@@ -4,7 +4,7 @@ class DevelopmentConfig():
     SQLALCHEMY_DATABASE_URI = 'sqlite:///database.db'
 
 config = {
-    'development': DevelopmentConfig
+    'development': DevelopmentConfig # environment //
 }
 
 API_KEY = 'api_key=52495a0d2fceefe863149757f96d5d21'

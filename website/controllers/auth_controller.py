@@ -1,106 +1,64 @@
 from flask import Blueprint, request, session
-from website.utils.db import db
-from ..models.user_model import User
-import re
+from website.models.user_model import User
+from website.services.auth_services import add_user_to_db, close_session, open_session, is_user_logged_in, validate_credentials, user_query_filter_by_name
+from website.view.view import (homepage_search_redirect, invalid_username, invalid_pass_registered_user, invalid_pass_new_user,
+                            redirect_login_auth, render_auth_template, already_loggedin_user, session_logout_warning, login_redirect)
 
 auth = Blueprint("auth", __name__)
 
 @auth.route('/', methods=['GET', 'POST'])
 def index():
-    from website.view import homepage_search_redirect, render_auth_template, already_loggedin_user
 
     if request.method == 'POST':
         return render_auth_template()
 
     else:
-        if 'username' in session:
+        if is_user_logged_in(session):
             already_loggedin_user(session["username"])
             return homepage_search_redirect()
         
-        # print("No username in session!")
         return render_auth_template()
     
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
 
-    from website.view import homepage_search_redirect, logout_redirect, invalid_pass_registered_user, invalid_pass_new_user, redirect_login_auth, welcome_user_login
-
     if request.method == 'POST':
 
         session.permanent = True
         user, email, password = (request.form.get(data) for data in ['username', 'email', 'password'])
-        password_check = r"^[A-Za-z0-9]{5,9}$"
 
-        found_user = User.query.filter_by(username=user).first()
+        found_user = user_query_filter_by_name(user)
+        
+        valid_user, valid_pass = validate_credentials(user, password)
 
-
+        
         if found_user: # If found in DB
-            # print(f"user already in database.")
-            session['username'] = user
-
-            if re.match(password_check, password):
-
-                if found_user.password == password:
-                    welcome_user_login(user)
-                    return homepage_search_redirect()
-
-                else: # WHY DO I NEED THIS FOR?
-                    print('missing password/email') # ?????
-                    invalid_pass_registered_user()
-                    return logout_redirect()
-
+            if found_user.compare_password(password):
+                open_session(user)
+                return homepage_search_redirect()
+                    
             else:
                 invalid_pass_registered_user()
-                return logout_redirect()
-
+                return login_redirect()
         else:
-            check_password = re.match(password_check, password)
-
-            if check_password:
-
-                session['username'] = user
-
-                add_user_to_db(user, email, password)
+            if not valid_user:
+                invalid_username()
+                return login_redirect()
+            elif not valid_pass:
+                invalid_pass_new_user()
+                return login_redirect()
                 
             else:
-                # print('missing password/email')
-                invalid_pass_new_user()
+                add_user_to_db(user, email, password)
+
                 return redirect_login_auth()
 
     return redirect_login_auth()
 
 @auth.route('/logout')
 def logout():
-
-    from website.view import session_logout_warning, redirect_auth
-
-    if 'username' in session:
-        
-        # remove the username from the session if it's there
-        session_logout_warning(session['username'])
+    if is_user_logged_in(session):
+        session_logout_warning(session['username']) # Removes the username from the session if it's there
         close_session()
     
-    return redirect_auth()
-
-def add_user_to_db(user, email, password):
-
-    from ..view import homepage_search_redirect, password_reminder_alert, database_error_alert
-
-    try:
-
-        user_db = User(user, email, password)
-        db.session.add(user_db)
-        db.session.commit()
-
-        password_reminder_alert(user, password)
-        return homepage_search_redirect()
-    
-    except Exception as e:
-        db.session.rollback()
-        database_error_alert(e)
-
-    finally:
-        close_session()
-
-def close_session():
-    session.pop('username', None)
+    return redirect_login_auth()

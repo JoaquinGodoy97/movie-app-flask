@@ -1,14 +1,10 @@
 from flask import session, Blueprint, request
-from website.utils.db import db
 from website.config import API_URL
 from website.models.wishlist_user_model import Wishlist_user
-from website.models.movie_model import Movies
-from website.view import (alert_movie_already_added, display_current_results, database_wishlist_save_success_alert,
-                        logout_redirect, display_movies, homepage_search_redirect, page_not_found, page_not_found_with_error, 
-                        first_page_warning, last_page_warning, go_to_next_page, go_to_prev_page, page_not_found_with_error_in_page, 
-                        database_save_error_alert)
-from .search_controller import search
-import requests
+from website.view.view import (alert_movie_already_added, display_current_results, database_wishlist_save_success_alert,
+                        logout_redirect, display_movies, homepage_search_redirect, page_not_found)
+from website.services.results_services import add_to_wishlist_db, fetch_movie_results, get_set_of_movies, fetch_multiple_pages, handle_form
+from website.services.auth_services import is_user_logged_in
 
 results = Blueprint('results', __name__)
 
@@ -24,8 +20,10 @@ def results_search_list(search_result, current_page):
     Returns:
         Response: Rendered template with search results or redirect.
     """
-    if "username" not in session:
-        return logout_redirect()
+    if is_user_logged_in(session):
+        logout_redirect()
+    else:
+        return 
 
     movie_results_no_page_separation = fetch_movie_results(search_result)
 
@@ -35,9 +33,11 @@ def results_search_list(search_result, current_page):
         return homepage_search_redirect()
 
     movies = fetch_multiple_pages(search_result, start_page=1, total_pages=movie_results_no_page_separation['total_pages'])
-    movie_results = get_set_of_movies(movies, current_page, search_result)
+
+    movie_results = get_set_of_movies(movies, current_page, search_result, current_service='results')
 
     if request.method == 'POST':
+        # breakpoint()
         
         response = handle_form(movie_results)
         if response:
@@ -59,186 +59,20 @@ def add_to_wishlist(search_result, current_page, movie_name, movie_id):
     Returns:
         Response: Rendered template with the updated results.
     """
+    # if It can be called from wishlist without affecting results would be ideal
 
-    if "username" not in session:
+    if is_user_logged_in(session) == False:
         return logout_redirect()
 
+    #consultar_con_wishlist(user_id=session['username'], mv_id=movie_id, model) goes to wishlist service
     movie_exists = Wishlist_user.query.filter_by(user_id=session['username'], mv_id=movie_id).first()
+
+    # check_wishlist_for_movie_match(user, movie_id)
 
     if movie_exists:
         alert_movie_already_added(movie_name, movie_id)
     else:
         database_wishlist_save_success_alert(movie_name, movie_id)
         add_to_wishlist_db(movie_id, movie_name, user_id=session['username'])
-
+        
     return display_current_results(search_result, current_page)
-
-def fetch_movie_results(search_result):
-    """
-    Fetches movie results from the API.
-
-    Returns:
-        dict: JSON response containing movie results.
-    """
-
-    api_url_for_search_results = get_url(search_result)
-    response = requests.get(api_url_for_search_results)
-    
-    """
-    # Into a Dict Alternative
-    # movies = json.loads(response.text) 
-    global movies
-    """
-
-    return response.json()
-
-def navigate_page(search_result, current_page, total_pages):
-    """
-    Handles navigation through pages for the movie search results.
-
-    Returns:
-        Response: Redirect to the next or previous page.
-    """
-
-    if request.form.get('npage') == 'Next':
-
-        if current_page >= total_pages:
-            last_page_warning()
-
-        current_page += 1
-        return go_to_next_page(search_result, current_page)
-
-    elif request.form.get('ppage') == 'Prev':
-
-        if current_page <= 1:
-            first_page_warning(search_result)
-
-        current_page -= 1
-        return go_to_prev_page(search_result, current_page)
-    
-def handle_form(results):
-    """
-    Handles form submissions for logout, search, and pagination.
-
-    Args:
-        results (dict): Dictionary containing search results and pagination info.
-
-    Returns:
-        Response: Redirects a response based on form action.
-    """
-    logout_response = handle_logout()
-    if logout_response:
-        return logout_response
-
-    search_response = handle_search()
-    if search_response:
-        return search_response
-
-    # Handles pagination
-    return navigate_page(results['search_result'], results['current_page'], results['total_pages'])
-
-def get_url(search_result):
-    if search_result:
-        url = API_URL + "&query=" + search_result 
-
-    else:
-        url = API_URL + "&query=default"
-
-    return url
-
-def handle_search():
-    """
-    Handles the search form submission if any.
-
-    Returns:
-        Response: Redirect to search results or homepage.
-    """
-
-    search_text = request.form.get('search')
-
-    if 'search' in request.form:
-        if search_text != "":
-            return search()
-    else:
-        return homepage_search_redirect()
-
-def handle_logout():
-    """
-    Handles the logout form submission.
-    """
-
-    if request.form.get('logout') == 'Log Out':
-            # session_logout_warning(session['username'])
-            return logout_redirect()
-
-def get_set_of_movies(movie_list, current_page, search_result):
-    """
-    Organizes a set of movies for display based on the current page.
-
-    Returns:
-        dict: Dictionary containing the movie set and pagination info.
-    """
-    movies = Movies(movie_list)
-
-    try:
-        return {
-            "movie_set": movies.get_movies_by_page(current_page),
-            "total_pages": movies.total_pages,
-            "current_page": current_page,
-            "search_result": search_result
-        }
-    except ValueError as e:
-        page_not_found_with_error(e)
-        return {
-            "movie_set": [],
-            "total_pages": movies.total_pages,
-            "current_page": current_page,
-            "search_result": search_result
-        }
-
-def fetch_multiple_pages(search_query, start_page, total_pages):
-    """
-    Fetches multiple pages of movie results from the API since it has more than 1 page (20 items per page),
-    so I get them all in one variable.
-
-    Returns:
-        list: List of movies from all fetched pages.
-    """
-    all_movie_results = []
-
-    for page in range(start_page, total_pages + 1):
-        try:
-            response = requests.get(API_URL + "&query=" + search_query + f"&page={page}")
-            response.raise_for_status()  # Raise an exception for HTTP errors
-            results_per_page = response.json()
-
-            if 'results' in results_per_page:
-                for movie in results_per_page['results']:
-
-                    movie_data = {
-                        'id': movie.get('id'),
-                        'title': movie.get('title'),
-                        'poster_path': movie.get('poster_path'),
-                        'overview': movie.get('overview')
-                    }
-
-                    all_movie_results.append(movie_data)
-                    
-        except requests.exceptions.RequestException as e:
-            page_not_found_with_error_in_page(page, e)
-            continue
-
-    return all_movie_results
-
-def add_to_wishlist_db(movie_id, movie_name, user_id):
-    try:
-        user_data = Wishlist_user(mv_id=movie_id, title=movie_name, user_id=user_id)
-        db.session.add(user_data)
-        db.session.commit()
-
-    except Exception as e:
-        db.session.rollback()
-        database_save_error_alert(e)
-
-    finally:
-        db.session.close()

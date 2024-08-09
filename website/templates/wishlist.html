@@ -35,7 +35,7 @@
                                 <input class="btn btn-dark" type="submit" name="search" id="search" value="Search">
                                 
                                 <input class="btn btn-primary" name="ppage" id="ppage" type="submit" value="Prev" {% if (current_page == 1) %} disabled {% endif %}/>
-                                <input class="btn btn-primary" name="npage" id="npage" type="submit" value="Next" {% if (current_page == movie_pages_numb) %} disabled {% endif %}/>
+                                <input class="btn btn-primary" name="npage" id="npage" type="submit" value="Next" {% if (current_page == total_pages) %} disabled {% endif %}/>
                             </div>
                             <div class="input-group ms-3 mb-3">
                                 <input class="btn btn-outline-dark " name="logout" id="logout" type="submit" value="Log Out"/>

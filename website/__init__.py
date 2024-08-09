@@ -1,8 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from website.utils.db import db, DB_NAME
-# from main import app ??? 2024
-# from website.utils.db import DB_NAME, db
 from os import path #operating system
 from flask_migrate import Migrate
 
@@ -19,7 +17,7 @@ def create_app():
     # SQLAlchemy(app)
     # Initialize the SQLAlchemy instance with the app
     db.init_app(app)
-    migrate.init_app(app, db)
+    migrate.init_app(app, db) #update DB location
 
     from .controllers.wishlist_controller import wishlist
     from .controllers.search_controller import homepage
@@ -42,10 +40,7 @@ def create_database(app):
         print('Created Database!')
 
 if __name__ == "__main__":
-        
         app = Flask(__name__)
         create_database(app)
         app.run()
 #---------------------------------------------------------------------------
-
-

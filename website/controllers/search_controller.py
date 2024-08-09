@@ -1,19 +1,23 @@
-from flask import render_template, request, Blueprint, session
+from flask import request, Blueprint, session
+from website.services.search_services import reformat_search_results, search_results
+from website.view.view import logout_redirect, homepage_search_redirect, go_to_first_page_redirect, render_homepage_template
 
 homepage = Blueprint('homepage', __name__)
 
-@homepage.route('/search', methods=['GET', 'POST']) # change the route by "/" to make it default /search
+@homepage.route('/search', methods=['GET', 'POST'])
 def search():
-    # search_plus_formatted = ""
+    """
+    Handles homepage search submission and reformatting of search input.
 
-    from website.view import logout_redirect, homepage_search_redirect, go_to_first_page_results, render_homepage_template
-    
+    Returns:
+        Response: Rendered template results with search result formatted, if failed loops homepage.
+    """
     search = request.form.get('search') ## apparently request.form .from() creates an html form for capturing the data
     
     if request.method == 'POST':
 
         if request.form.get('logout') == 'Log Out':
-                return logout_redirect()
+            return logout_redirect()
             
         elif search:
             if search == "":
@@ -21,16 +25,13 @@ def search():
             
             else:
                 search_plus_formatted = reformat_search_results(search)
-                return go_to_first_page_results(search_plus_formatted, current_page=1)
+                current_service = 'results.results_search_list'
+                return search_results(search_plus_formatted, 1, current_service)
+
+            return search_results(search, current_page=1, current_service="")
             
     else:
         if "username" not in session:
             return logout_redirect()
-
+        
     return render_homepage_template()
-
-def reformat_search_results(search):
-    list_without_space = search.split() #result into a list 
-
-    search_plus_formatted = "+".join(list_without_space)
-    return search_plus_formatted

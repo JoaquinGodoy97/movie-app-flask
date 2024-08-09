@@ -1,5 +1,4 @@
-from website.view import page_not_found
-
+from website.view.view import page_not_found
 
 class Movies:
     def __init__(self, movie_list):
@@ -9,8 +8,6 @@ class Movies:
         
     def paginate_movies(self, items_per_page=5): 
         movie_set_list = []
-
-        # print(len(self.movies))
 
         for movie_set in range(0, len(self.movies), items_per_page):
             movie_set_end = movie_set + items_per_page
@@ -23,5 +20,3 @@ class Movies:
             return self.movies_per_page[current_page - 1]
         else:
             return page_not_found()
-            # orsendto = 'index.html'
-            # return render_template(orsendto)
