@@ -11,7 +11,7 @@ def display_movies(results, template_success, template_error):
 
         return render_template(template_success, movies=movie_set, search_result=search_result, current_page=current_page, total_pages=total_pages)
     else:
-        page_not_found()
+        page_not_found_warning()
         return render_template(template_error)
     
 def display_current_results(search_result, current_page):
@@ -24,6 +24,12 @@ def render_auth_template():
 
 def render_homepage_template():
     return render_template("index.html")
+
+def render_wishlist_template():
+    return render_template("wishlist.html")
+
+def render_page_not_found():
+    return render_template('404.html'), 404
 
 # REDIRECTS
 
@@ -63,6 +69,15 @@ def go_to_prev_page(search_result, current_page, current_service):
 
 #-------
 
+def wishlist_search_redirect(current_page, search_result):
+    return redirect(url_for('wishlist.wishlist_search', current_page=current_page, search_result=search_result))
+
+def wishlist_pages_redirect(current_page):
+    return redirect(url_for('wishlist.wishlist_pages', current_page=current_page))
+
+def results_pages_redirect(current_page, search_result):
+    return redirect(url_for('results.results_search_list', current_page=current_page, search_result=search_result))
+
 def homepage_search_redirect():
     return redirect(url_for("homepage.search"))
 
@@ -73,7 +88,7 @@ def wishlist_redirect():
 # FLASH DISPLAY ERRORS
 
 """PAGINATION"""
-def page_not_found():
+def page_not_found_warning():
     return flash("Page not found.", "warning")
 
 def page_not_found_with_error(e):

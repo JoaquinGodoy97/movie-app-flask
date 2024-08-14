@@ -1,6 +1,6 @@
 from flask import request, Blueprint, session
 from website.services.search_services import reformat_search_results, search_results
-from website.view.view import logout_redirect, homepage_search_redirect, go_to_first_page_redirect, render_homepage_template
+from website.view.view import logout_redirect, homepage_search_redirect, render_homepage_template
 
 homepage = Blueprint('homepage', __name__)
 
@@ -15,7 +15,6 @@ def search():
     search = request.form.get('search') ## apparently request.form .from() creates an html form for capturing the data
     
     if request.method == 'POST':
-
         if request.form.get('logout') == 'Log Out':
             return logout_redirect()
             
@@ -27,8 +26,6 @@ def search():
                 search_plus_formatted = reformat_search_results(search)
                 current_service = 'results.results_search_list'
                 return search_results(search_plus_formatted, 1, current_service)
-
-            return search_results(search, current_page=1, current_service="")
             
     else:
         if "username" not in session:

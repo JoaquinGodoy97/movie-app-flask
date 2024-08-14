@@ -1,5 +1,4 @@
 from website.utils.db import db
-from website.view.view import invalid_pass_new_user, invalid_username
 import re
 
 class User(db.Model):

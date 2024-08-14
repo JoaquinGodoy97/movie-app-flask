@@ -1,8 +1,8 @@
-from flask import Blueprint, request, session
-from website.models.user_model import User
+from flask import Blueprint, request, session, render_template
 from website.services.auth_services import add_user_to_db, close_session, open_session, is_user_logged_in, validate_credentials, user_query_filter_by_name
 from website.view.view import (homepage_search_redirect, invalid_username, invalid_pass_registered_user, invalid_pass_new_user,
                             redirect_login_auth, render_auth_template, already_loggedin_user, session_logout_warning, login_redirect)
+import logging
 
 auth = Blueprint("auth", __name__)
 
@@ -62,3 +62,8 @@ def logout():
         close_session()
     
     return redirect_login_auth()
+
+@auth.errorhandler(404)
+def page_not_found(e):
+    logging.error(f"Page not found: {e}, route: {request.url}")
+    return render_template('404.html'), 404

@@ -1,4 +1,4 @@
-from website.view.view import page_not_found
+from website.view.view import page_not_found_warning
 
 class Movies:
     def __init__(self, movie_list):
@@ -19,4 +19,4 @@ class Movies:
         if 1 <= current_page <= self.total_pages:
             return self.movies_per_page[current_page - 1]
         else:
-            return page_not_found()
+            return page_not_found_warning()

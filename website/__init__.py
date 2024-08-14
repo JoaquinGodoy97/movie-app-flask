@@ -1,8 +1,10 @@
-from flask import Flask
+from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from website.utils.db import db, DB_NAME
 from os import path #operating system
 from flask_migrate import Migrate
+from website.view.view import render_page_not_found
+import logging
 
 migrate = Migrate()
 
@@ -28,6 +30,12 @@ def create_app():
     app.register_blueprint(results, url_prefix="/") #all of the url store inside how do I access
     app.register_blueprint(homepage, url_prefix="/")
     app.register_blueprint(auth, url_prefix="/")
+
+    # Global 404 error handler
+    @app.errorhandler(404)
+    def page_not_found(e):
+        logging.error(f"Page not found: {e}, route: {request.url}")
+        return render_page_not_found()
     
     app.secret_key = 'your_secret_key'
     # from website.models.user import User
@@ -44,3 +52,5 @@ if __name__ == "__main__":
         create_database(app)
         app.run()
 #---------------------------------------------------------------------------
+
+

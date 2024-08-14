@@ -1,11 +1,8 @@
 from flask import request
 from website.config import API_URL
-from website.utils.db import db
 from website.view.view import (page_not_found_with_error_in_page, page_not_found_with_error, 
-                        first_page_warning, last_page_warning, go_to_next_page, go_to_prev_page, page_not_found_with_error_in_page, 
-                        database_save_error_alert, homepage_search_redirect, logout_redirect, render_homepage_template) 
-from website.controllers.search_controller import search_results
-from website.models.wishlist_user_model import Wishlist_user
+                        first_page_warning, last_page_warning, go_to_next_page, go_to_prev_page, wishlist_pages_redirect, wishlist_search_redirect,
+                        page_not_found_with_error_in_page, homepage_search_redirect, logout_redirect, results_pages_redirect) 
 from website.models.movie_model import Movies
 import requests
 
@@ -90,13 +87,15 @@ def handle_form(results):
         return search_response
     
     if results['current_service'] == "results":
-        return navigate_page(results['search_result'], results['current_page'], results['total_pages'], 'results.results_search_list')
+        return navigate_page(results['search_result'], results['current_page'], results['total_pages'], 'results')
     
     elif results['current_service'] == "wishlist":
-        return navigate_page(results['search_result'], results['current_page'], results['total_pages'], 'wishlist.wishlist_pages')
+        print("this is wishlist page filter")
+        print(f'check if serach result dict {results['search_result']}')
+        return navigate_page(results['search_result'], results['current_page'], results['total_pages'], 'wishlist')
 
     # Handles pagination
-    return homepage_search_redirect()
+    # return homepage_search_redirect()
 
 def navigate_page(search_result, current_page, total_pages, current_service):
 
@@ -106,23 +105,34 @@ def navigate_page(search_result, current_page, total_pages, current_service):
     Returns:
         Response: Redirect to the next or previous page.
     """
+    print(search_result, current_page, total_pages, current_service)
+
 
     if request.form.get('npage') == 'Next':
-
-        if current_page >= total_pages:
+        if current_page < total_pages:
+            current_page += 1
+        else:
             last_page_warning()
 
-        current_page += 1
-        return go_to_next_page(search_result, current_page, current_service)
-
     elif request.form.get('ppage') == 'Prev':
-
-        if current_page <= 1:
+        if current_page > 1:
+            current_page -= 1
+        else:
             first_page_warning(search_result)
 
-        current_page -= 1
-        return go_to_prev_page(search_result, current_page, current_service)
+    # Handle Wishlist pagination with and without search results
+    if current_service == "wishlist":
+        if search_result:
+            print('Filter searchresult in pagination')
+            return wishlist_search_redirect(current_page, search_result)
+        else:
+            return wishlist_pages_redirect(current_page)
 
+    # Handle Results pagination
+    elif current_service == "results":
+        return results_pages_redirect(current_page, search_result)
+
+    return None
 def handle_search(results):
     """
     Handles the search form submission if any.
@@ -131,15 +141,21 @@ def handle_search(results):
         Response: Redirect to search results or homepage.
     """
     search_text = request.form.get('search')
+    print(search_text, 'this should say batman')
+
+    if results['search_result'] != search_text:
+        results['search_result'] = search_text 
+        results['current_page'] = 1
 
     if 'search' in request.form:
         if search_text != "":
                 
             if results['current_service'] == "results":
-                return navigate_page(results['search_result'], results['current_page'], results['total_pages'], 'results.results_search_list')
+                return navigate_page(results['search_result'], results['current_page'], results['total_pages'], 'results')
 
             elif results['current_service'] == "wishlist":
-                return navigate_page(results['search_result'], results['current_page'], results['total_pages'], 'wishlist.wishlist_search_list')
+                print('should pass here if there is a search')
+                return navigate_page(results['search_result'], results['current_page'], results['total_pages'], 'wishlist')
 
             else:
                 return navigate_page(results['search_result'], results['current_page'], results['total_pages'], 'homepage.search')
