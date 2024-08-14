@@ -55,7 +55,8 @@ def wishlist_pages_redirect(current_page):
     return redirect(url_for('wishlist.wishlist_pages', current_page=current_page))
 
 def results_pages_redirect(current_page, search_result):
-    return redirect(url_for('results.results_search_list', current_page=current_page, search_result=search_result))
+    print(current_page)
+    return redirect(url_for('results.results_search_list', search_result=search_result, current_page=current_page))
 
 def homepage_search_redirect():
     return redirect(url_for("homepage.search"))

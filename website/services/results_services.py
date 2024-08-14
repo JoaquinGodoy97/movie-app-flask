@@ -106,8 +106,10 @@ def navigate_page(search_result, current_page, total_pages, current_service):
 
     if request.form.get('npage') == 'Next':
         if current_page < total_pages:
+
             current_page += 1
-        else:
+
+        elif current_page == total_pages:
             last_page_warning()
 
     elif request.form.get('ppage') == 'Prev':
@@ -122,7 +124,6 @@ def navigate_page(search_result, current_page, total_pages, current_service):
             return wishlist_search_redirect(current_page, search_result)
         else:
             return wishlist_pages_redirect(current_page)
-
     # Handle Results pagination
     elif current_service == "results":
         return results_pages_redirect(current_page, search_result)
@@ -137,23 +138,27 @@ def handle_search(results):
     """
     search_text = request.form.get('search')
 
-    if results['search_result'] != search_text:
-        results['search_result'] = search_text 
-        results['current_page'] = 1
+    
 
     if 'search' in request.form:
         if search_text != "":
+
+            if results['search_result'] != search_text:
+                    results['search_result'] = search_text 
+                    results['current_page'] = 1
                 
             if results['current_service'] == "results":
                 return navigate_page(results['search_result'], results['current_page'], results['total_pages'], 'results')
 
             elif results['current_service'] == "wishlist":
+                
                 return navigate_page(results['search_result'], results['current_page'], results['total_pages'], 'wishlist')
 
             else:
                 return navigate_page(results['search_result'], results['current_page'], results['total_pages'], 'homepage.search')
     else:
-        return homepage_search_redirect()
+        # return homepage_search_redirect()
+        None
     
 def handle_logout():
     """

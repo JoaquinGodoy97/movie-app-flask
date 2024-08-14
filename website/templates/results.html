@@ -20,7 +20,7 @@
 
                 <div class="button-container">
 
-                    <form class="form-floating" method="POST">
+                    <form action="{{ url_for('results.results_search_list', search_result=search_result, current_page=current_page) }}" class="form-floating" method="POST">
 
                         <label for="search">Search Movies</label>
                         
