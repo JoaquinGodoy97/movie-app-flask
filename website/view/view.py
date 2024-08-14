@@ -45,27 +45,6 @@ def logout_redirect():
 def go_to_first_page_redirect(search_result, current_page, current_service): # 'results.results_search_list'
     return redirect(url_for(current_service, search_result=search_result, current_page=current_page))
 
-# def go_to_default_page(search_result, current_page, current_service): # 'results.results_search_list'
-#     return redirect(url_for(current_service, search_result=search_result, current_page=current_page))
-
-# def go_to_page_in_service(search_result, current_page, current_service):
-#     return redirect(url_for(current_service, search_result=search_result, current_page=current_page))
-
-#--------
-
-def go_to_next_page(search_result, current_page, current_service):
-    return redirect(url_for(current_service, search_result=search_result, current_page=current_page))
-
-def go_to_prev_page(search_result, current_page, current_service):
-    return redirect(url_for(current_service, search_result=search_result, current_page=current_page))
-
-#--------
-
-# def go_to_next_page_wishlist(search_result, current_page, current_service):
-#     return redirect(url_for(current_service, search_result=search_result, current_page=current_page))
-
-# def go_to_prev_page_wishlist(search_result, current_page, current_service):
-#     return redirect(url_for(current_service, search_result=search_result, current_page=current_page))
 
 #-------
 

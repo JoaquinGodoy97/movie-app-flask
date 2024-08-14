@@ -11,7 +11,6 @@ migrate = Migrate()
 def create_app():
 
     app = Flask(__name__)
-    # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:passwordtest123@localhost/moviewishlist'
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY']= "milanesa"
@@ -34,7 +33,9 @@ def create_app():
     # Global 404 error handler
     @app.errorhandler(404)
     def page_not_found(e):
-        logging.error(f"Page not found: {e}, route: {request.url}")
+        if request.path.startswith('/static/css'):
+            return e
+        # logging.error(f"Page not found: {e}, route: {request.url}")
         return render_page_not_found()
     
     app.secret_key = 'your_secret_key'

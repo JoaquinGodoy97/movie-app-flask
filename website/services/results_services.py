@@ -1,7 +1,7 @@
 from flask import request
 from website.config import API_URL
 from website.view.view import (page_not_found_with_error_in_page, page_not_found_with_error, 
-                        first_page_warning, last_page_warning, go_to_next_page, go_to_prev_page, wishlist_pages_redirect, wishlist_search_redirect,
+                        first_page_warning, last_page_warning, wishlist_pages_redirect, wishlist_search_redirect,
                         page_not_found_with_error_in_page, homepage_search_redirect, logout_redirect, results_pages_redirect) 
 from website.models.movie_model import Movies
 import requests
@@ -90,8 +90,6 @@ def handle_form(results):
         return navigate_page(results['search_result'], results['current_page'], results['total_pages'], 'results')
     
     elif results['current_service'] == "wishlist":
-        print("this is wishlist page filter")
-        print(f'check if serach result dict {results['search_result']}')
         return navigate_page(results['search_result'], results['current_page'], results['total_pages'], 'wishlist')
 
     # Handles pagination
@@ -105,8 +103,6 @@ def navigate_page(search_result, current_page, total_pages, current_service):
     Returns:
         Response: Redirect to the next or previous page.
     """
-    print(search_result, current_page, total_pages, current_service)
-
 
     if request.form.get('npage') == 'Next':
         if current_page < total_pages:
@@ -123,7 +119,6 @@ def navigate_page(search_result, current_page, total_pages, current_service):
     # Handle Wishlist pagination with and without search results
     if current_service == "wishlist":
         if search_result:
-            print('Filter searchresult in pagination')
             return wishlist_search_redirect(current_page, search_result)
         else:
             return wishlist_pages_redirect(current_page)
@@ -141,7 +136,6 @@ def handle_search(results):
         Response: Redirect to search results or homepage.
     """
     search_text = request.form.get('search')
-    print(search_text, 'this should say batman')
 
     if results['search_result'] != search_text:
         results['search_result'] = search_text 
@@ -154,7 +148,6 @@ def handle_search(results):
                 return navigate_page(results['search_result'], results['current_page'], results['total_pages'], 'results')
 
             elif results['current_service'] == "wishlist":
-                print('should pass here if there is a search')
                 return navigate_page(results['search_result'], results['current_page'], results['total_pages'], 'wishlist')
 
             else:

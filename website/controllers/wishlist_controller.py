@@ -108,13 +108,9 @@ def wishlist_search(search_result, current_page):
 
     results = filter_by_usersession(session['username'])
     results = get_results_by_movie_id(results) # here it should be the filter
-    print(search_result, 1)
     results = filter_movies_by_search_if_any(results, search_result) ######
-    print(search_result, 2)
     movie_results = get_set_of_movies(results, current_page, search_result, current_service='wishlist')
-    print(search_result, 3)
-    print(movie_results['search_result'])
-    print('this is wishlist endpoint with SEARCH')
+    
     if request.method == 'POST':
         response = handle_form(movie_results)
 
