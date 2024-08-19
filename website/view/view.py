@@ -55,7 +55,6 @@ def wishlist_pages_redirect(current_page):
     return redirect(url_for('wishlist.wishlist_pages', current_page=current_page))
 
 def results_pages_redirect(current_page, search_result):
-    print(current_page)
     return redirect(url_for('results.results_search_list', search_result=search_result, current_page=current_page))
 
 def homepage_search_redirect():
@@ -133,6 +132,9 @@ def alert_no_movie_added():
 
 def alert_no_movie_added_wishlist():
     return flash("No movies added to your Wishlist.", "warning")
+
+def first_page_warning_wishlist():
+    return flash('Right now you are on the first page of your Wishlist results.', 'warning')
 
 """WISHLIST.DATABASE"""
 

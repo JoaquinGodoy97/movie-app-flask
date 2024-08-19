@@ -1,10 +1,20 @@
-from flask import request
+from flask import request, jsonify
 from website.config import API_URL
 from website.view.view import (page_not_found_with_error_in_page, page_not_found_with_error, 
                         first_page_warning, last_page_warning, wishlist_pages_redirect, wishlist_search_redirect,
-                        page_not_found_with_error_in_page, homepage_search_redirect, logout_redirect, results_pages_redirect) 
+                        page_not_found_with_error_in_page, homepage_search_redirect, logout_redirect, results_pages_redirect, first_page_warning_wishlist) 
 from website.models.movie_model import Movies
 import requests
+from website.utils.logger import logger
+
+def get_url(search_result):
+    if search_result:
+        url = API_URL + "&query=" + search_result 
+
+    else:
+        url = API_URL + "&query=default"
+
+    return url
 
 def fetch_movie_results(search_result):
     """
@@ -13,9 +23,16 @@ def fetch_movie_results(search_result):
     Returns:
         dict: JSON response containing movie results.
     """
+    try:
+        api_url_for_search_results = get_url(search_result)
+        response = requests.get(api_url_for_search_results)
 
-    api_url_for_search_results = get_url(search_result)
-    response = requests.get(api_url_for_search_results)
+    except Exception as e:
+        # Log the exception details for internal use
+        logger.error(f"An error occurred: {e}")  # Log the exception
+        # Return a generic error message to the client
+        return jsonify({"error": "An internal error occurred. Please try again later."}), 500
+    
     
     """
     # Into a Dict Alternative
@@ -59,15 +76,6 @@ def fetch_multiple_pages(search_query, start_page, total_pages):
 
     return all_movie_results
 
-def get_url(search_result):
-    if search_result:
-        url = API_URL + "&query=" + search_result 
-
-    else:
-        url = API_URL + "&query=default"
-
-    return url
-
 def handle_form(results):
     """
     Handles form submissions for logout, search, and pagination.
@@ -106,17 +114,21 @@ def navigate_page(search_result, current_page, total_pages, current_service):
 
     if request.form.get('npage') == 'Next':
         if current_page < total_pages:
-
             current_page += 1
-
-        elif current_page == total_pages:
-            last_page_warning()
+            
+            if current_page == total_pages:
+                last_page_warning()
 
     elif request.form.get('ppage') == 'Prev':
         if current_page > 1:
             current_page -= 1
-        else:
-            first_page_warning(search_result)
+
+            if current_service == 'results':
+                if current_page == 1:
+                    first_page_warning(search_result)
+            
+            elif current_service == "wishlist" and current_page == 1:
+                first_page_warning_wishlist()
 
     # Handle Wishlist pagination with and without search results
     if current_service == "wishlist":
@@ -137,8 +149,6 @@ def handle_search(results):
         Response: Redirect to search results or homepage.
     """
     search_text = request.form.get('search')
-
-    
 
     if 'search' in request.form:
         if search_text != "":

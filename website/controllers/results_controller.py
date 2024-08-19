@@ -27,7 +27,6 @@ def results_search_list(search_result, current_page):
         return 
 
     movie_results_no_page_separation = fetch_movie_results(search_result)
-
     #  If current page out of range => not found or didn't receive an object
     if not movie_results_no_page_separation['results']:
         page_not_found_warning()
@@ -38,10 +37,8 @@ def results_search_list(search_result, current_page):
 
     # Set a separation => (set pages of 5 movies each)
     movie_results = get_set_of_movies(movies, current_page, search_result, current_service='results')
-
     
     if current_page > movie_results['total_pages']:
-        page_not_found_warning()
         return homepage_search_redirect()
     
     if request.method == 'POST':

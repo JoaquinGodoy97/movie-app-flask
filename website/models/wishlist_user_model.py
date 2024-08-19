@@ -17,9 +17,6 @@ class Wishlist_user(db.Model):
         self.user_id = user_id
         self.search_results = ""
 
-
-         
-        
     # def filter_movies_by_search_if_any(self, movie_list, search_result):
     #     if search_result:
     #         pattern = re.compile(f".*?{re.escape(search_result)}.*?", re.IGNORECASE)
