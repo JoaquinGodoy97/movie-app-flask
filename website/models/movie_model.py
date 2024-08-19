@@ -1,4 +1,4 @@
-from website.view.view import page_not_found_warning
+from website.view.view import page_not_found_warning, page_not_found_wishlist_warning
 
 class Movies:
     def __init__(self, movie_list):
@@ -15,8 +15,10 @@ class Movies:
         
         return movie_set_list
 
-    def get_movies_by_page(self, current_page):
+    def get_movies_by_page(self, current_page, current_service):
         if 1 <= current_page <= self.total_pages:
             return self.movies_per_page[current_page - 1]
         else:
+            if current_service == "wishlist":
+                return page_not_found_wishlist_warning()
             return page_not_found_warning()

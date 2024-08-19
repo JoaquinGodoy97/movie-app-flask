@@ -107,9 +107,12 @@ def wishlist_search(search_result, current_page):
     from website.services.wishlist_services import filter_movies_by_search_if_any
 
     results = filter_by_usersession(session['username'])
-    results = get_results_by_movie_id(results) # here it should be the filter
-    results = filter_movies_by_search_if_any(results, search_result) ######
+    results = get_results_by_movie_id(results)
+    results = filter_movies_by_search_if_any(results, search_result)
     movie_results = get_set_of_movies(results, current_page, search_result, current_service='wishlist')
+
+    if movie_results['movie_set'] == None:
+        movie_results['movie_set'] = ''
     
     if request.method == 'POST':
         response = handle_form(movie_results)

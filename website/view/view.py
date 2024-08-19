@@ -70,6 +70,9 @@ def wishlist_redirect():
 def page_not_found_warning():
     return flash("Page not found.", "warning")
 
+def page_not_found_wishlist_warning():
+    return flash("No movie with that name found in your Wishlist.", "warning")
+
 def page_not_found_with_error(e):
     return flash(f"Page not found:{e}", "warning")
 

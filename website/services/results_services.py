@@ -190,7 +190,7 @@ def get_set_of_movies(movie_list, current_page, search_result, current_service):
 
     try:
         return {
-            "movie_set": movies.get_movies_by_page(current_page),
+            "movie_set": movies.get_movies_by_page(current_page, current_service),
             "total_pages": movies.total_pages,
             "current_page": current_page,
             "search_result": search_result,
