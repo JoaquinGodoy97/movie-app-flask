@@ -1,4 +1,13 @@
 const MovieCard = ({ movie, onWishlist }) => {
+
+    console.log(movie.poster_path)
+
+    const POSTER_URL = "https://image.tmdb.org/t/p/w200"
+
+    const checkPoster = (poster) => poster === null
+        ? 'https://eticketsolutions.com/demo/themes/e-ticket/img/movie.jpg'
+        :  POSTER_URL + poster
+
     return (
 
         <div className="card mb-3 me-5 movie-item" style={{ width: '12rem'}}>
@@ -19,7 +28,7 @@ const MovieCard = ({ movie, onWishlist }) => {
                 </button>
             </div>
             <img
-                src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+                src={checkPoster(movie.poster_path)}
                 className="card-img-top"
                 alt="movie_cover"
             />
