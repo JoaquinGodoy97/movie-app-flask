@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 {% endblock %}
 
-
 {% block body %}
     <main>
 
@@ -16,41 +15,35 @@
 
             <!-- <h1>This is how is gonna appear: {{url_view}}</h1> -->
 
-        <div class="button-container">
+            <div class="button-container">
 
-            <form method="POST" action="{{ url_for('auth.login')}}">    
+                <form method="POST" action="{{ url_for('auth.login')}}">    
 
-                <div class="mb-3">
+                    <div class="mb-3">
 
-                    <label for="username" class="form-label">Username</label>
-                    <input type="username" name="username" class="form-control" id="username" aria-describedby="usernameHelp">
-                    <!-- <div id="usernameHelp" class="form-text">Your mail will be set as your user.</div> -->
+                        <label for="username" class="form-label">Username</label>
+                        <input type="username" name="username" class="form-control" id="username" aria-describedby="usernameHelp">
 
-                </div>
+                    </div>
 
-                <div class="mb-3">
-                <!-- 
-                    <input type="text" id="name" name="name" class="form-control" placeholder="Name" aria-label="Name" aria-describedby="basic-addon1">
-                    <input class="btn btn-dark" type="submit" name="name" id="name" value="Name">
-                    -->
-                    <label for="email" class="form-label">Email address <span style="color: rgb(52, 52, 52);font-style: oblique 10deg;">(optional)</span></label>
-                    <input type="email" name="email" class="form-control" id="email" aria-describedby="emailHelp" disabled>
-                    <!-- <div id="emailHelp" class="form-text">Your mail will be set as your user.</div> -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email address <span style="color: rgb(52, 52, 52);font-style: oblique 10deg;">(optional)</span></label>
+                        <input type="email" name="email" class="form-control" id="email" aria-describedby="emailHelp" disabled>
 
-                </div>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="exampleInputPassword1" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password">
-                </div>
+                    <div class="mb-3">
+                        <label for="exampleInputPassword1" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password">
+                    </div>
 
-                <button name="login_submit" type="submit" class="btn btn-dark">Submit</button>
+                    <button name="login_submit" type="submit" class="btn btn-dark">Submit</button>
 
-            </form>
-                
+                </form>
+                    
+            </div>
+            
         </div>
-        
-    </div>
         
     </main>
 

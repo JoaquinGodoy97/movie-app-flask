@@ -1,15 +1,12 @@
 # movie-app-flask
 
-<!-- #first step idea    
-This is a movie App that takes data from a movie API. In general, I am using flask framework for the backend coding. For displaying I used Bootstrap and a bit of CSS. The app also includes  a custom pagination functionality as well as a basic display of a list of movies. -->
-
 The project is a Movie App built using Flask framwork that takes data from a movie API. Using an MVC architecture, the app will allow you to Sig-up, Log-in and have a set of basic functionalities exploring movies and save them into a wishlist.
 
 You can check the App on the following link: https://movie-app-flask.onrender.com/
 
 ## Purpose
 
-The movie Aoo auns to provide a user-friendly platform for cinema lovers to explore and save list of movies.
+The movie App runs to provide a user-friendly platform for cinema lovers to explore and save list of movies.
 The main idea is to keep track of your all-time discoveries.
 
 ## Responsabilidades

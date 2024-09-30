@@ -1,28 +1,25 @@
-from flask import render_template, flash, redirect, jsonify, url_for
+from flask import render_template, flash, redirect, url_for
 
 # Display movies in their respective page
 
-def display_movies(results, render_success, render_error):
+def display_movies(results, template_success, template_error):
     if results:
         movie_set = results['movie_set']
         total_pages = results['total_pages']
         current_page = results['current_page']
         search_result = results['search_result']
 
-
-        return jsonify({ "results": movie_set, "total_pages": total_pages, "redirect": render_success })
-        # return render_template(template_success, movies=movie_set, search_result=search_result, current_page=current_page, total_pages=total_pages)
+        return render_template(template_success, movies=movie_set, search_result=search_result, current_page=current_page, total_pages=total_pages)
     else:
         page_not_found_warning()
-        return render_template(render_error)
+        return render_template(template_error)
     
 def display_current_results(search_result, current_page):
     return redirect(url_for("results.results_search_list", search_result=search_result, current_page=current_page))
 
 # RENDER TEMPLATES
 
-def render_auth_template(error_msg=""):
-    return jsonify({"error": error_msg, "redirect": "/login"}), 403
+def render_auth_template():
     return render_template("auth.html")
 
 def render_homepage_template():
@@ -37,21 +34,16 @@ def render_page_not_found():
 # REDIRECTS
 
 def redirect_login_auth():
-    return jsonify({ "redirect": "/login" })
-    # return redirect(url_for("auth.index"))
+    return redirect(url_for("auth.index"))
 
 def login_redirect():
+    return redirect(url_for('auth.login'))
 
-    return jsonify({ "redirect": "/login" })
-    # return redirect(url_for('auth.login'))
-
-def logout_redirect(message=""):
-    return jsonify({ "message": message, "redirect": "/logout" })
-    # return redirect(url_for('auth.logout'))
+def logout_redirect():
+    return redirect(url_for('auth.logout'))
 
 def go_to_first_page_redirect(search_result, current_page, current_service): # 'results.results_search_list'
-    # return redirect(url_for(current_service, search_result=search_result, current_page=current_page))
-    return jsonify({ "redirect": f"/{current_service}/search?query={search_result}&page={current_page}", "current_page": 1, "search_result": search_result})
+    return redirect(url_for(current_service, search_result=search_result, current_page=current_page))
 
 
 #-------
@@ -65,9 +57,8 @@ def wishlist_pages_redirect(current_page):
 def results_pages_redirect(current_page, search_result):
     return redirect(url_for('results.results_search_list', search_result=search_result, current_page=current_page))
 
-def homepage_search_redirect(message="", user_loggedin=None):
-    return jsonify({ 'message': message, 'username': user_loggedin, "redirect": "/search"})
-
+def homepage_search_redirect():
+    return redirect(url_for("homepage.search"))
 
 def wishlist_redirect():
     return redirect(url_for('wishlist.wishlist_pages', current_page=1))
