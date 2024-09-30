@@ -9,6 +9,7 @@ const ResultsPage = () => {
     const [movies, setMovies] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
     const navigate = useNavigate();
+    const [ loading, setLoading ] = useState(false); 
 
     // Use location to read the query from the URL
     const location = useLocation();
@@ -17,6 +18,8 @@ const ResultsPage = () => {
     const currentPageUrl = parseInt(queryParams.get('page')) || 1;
 
     const fetchMovies = async (query, page = 1) => {
+        setLoading(true)
+
         try {
             const response = await fetch(`http://localhost:5000/results/search?query=${query}&page=${page}`, {
                 method: 'GET',
@@ -28,11 +31,14 @@ const ResultsPage = () => {
 
             const data = await response.json();
             setMovies(data.results);
+
             console.log(data.total_pages)
             setTotalPages(data.total_pages || 1);
 
         } catch (error) {
             console.error('Error fetching movies:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -76,7 +82,7 @@ const ResultsPage = () => {
             />
             <PaginationPanel currentPage={currentPageUrl} totalPages={totalPages} onPageChange={handlePageChange} />
 
-            <MovieList movies={movies} />
+            <MovieList movies={movies} loading={loading}/>
         </div>
     );
 
