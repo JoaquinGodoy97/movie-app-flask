@@ -4,6 +4,8 @@ import { SearchBar } from './SearchBar';
 import { MovieList} from './MovieList';
 import {PaginationPanel} from './PaginationPanel';
 import '../Main.css';
+import { checkUserSession } from './checkUserSession';
+import { LoadingPage } from './utils/LoadingPage';
 
 const ResultsPage = () => {
     const [movies, setMovies] = useState([]);
@@ -15,7 +17,12 @@ const ResultsPage = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const searchQuery = queryParams.get('query') || '';
+    const [user, setUser] = useState(null);
     const currentPageUrl = parseInt(queryParams.get('page')) || 1;
+
+    useEffect(() => {
+        checkUserSession(setLoading, setUser, navigate);
+    })
 
     const fetchMovies = async (query, page = 1) => {
         setLoading(true)
@@ -73,8 +80,14 @@ const ResultsPage = () => {
     //     console.log(`Added movie ${movieTitle} to wishlist,`)
     // }
 
+    const classNames  = `results-page main-item movie-search d-flex mt-5 mb-3 ${!loading ? 'fade-in' : ''}`
+
+    if (loading){
+        return <LoadingPage/>
+    }
+
     return (
-        <div className="results-page">
+        <div className={classNames}>
             <SearchBar
                 onSearch={handleSearch}
                 currentPage={currentPageUrl}

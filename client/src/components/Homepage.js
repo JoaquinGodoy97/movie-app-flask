@@ -1,40 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SearchBar } from './SearchBar';
+import '../Main.css';
+import { checkUserSession } from './checkUserSession';
+import { LoadingPage } from './utils/LoadingPage';
 
 function Homepage() {
 
     const navigate = useNavigate();
-    const [user, setUser] = useState("");
+    const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchUser = async () => {
-
-            try {
-                const response = await fetch("http://localhost:3000/@me", {
-                    credentials: 'include'
-                });
-                const data = await response.json();  // Parse the JSON from the response
-                setUser(data);  // Set the user state with the fetched data
-
-                console.log(user)
-
-                if (user.error === "Unauthorised") {
-                    console.log("it passed")
-                    navigate('/login');
-                }
-
-            } catch (error) {
-                console.error("No response ", error);
-            } finally {
-                setLoading(false)
-            }
-        };
-
-        fetchUser();  // Call the async function
-
-    }, [user]);
+        const delayLoad = 2000;  // 2 seconds delay
+    
+        const timer = setTimeout(() => {
+            // Only allow the loading state to change after 2 seconds
+            setLoading(false);
+        }, delayLoad);
+    
+        // Check the user session while the timer is active
+        checkUserSession(setLoading, setUser, navigate);
+    
+        return () => clearTimeout(timer);  // Clean up on unmount
+    }, [navigate]);
 
     const handleSearch = async (query) => {
 
@@ -77,16 +66,15 @@ function Homepage() {
     //         console.error("Logout Failed")
     //     }
     // }
-    if (loading) {
-        return (
-            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '70vh' }}>
-                <h3>Loading . . .</h3>
-            </div>)
+    const classNames  = `main-item movie-search d-flex mt-5 mb-3 ${!loading ? 'fade-in' : ''}`
+
+    if (loading){
+        return <LoadingPage/>
     }
 
     return (
 
-        <div className="main-item movie-search d-flex mt-5 mb-3">
+        <div className={classNames}>
 
             <div className="button-container">
 
