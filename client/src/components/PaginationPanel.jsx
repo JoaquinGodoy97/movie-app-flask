@@ -1,6 +1,6 @@
 import React from 'react'
 
-const PaginationPanel = ({ currentPage, totalPages, onPageChange}) => {
+export const PaginationPanel = ({ currentPage, totalPages, onPageChange}) => {
 
     return (
         <div className="pagination-controls">
@@ -23,5 +23,3 @@ const PaginationPanel = ({ currentPage, totalPages, onPageChange}) => {
         </div>
     )
 };
-
-export default PaginationPanel

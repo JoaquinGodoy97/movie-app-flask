@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'; // Import useLocation to access the query
-import SearchBar from './SearchBar';
-import MovieList from './MovieList';
-import PaginationPanel from './PaginationPanel';
+import { SearchBar } from './SearchBar';
+import { MovieList} from './MovieList';
+import {PaginationPanel} from './PaginationPanel';
 import '../Main.css';
 
 const ResultsPage = () => {
@@ -83,6 +83,7 @@ const ResultsPage = () => {
             <PaginationPanel currentPage={currentPageUrl} totalPages={totalPages} onPageChange={handlePageChange} />
 
             <MovieList movies={movies} loading={loading}/>
+            
         </div>
     );
 

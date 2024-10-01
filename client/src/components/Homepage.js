@@ -1,14 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SearchBar from './SearchBar';
+import { SearchBar } from './SearchBar';
 
 function Homepage() {
 
     const navigate = useNavigate();
-    const [searchQuery, setSearchQuery] = useState('');
+    const [user, setUser] = useState("");
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+
+            try {
+                const response = await fetch("http://localhost:3000/@me", {
+                    credentials: 'include'
+                });
+                const data = await response.json();  // Parse the JSON from the response
+                setUser(data);  // Set the user state with the fetched data
+
+                console.log(user)
+
+                if (user.error === "Unauthorised") {
+                    console.log("it passed")
+                    navigate('/login');
+                }
+
+            } catch (error) {
+                console.error("No response ", error);
+            } finally {
+                setLoading(false)
+            }
+        };
+
+        fetchUser();  // Call the async function
+
+    }, [user]);
 
     const handleSearch = async (query) => {
-        setSearchQuery(query);
 
         if (!query) {
             alert("Please enter a search term");
@@ -24,9 +52,11 @@ function Homepage() {
             body: JSON.stringify({ search: query })
         });
 
+        console.log(response)
+
         const result = await response.json();
 
-        if(result.redirect){
+        if (result.redirect) {
             console.log(result)
             navigate(`/results/search?query=${query}&page=1`)
         } else {
@@ -47,14 +77,21 @@ function Homepage() {
     //         console.error("Logout Failed")
     //     }
     // }
+    if (loading) {
+        return (
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '70vh' }}>
+                <h3>Loading . . .</h3>
+            </div>)
+    }
 
     return (
-    
-    <div className="main-item movie-search d-flex mt-5 mb-3">
 
-        <div className="button-container">
-            <SearchBar onSearch={handleSearch} />
-            {/* <form className="form-floating" onSubmit={onSubmit}>
+        <div className="main-item movie-search d-flex mt-5 mb-3">
+
+            <div className="button-container">
+
+                <SearchBar onSearch={handleSearch} />
+                {/* <form className="form-floating" onSubmit={onSubmit}>
 
                 <label htmlFor="search">Search Movies</label>
 
@@ -77,10 +114,10 @@ function Homepage() {
                 
                 
             </form> */}
-                
+
+            </div>
+
         </div>
-        
-    </div>
     )
 };
 

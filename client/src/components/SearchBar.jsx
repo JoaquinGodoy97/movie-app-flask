@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 // import { useNavigate } from 'react-router-dom';
 
-const SearchBar = ({ onSearch, currentPage, totalPages, initialQuery }) => {
+export const SearchBar = ({ onSearch, currentPage, totalPages, initialQuery }) => {
     const [ searchQuery, setSearchQuery ] = useState(initialQuery || "");
     // const navigate = useNavigate();
     
@@ -34,4 +34,4 @@ const SearchBar = ({ onSearch, currentPage, totalPages, initialQuery }) => {
 
 };
 
-export default SearchBar;
+// export default SearchBar;

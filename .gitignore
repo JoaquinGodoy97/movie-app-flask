@@ -27,3 +27,6 @@ __pycache__/
 
 # Ignore virtual environments
 .venv/
+
+#Literally a copy of view
+view-copy.py

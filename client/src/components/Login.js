@@ -15,6 +15,7 @@ function Login() {
             .then(res => res.json())
             .then(data => {
                 setData(data);
+                console.log(data)
                 // if (!data.logged_in){
                     navigate('/login')
                 // }

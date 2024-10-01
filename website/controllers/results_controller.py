@@ -5,7 +5,7 @@ from website.services.auth_services import is_user_logged_in
 
 results = Blueprint('results', __name__)
 
-@results.route('/results' , methods=["GET", "POST"])
+@results.route('/results' , methods=["GET"])
 def send_to_homepage():
     return homepage_search_redirect()
 
@@ -50,4 +50,4 @@ def results_search_list():
     #     if response:
     #         return response
     # return display_movies(movie_results)
-    return display_movies(movie_results, render_success='/results', render_error='/search')
+    return display_movies(movie_results, render_success='/results', render_error='/search', current_user=session['username'])

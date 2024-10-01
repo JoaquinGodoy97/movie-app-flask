@@ -17,12 +17,13 @@ def index():
             return homepage_search_redirect(Messages.MSG_USER_LOGGEDIN, session["username"])
             # return jsonify({'message': 'User already logged in', 'username': session["username"]})
         
-        return jsonify({"hello world": '123'})  # Corrected to use jsonify
+        return jsonify({"message": 'User not logged in'})  # Corrected to use jsonify
 
 @auth.route('/login', methods=['POST'])
 def login():
     session.permanent = True
     user, email, password = (request.json.get(data) for data in ['username', 'email', 'password'])
+    print("User received from postman:", user)
 
     found_user = user_query_filter_by_name(user)
     
@@ -69,3 +70,17 @@ def logout():
 # def page_not_found(e):
 #     logging.error(f"Page not found: {e}, route: {request.url}")
 #     return render_template('404.html'), 404
+
+@auth.route('/@me')
+def get_current_user():
+
+    user = session.get('username')
+
+    if not user:
+        return jsonify({"error": "Unauthorised"}), 401
+    
+    user = user_query_filter_by_name(user)
+
+    return jsonify({
+        "username": user.username
+    })

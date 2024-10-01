@@ -1,16 +1,17 @@
-from flask import render_template, flash, redirect, jsonify, url_for
+from flask import render_template, flash, redirect, jsonify, url_for, session
 
 # Display movies in their respective page
 
-def display_movies(results, render_success, render_error):
+def display_movies(results, render_success, render_error, current_user = None): # for the moment keep user optional
     if results:
         movie_set = results['movie_set']
         total_pages = results['total_pages']
-        current_page = results['current_page']
-        search_result = results['search_result']
+        # current_page = results['current_page']
+        # search_result = results['search_result']
+        current_user = session['username']
 
 
-        return jsonify({ "results": movie_set, "total_pages": total_pages, "redirect": render_success })
+        return jsonify({ "results": movie_set, "total_pages": total_pages, "redirect": render_success, "current_user": current_user })
         # return render_template(template_success, movies=movie_set, search_result=search_result, current_page=current_page, total_pages=total_pages)
     else:
         page_not_found_warning()
@@ -66,7 +67,7 @@ def results_pages_redirect(current_page, search_result):
     return redirect(url_for('results.results_search_list', search_result=search_result, current_page=current_page))
 
 def homepage_search_redirect(message="", user_loggedin=None):
-    return jsonify({ 'message': message, 'username': user_loggedin, "redirect": "/search"})
+    return jsonify({ 'message': message, 'user_loggedin': user_loggedin, "redirect": "/search"})
 
 
 def wishlist_redirect():

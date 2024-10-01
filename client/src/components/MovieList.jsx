@@ -1,6 +1,6 @@
 import MovieCard from "./MovieCard"
 
-const MovieList = ({ movies = [], loading }) => {
+export const MovieList = ({ movies = [], loading }) => {
 
   const handleMovies = (moviesSet) => {
 
@@ -47,5 +47,3 @@ const MovieList = ({ movies = [], loading }) => {
     </div>
   )
 }
-
-export default MovieList;

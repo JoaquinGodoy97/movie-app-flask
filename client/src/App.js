@@ -5,6 +5,7 @@ import Login from './components/Login';
 import Logout from './components/Logout';
 import Homepage from './components/Homepage';
 import ResultsPage from './components/ResultsPage';
+import WishlistPage from './components/WishlistPage';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/logout" element={<Logout />} />
         <Route path="/search" element={<Homepage />} />
         <Route path="/results/search" element={<ResultsPage />} />
+        <Route path="/wishlist" element={<WishlistPage />} />
       </Routes>
     </Router>
   );

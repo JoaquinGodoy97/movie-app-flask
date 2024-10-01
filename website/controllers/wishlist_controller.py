@@ -16,8 +16,11 @@ wishlist = Blueprint('wishlist', __name__)
 def wishlist_homepage(current_page = 1):
     return redirect(url_for('wishlist.wishlist_pages', current_page=current_page))
 
-@wishlist.route('/wishlist/<int:current_page>', methods=["POST", "GET"])
-def wishlist_pages(current_page):
+@wishlist.route('/wishlist', methods=["POST", "GET"])
+def wishlist_pages():
+    
+    search_result = request.args.get('query', '')
+    current_page = request.args.get('page', 1, type=int)
 
     if is_user_logged_in(session) == False:
         return logout_redirect()
@@ -52,7 +55,7 @@ def wishlist_pages(current_page):
         
     return display_movies(movie_results, template_success='wishlist.html', template_error='wishlist.html')
 
-@wishlist.route('/wishlist/<search_result>/<int:current_page>/<int:movie_id>/<movie_name>', methods=["POST", "GET"])
+@wishlist.route('/wishlist/<search_result>/<int:current_page>/<int:movie_id>/<movie_name>', methods=["POST"])
 def add_to_wishlist(search_result, current_page, movie_name, movie_id):
     """
     Adds a movie to the user's wishlist if it doesn't already exist.
@@ -80,7 +83,7 @@ def add_to_wishlist(search_result, current_page, movie_name, movie_id):
         
     return display_current_results(search_result, current_page)
 
-@wishlist.route('/wishlist/<int:current_page>/<int:movie_id>', methods=["POST", "GET"])
+@wishlist.route('/wishlist/<int:current_page>/<int:movie_id>', methods=["POST"])
 def remove_from_wishlist(current_page, movie_id):
     """
     Removes a movie from the user's wishlist.
@@ -94,6 +97,7 @@ def remove_from_wishlist(current_page, movie_id):
     Returns:
         Response: Rendered template with the updated results.
     """
+    
     found_movie_to_delete = Wishlist_user.query.filter_by(mv_id=str(movie_id)).first()
     
     if found_movie_to_delete:
@@ -101,10 +105,13 @@ def remove_from_wishlist(current_page, movie_id):
 
     return redirect(url_for("wishlist.wishlist_pages", current_page=current_page))
 
-@wishlist.route('/wishlist/<search_result>/<int:current_page>', methods=["POST", "GET"])
+@wishlist.route('/wishlist/search', methods=["GET"])
 def wishlist_search(search_result, current_page):
 
     from website.services.wishlist_services import filter_movies_by_search_if_any
+
+    search_result = request.args.get('query', '')
+    current_page = request.args.get('page', 1, type=int)
 
     results = filter_by_usersession(session['username'])
     results = get_results_by_movie_id(results)
@@ -114,16 +121,16 @@ def wishlist_search(search_result, current_page):
     if movie_results['movie_set'] == None:
         movie_results['movie_set'] = ''
     
-    if request.method == 'POST':
-        response = handle_form(movie_results)
+    # if request.method == 'POST':
+    #     response = handle_form(movie_results)
 
-        if response:
-            return response
+    #     if response:
+    #         return response
 
-        #LOG OUT
-        if request.form.get('logout') == 'Log Out':
-            session_logout_warning(session['username'])
-            return logout_redirect()
+    #     #LOG OUT
+    #     if request.form.get('logout') == 'Log Out':
+    #         session_logout_warning(session['username'])
+    #         return logout_redirect()
         
     return display_movies(movie_results, template_success='wishlist.html', template_error='wishlist.html')
     # return redirect(url_for("wishlist.wishlist_search", current_page=current_page, search_result=search_result))
