@@ -20,9 +20,7 @@ const ResultsPage = () => {
     const [user, setUser] = useState(null);
     const currentPageUrl = parseInt(queryParams.get('page')) || 1;
 
-    useEffect(() => {
-        checkUserSession(setLoading, setUser, navigate);
-    })
+    
 
     const fetchMovies = async (query, page = 1) => {
         setLoading(true)
@@ -49,13 +47,23 @@ const ResultsPage = () => {
         }
     };
 
-    // This effect runs whenever the searchQuery or currentPage changes
     useEffect(() => {
-        if (searchQuery && currentPageUrl) {
-            fetchMovies(searchQuery, currentPageUrl); 
-        }
+        const checkSessionAndFetchMovies = async () => {
+            await checkUserSession(setLoading, setUser, navigate);
+            if (searchQuery && currentPageUrl) {
+                await fetchMovies(searchQuery, currentPageUrl);
+            }
+        };
+        checkSessionAndFetchMovies();
+    }, [searchQuery, currentPageUrl, navigate]);
 
-    }, [searchQuery, currentPageUrl]);
+    // This effect runs whenever the searchQuery or currentPage changes
+    // useEffect(() => {
+    //     if (searchQuery && currentPageUrl) {
+    //         fetchMovies(searchQuery, currentPageUrl); 
+    //     }
+
+    // }, [searchQuery, currentPageUrl]);
 
     const handleSearch = (query) => {
         if (!query) {

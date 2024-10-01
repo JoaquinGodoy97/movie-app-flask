@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, url_for, redirect, session
+from flask import Blueprint, render_template, request, url_for, redirect, session, jsonify, json
 from .results_controller import handle_form, get_set_of_movies
 from website.models.wishlist_user_model import Wishlist_user
 from website.utils.db import db
@@ -9,27 +9,33 @@ from website.view.view import (session_logout_warning, logout_redirect, display_
 from website.services.auth_services import is_user_logged_in
 from website.services.wishlist_services import (get_results_by_movie_id, add_to_wishlist_db, remove_from_wishlist_db,
                                                 filter_by_usersession_and_movieid, filter_by_usersession)
+import requests
 
 wishlist = Blueprint('wishlist', __name__)
 
-@wishlist.route('/wishlist', methods=["POST", "GET"])
-def wishlist_homepage(current_page = 1):
-    return redirect(url_for('wishlist.wishlist_pages', current_page=current_page))
+# @wishlist.route('/wishlist', methods=["POST", "GET"])
+# def wishlist_homepage():
+#     return jsonify({ "redirect": "/wishlist"})
+#     # return redirect(url_for('wishlist.wishlist_pages', page=page))
 
-@wishlist.route('/wishlist', methods=["POST", "GET"])
+
+@wishlist.route('/wishlist', methods=["GET"])
 def wishlist_pages():
     
     search_result = request.args.get('query', '')
     current_page = request.args.get('page', 1, type=int)
 
-    if is_user_logged_in(session) == False:
-        return logout_redirect()
+    session_cookie = request.cookies.get('session')
+    
+    res = requests.get("http://localhost:5000/@me", cookies={'session': session_cookie})
+    response = json.loads(res.text)
 
-    results = filter_by_usersession(session['username'])
+    results = filter_by_usersession(response['username'])
 
-    if not results:
-        alert_no_movie_added_wishlist()
-        return render_wishlist_template()
+    # if not results:
+    #     alert_no_movie_added_wishlist()
+    #     return render_wishlist_template()
+    # return jsonify({ "message": results })
     
     results = get_results_by_movie_id(results)
 
@@ -38,22 +44,7 @@ def wishlist_pages():
     search_result = ""
     movie_results = get_set_of_movies(results, current_page, search_result, current_service)
 
-    # Filters pages out of range & returns to the main Wishlist page
-    if current_page > movie_results['total_pages']:
-        return wishlist_redirect()
-
-    if request.method == 'POST':
-        response = handle_form(movie_results)
-
-        if response:
-            return response
-
-        #LOG OUT
-        if request.form.get('logout') == 'Log Out':
-            session_logout_warning(session['username'])
-            return logout_redirect()
-        
-    return display_movies(movie_results, template_success='wishlist.html', template_error='wishlist.html')
+    return display_movies(movie_results, render_success='/wishlist', render_error='/wishlist')
 
 @wishlist.route('/wishlist/<search_result>/<int:current_page>/<int:movie_id>/<movie_name>', methods=["POST"])
 def add_to_wishlist(search_result, current_page, movie_name, movie_id):
@@ -70,8 +61,8 @@ def add_to_wishlist(search_result, current_page, movie_name, movie_id):
         Response: Rendered template with the updated results.
     """
     
-    if is_user_logged_in(session) == False:
-        return logout_redirect()
+    # if is_user_logged_in(session) == False:
+    #     return logout_redirect()
 
     movie_exists = filter_by_usersession_and_movieid(session['username'], movie_id)
 
@@ -106,16 +97,29 @@ def remove_from_wishlist(current_page, movie_id):
     return redirect(url_for("wishlist.wishlist_pages", current_page=current_page))
 
 @wishlist.route('/wishlist/search', methods=["GET"])
-def wishlist_search(search_result, current_page):
+def wishlist_search():
 
     from website.services.wishlist_services import filter_movies_by_search_if_any
 
     search_result = request.args.get('query', '')
     current_page = request.args.get('page', 1, type=int)
 
-    results = filter_by_usersession(session['username'])
+    session_cookie = request.cookies.get('session')
+    
+    res = requests.get("http://localhost:5000/@me", cookies={'session': session_cookie})
+    response = json.loads(res.text)
+
+    if "error" in response:
+        return jsonify({ "error": "Unauthorized"}), 401
+
+    results = filter_by_usersession(response['username'])
+
+    # return jsonify({ "message": results})
+
     results = get_results_by_movie_id(results)
+
     results = filter_movies_by_search_if_any(results, search_result)
+
     movie_results = get_set_of_movies(results, current_page, search_result, current_service='wishlist')
 
     if movie_results['movie_set'] == None:
@@ -132,5 +136,5 @@ def wishlist_search(search_result, current_page):
     #         session_logout_warning(session['username'])
     #         return logout_redirect()
         
-    return display_movies(movie_results, template_success='wishlist.html', template_error='wishlist.html')
+    return display_movies(movie_results, render_success="/wishlist/search", render_error="/wishlist")
     # return redirect(url_for("wishlist.wishlist_search", current_page=current_page, search_result=search_result))

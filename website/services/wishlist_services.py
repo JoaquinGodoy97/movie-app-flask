@@ -6,24 +6,42 @@ from website.view.view import database_save_error_alert, database_wishlist_delet
 import requests, re
 
 def get_results_by_movie_id(results):
+        updated_results = [] 
+
         for movie in results:
-                api_url = BASE_URL + "/movie/" + str(movie.mv_id) + "?" + API_KEY
+                api_url = BASE_URL + "/movie/" + str(movie['mv_id']) + "?" + API_KEY
                 
                 response = requests.get(api_url)
                 response.raise_for_status()  # Check for HTTP request errors
                 results_json = response.json()
 
-                # Update movie_data fields
-                movie.title = results_json.get('title')
-                movie.poster_path = results_json.get('poster_path')
-                movie.overview = results_json.get('overview')
-        return results
+                updated_movie = {
+                'id': movie['id'],
+                'mv_id': movie['mv_id'],
+                'user_id': movie['user_id'],
+                'title': results_json.get('title', movie['title']),  # Use existing title if not found
+                'poster_path': results_json.get('poster_path', None),
+                'overview': results_json.get('overview', None),
+                }
+
+                updated_results.append(updated_movie)
+
+        return updated_results
 
 def filter_by_usersession_and_movieid(user_session, movie_id):
         return Wishlist_user.query.filter_by(user_id=user_session, mv_id=movie_id).first()
 
-def filter_by_usersession(user_session):
-        return Wishlist_user.query.filter_by(user_id=user_session).all()
+def filter_by_usersession(user_id):
+        movies = Wishlist_user.query.filter_by(user_id=user_id).all()
+        return [movie_to_dict(movie) for movie in movies]
+
+def movie_to_dict(movie):
+        return {
+                'id': movie.id,
+                'mv_id': movie.mv_id,
+                'title': movie.title,
+                'user_id': movie.user_id
+        }
 
 def add_to_wishlist_db(movie_id, movie_name, user_id):
         try:

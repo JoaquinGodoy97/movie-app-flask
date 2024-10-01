@@ -34,7 +34,7 @@ def add_user_to_db(user, email, password):
 
 def open_session(user):
     session['username'] = user
-    welcome_user_login(user)
+    welcome_user_login(session['username'])
 
 def close_session():
     session.pop('username', None)
@@ -51,3 +51,10 @@ def validate_credentials(username, password):
 def user_query_filter_by_name(user):
     found_user = User.query.filter_by(username=user).first() # modificar
     return found_user
+
+def user_to_dict(user):
+    return {
+        "username": user.username,
+        "id": user.id,
+        # Add more fields as needed
+    }

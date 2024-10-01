@@ -50,4 +50,4 @@ def results_search_list():
     #     if response:
     #         return response
     # return display_movies(movie_results)
-    return display_movies(movie_results, render_success='/results', render_error='/search', current_user=session['username'])
+    return display_movies(movie_results, render_success='/results', render_error='/search')

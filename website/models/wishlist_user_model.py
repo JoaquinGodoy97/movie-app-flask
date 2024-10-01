@@ -8,6 +8,7 @@ class Wishlist_user(db.Model):
     mv_id = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String(150), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    # IMPORTANT USER ID IS WRONGLY NAME AS ID, WHEN ITS ACUTALLY A USERNAME
 
     #how to add lists
 

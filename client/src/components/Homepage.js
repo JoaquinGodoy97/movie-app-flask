@@ -12,18 +12,8 @@ function Homepage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const delayLoad = 2000;  // 2 seconds delay
-    
-        const timer = setTimeout(() => {
-            // Only allow the loading state to change after 2 seconds
-            setLoading(false);
-        }, delayLoad);
-    
-        // Check the user session while the timer is active
         checkUserSession(setLoading, setUser, navigate);
-    
-        return () => clearTimeout(timer);  // Clean up on unmount
-    }, [navigate]);
+    }, [setLoading, setUser, navigate]);
 
     const handleSearch = async (query) => {
 
@@ -41,7 +31,6 @@ function Homepage() {
             body: JSON.stringify({ search: query })
         });
 
-        console.log(response)
 
         const result = await response.json();
 

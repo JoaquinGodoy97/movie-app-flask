@@ -1,7 +1,5 @@
 const MovieCard = ({ movie, onWishlist }) => {
 
-    console.log(movie.poster_path)
-
     const POSTER_URL = "https://image.tmdb.org/t/p/w200"
 
     const checkPoster = (poster) => poster === null
