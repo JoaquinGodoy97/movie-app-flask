@@ -1,7 +1,49 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+body {
+
+    min-width: 600px; /* Set a minimum width for the entire page */
+    overflow-x: auto; /* Prevent horizontal overflow by adding a scrollbar */
+    max-width: 100%;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Centers content and reduces large gaps */
+
+    width: 100%; /* Full width */
+    max-width: 1500px; /* Add a max width to prevent it from getting too wide */
+    margin: 0 auto; /* Center the container */
+    padding: 0 15px; /* Add padding for responsiveness */
+    
+}
+
+.movie-search {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.movie-item {
+    width: 100%;
+    max-width: 200px;
+    flex-grow: 1;
+    margin: 10px;
+    box-sizing: border-box; /* Ensures padding and border are included in width */
+}
+
+
+.montserrat-font {
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
 }
 
 /* body{
@@ -11,23 +53,21 @@
 } */
 
 /* main{ */
-    /* display: flex;
+/* display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     padding: 20px 0 20px 0; */
 /* } */
 
-.button-container{
-    display: flex;
-}
 
-.button-container button{
+.button-container Button {
     margin: 0 0 0 2.5px;
 }
 
 .input-group.search-group {
-    flex: 0 0 70%; /* Takes 70% of the container's width */
+    flex: 0 0 70%;
+    /* Takes 70% of the container's width */
 }
 
 /* 
@@ -53,13 +93,7 @@ form #npage:hover{
     margin: 20px 0 20px 0;
 } */
 
-.movie-search{
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    font-family: 'Helvetica Neue';
-}
+
 
 /* .movie-container{
     max-width: 60%;
@@ -70,26 +104,6 @@ form #npage:hover{
     
 } */
 
-.movie-item{
-    /* text-align: center; */
-    /* justify-items: flex-start; */
-    /* max-width: 200px; */
-    /* display: block; */
-    
-    /* flex-direction: column; */
-    /* justify-content: center;
-    align-items: center; */
-
-    /* border: 1.5px solid rgb(97, 97, 97); */
-    /* margin: 0px 40px; */
-    /* border-radius: 10px; */
-    /* background-color: rgba(169, 175, 173, 0.342); */
-    /* margin: 40px 20px 0 20px; */
-
-
-    box-shadow: 0px 5px 10px 0px rgba(83, 83, 83, 0.658);
-    
-}
 
 /* .movie-item h4{
     padding: 0;
@@ -120,5 +134,35 @@ form #npage:hover{
 @keyframes fadeIn {
     to {
         opacity: 1;
+    }
+}
+
+@media (max-width: 800px) {
+    .movie-item {
+        width: 100%;
+        /* Make each movie card take full width */
+        flex: 1 1 100%;
+    }
+
+    .search-bar {
+        width: 100%;
+        /* Make the search bar full width on smaller screens */
+    }
+
+    .pagination-buttons {
+        flex-direction: column;
+        /* Stack buttons vertically */
+        align-items: center;
+        /* Center buttons */
+    }
+}
+@media (max-width: 600px) {
+    .btn {
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+
+    h5 {
+        font-size: 14px;
     }
 }

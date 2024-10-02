@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 // import { useNavigate } from 'react-router-dom';
 
-export const SearchBar = ({ onSearch, currentPage, totalPages, initialQuery }) => {
+export const SearchBar = ({ onSearch, initialQuery }) => {
     const [ searchQuery, setSearchQuery ] = useState(initialQuery || "");
     // const navigate = useNavigate();
     
@@ -17,8 +17,8 @@ export const SearchBar = ({ onSearch, currentPage, totalPages, initialQuery }) =
 
     return (
         <form onSubmit={handleSubmit}>
-            <label htmlFor="search">Search Movies</label>
-            <div className="input-group mb-3">
+            {/* <label htmlFor="search">Search Movies</label> */}
+            <div className="input-group mb-3 search-bar">
                 <input
                     type="text"
                     id="search"

@@ -1,7 +1,7 @@
 
 const fetchWithDelay = async () => {
     await new Promise(resolve => setTimeout(resolve, 1000));  // Delay of 1 second
-    return fetch("http://localhost:3000/@me", { credentials: 'include' });
+    return fetch("http://localhost:5000/@me", { credentials: 'include' });
 };
 
 export const checkUserSession = async (setLoading, setUser, navigate) => {
@@ -9,14 +9,21 @@ export const checkUserSession = async (setLoading, setUser, navigate) => {
 
     try {
         const response = await fetchWithDelay();
-        console.log('Response status:', response.status); // Debugging response status
+        // console.log('Response status:', response.status); // Debugging response 
+    
+        if (response.status === 401) {
+            // Handle 401 Unauthorized explicitly
+            navigate('/login');
+            return;  // Exit function
+        }
+
         if (!response.ok) {
             throw new Error('Failed to fetch user session');
         }
 
         const data = await response.json();
-
-        if (data.error === "Unauthorised") {
+        
+        if (response.status === 401) {
             navigate('/login');
         } else {
             setUser(data);

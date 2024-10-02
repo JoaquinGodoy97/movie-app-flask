@@ -31,6 +31,10 @@ function Homepage() {
             body: JSON.stringify({ search: query })
         });
 
+        if (response.status === 401) {
+            console.log('Passed through')
+            navigate('/login');
+        }
 
         const result = await response.json();
 
@@ -55,10 +59,15 @@ function Homepage() {
     //         console.error("Logout Failed")
     //     }
     // }
-    const classNames  = `main-item movie-search d-flex mt-5 mb-3 ${!loading ? 'fade-in' : ''}`
+    
+    const classNames = `main-item movie-search d-flex mt-5 mb-3 ${!loading ? 'fade-in' : ''}`
 
-    if (loading){
-        return <LoadingPage/>
+    if (loading) {
+        return <LoadingPage />
+    }
+
+    if (!user) {
+        return null;  // Optionally render nothing if not logged in
     }
 
     return (

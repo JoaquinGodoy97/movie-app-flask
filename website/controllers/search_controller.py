@@ -2,10 +2,12 @@ from flask import request, Blueprint, session, jsonify
 from website.services.search_services import search_results
 from website.view.view import logout_redirect, homepage_search_redirect, render_homepage_template
 from website.utils.config import Services
+from website.services.auth_services import login_required
 
 homepage = Blueprint('homepage', __name__)
 
 @homepage.route('/search', methods=['POST'])
+@login_required
 def search():
     """
     Handles homepage search submission and reformatting of search input.
@@ -28,17 +30,9 @@ def search():
             return homepage_search_redirect()
         
         else:
-            # search_plus_formatted = reformat_search_results(search_result)
-            # print(search_plus_formatted)
+            # search_plus_formatted = reformat_search_results(search_result) # Not necessary already formatted from react.
             current_service = Services.RESULTS_SERVICE_ENDPOINT
-            # return jsonify({ "redirect": f"/{current_service}/{search_plus_formatted}/1"})
             return search_results(search_result, 1, current_service)
         
     # # If no search_result, return an error message
     return jsonify({'error': 'No search query provided'})
-            
-    # else:
-    #     if "username" not in session:
-    #         return logout_redirect()
-        
-    # return render_homepage_template()

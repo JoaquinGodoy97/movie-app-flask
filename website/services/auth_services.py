@@ -1,7 +1,16 @@
-from flask import session
+from flask import session, jsonify
 from website.models.user_model import User
 from website.utils.db import db
 from website.view.view import homepage_search_redirect, password_reminder_alert, database_save_error_alert, welcome_user_login
+from functools import wraps
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session:
+            return jsonify({'error': 'Unauthorized', 'redirect': '/login'}), 401
+        return f(*args, **kwargs)
+    return decorated_function
 
 def add_user_to_db(user, email, password):
     """

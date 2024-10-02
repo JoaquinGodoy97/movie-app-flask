@@ -17,6 +17,7 @@ function App() {
         <Route path="/search" element={<Homepage />} />
         <Route path="/results/search" element={<ResultsPage />} />
         <Route path="/wishlist" element={<WishlistPage />} />
+        <Route path="/wishlist/search" element={<WishlistPage />} />
       </Routes>
     </Router>
   );

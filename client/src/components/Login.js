@@ -44,6 +44,10 @@ function Login() {
             const response = await fetch(url, options);
             const result = await response.json();
 
+            if (result.error) {
+                navigate(result.redirect);
+            }
+
             if (response.ok) {
                 
                 alert(result.message)
@@ -58,7 +62,7 @@ function Login() {
     };
     
     return (
-        <div className="main-item movie-search d-flex mt-5 mb-3">
+        <div className="main-item movie-search d-flex mt-5 mb-3 montserrat-font">
             <div className="button-container">
                 <form method="POST" onSubmit={onSubmit}>
                     <div className="mb-3">

@@ -1,5 +1,5 @@
 from flask import Blueprint, request, render_template, jsonify, send_from_directory, session
-from website.services.auth_services import add_user_to_db, close_session, open_session, is_user_logged_in, validate_credentials, user_query_filter_by_name
+from website.services.auth_services import add_user_to_db, close_session, open_session, is_user_logged_in, validate_credentials, user_query_filter_by_name, login_required
 from website.view.view import (homepage_search_redirect, invalid_username, invalid_pass_registered_user, invalid_pass_new_user,
                             redirect_login_auth, render_auth_template, already_loggedin_user, session_logout_warning, login_redirect)
 from website.utils.config import Messages
@@ -11,9 +11,8 @@ auth = Blueprint("auth", __name__)
 def index():
     if request.method == 'POST':
         return jsonify({'message': 'Auth template rendering is now handled by React'})
-    else: # GET
-        if is_user_logged_in(session['username']):
-            # already_loggedin_user(session["username"])
+    else: 
+        if is_user_logged_in(session):
             return homepage_search_redirect(Messages.MSG_USER_LOGGEDIN, session["username"])
             # return jsonify({'message': 'User already logged in', 'username': session["username"]})
         
@@ -54,22 +53,10 @@ def login():
             add_user_to_db(user, email, password)
             return redirect_login_auth()
 
-# @auth.route('/check_session')
-# def check_session():
-#     if 'username' in session:   
-#         return jsonify({'logged_in': True, 'username': session['username']}), 200
-#     else:
-#         return jsonify({'logged_in': False}), 401
-
 @auth.route('/logout', methods=['POST'])
 def logout():
     session.pop('username', None)
     return jsonify({'message': 'Logged out successfully', 'redirect': '/login'}), 200
-
-# @auth.errorhandler(404)
-# def page_not_found(e):
-#     logging.error(f"Page not found: {e}, route: {request.url}")
-#     return render_template('404.html'), 404
 
 @auth.route('/@me')
 def get_current_user():
@@ -78,11 +65,8 @@ def get_current_user():
 
     user = session.get('username')
 
-    # print("This is session /@me: ", user, session)
-
     if not user:
-        return jsonify({"error": "Unauthorised"}), 401
+        return jsonify({"error": "Unauthorized"}), 401
     
     user = user_query_filter_by_name(user)
-
     return jsonify(user_to_dict(user))

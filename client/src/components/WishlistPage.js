@@ -4,6 +4,8 @@ import { MovieList } from './MovieList';
 import { PaginationPanel } from './PaginationPanel';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../Main.css';
+import { checkUserSession } from './checkUserSession';
+import { LoadingPage } from './utils/LoadingPage';
 
 const WishlistPage = () => {
 
@@ -21,23 +23,10 @@ const WishlistPage = () => {
 
     const fetchMovies = async (query, page = 1) => {
         setLoading(true)
-
         try {
-
-            const userData = await fetch("http://localhost:5000/@me", {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include',
-            mode: 'cors',
-            })
-
-            console.log(userData)
-
             const url = query ?
-                `http://localhost:3000/wishlist/search?query=${query}&page=${page}` :
-                `http://localhost:3000/wishlist?page=${page}`;
+                `http://localhost:5000/wishlist/search?query=${query}&page=${page}` :
+                `http://localhost:5000/wishlist?page=${page}`;
 
             const response = await fetch(url, {
                 method: 'GET',
@@ -48,10 +37,15 @@ const WishlistPage = () => {
                 mode: 'cors',
             });
 
+            if (response.status === 401) {
+                navigate('/login');
+            }
+
             const result = await response.json();
 
             if (response.ok) {
                 setMovies(result.results);
+                console.log(result.results)
                 setTotalPages(result.total_pages || 1);
             } else {
                 alert(result.error);
@@ -65,16 +59,24 @@ const WishlistPage = () => {
     };
 
     useEffect(() => {
-        fetchMovies(searchQuery, currentPageUrl);
-    }, [searchQuery, currentPageUrl]);
+        const checkSessionAndFetchMovies = async () => {
+
+            await checkUserSession(setLoading, setUser, navigate)
+
+            if (searchQuery || currentPageUrl) {
+
+                await fetchMovies(searchQuery, currentPageUrl);
+            }
+        };
+        checkSessionAndFetchMovies();
+    }, [searchQuery, currentPageUrl, navigate]);
 
     const handleSearch = (query) => {
         if (!query) {
             navigate(`/wishlist?page=1`);
         }
+        navigate(`/wishlist/search?query=${query}&page=${currentPageUrl}`)
 
-        // Navigate to the results page with the search query
-        // navigate(`/wishlist/search?query=${query}&page=1`);
     };
 
 
@@ -88,27 +90,24 @@ const WishlistPage = () => {
                 navigate(`/wishlist/?page=${newPage}`);
             } else {
                 // If there is a search query, go to /wishlist/search
-                navigate(`/wishlist/search?query=${searchQuery}&page=${newPage}`);
+                navigate(`/wishlist/search?query=${searchQuery}&?page=${newPage}`);
             }
         }
     };
 
+    const classNames = `results-page main-item movie-search d-flex mt-5 mb-3 ${!loading ? 'fade-in' : ''}`
+
+    if (loading) {
+        return <LoadingPage />
+    }
     return (
-        <div className="results-page">
-
-
+        <div className={classNames}>
             <SearchBar
                 onSearch={handleSearch}
-                currentPage={currentPageUrl}
-                totalPages={totalPages}
             />
-
             {totalPages > 0 ?
-
                 <PaginationPanel currentPage={currentPageUrl} totalPages={totalPages} onPageChange={handlePageChange} />
-
                 : null}
-
             <MovieList movies={movies} loading={loading} />
         </div>
     )

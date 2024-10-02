@@ -9,6 +9,11 @@
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/app.py",
+            "args": ["run", "--no-debugger", "--no-reload"],
+            "env": {
+                "FLASK_APP": "app.py", // Ensure the FLASK_APP is set to your entry file
+                "FLASK_ENV": "development"
+            },
             "console": "integratedTerminal",
             "justMyCode": false
         }

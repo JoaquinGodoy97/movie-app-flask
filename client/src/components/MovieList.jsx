@@ -17,7 +17,7 @@ export const MovieList = ({ movies = [], loading }) => {
   
     if (movies.length > 0) {
       return (
-        <div className="movie-list d-flex justify-content-evenly container">
+        <div className="movie-list container">
           {movies.map((movie) => (
             <MovieCard key={movie.id} movie={movie} />
           ))}
@@ -25,7 +25,7 @@ export const MovieList = ({ movies = [], loading }) => {
       );
     } else {
       return (
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '70vh' }}>
+        <div style={{ display: 'flex' }}>
           <h3><i>Search not found</i></h3>
           <img
             style={{ maxWidth: '50%', maxHeight: '50%' }}

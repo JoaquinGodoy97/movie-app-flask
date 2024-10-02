@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'; // Import useLocation to access the query
 import { SearchBar } from './SearchBar';
-import { MovieList} from './MovieList';
-import {PaginationPanel} from './PaginationPanel';
+import { MovieList } from './MovieList';
+import { PaginationPanel } from './PaginationPanel';
 import '../Main.css';
 import { checkUserSession } from './checkUserSession';
 import { LoadingPage } from './utils/LoadingPage';
@@ -11,7 +11,7 @@ const ResultsPage = () => {
     const [movies, setMovies] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
     const navigate = useNavigate();
-    const [ loading, setLoading ] = useState(false); 
+    const [loading, setLoading] = useState(false);
 
     // Use location to read the query from the URL
     const location = useLocation();
@@ -19,8 +19,6 @@ const ResultsPage = () => {
     const searchQuery = queryParams.get('query') || '';
     const [user, setUser] = useState(null);
     const currentPageUrl = parseInt(queryParams.get('page')) || 1;
-
-    
 
     const fetchMovies = async (query, page = 1) => {
         setLoading(true)
@@ -36,9 +34,8 @@ const ResultsPage = () => {
 
             const data = await response.json();
             setMovies(data.results);
-
-            console.log(data.total_pages)
             setTotalPages(data.total_pages || 1);
+            console.log(data.total_pages)
 
         } catch (error) {
             console.error('Error fetching movies:', error);
@@ -88,10 +85,10 @@ const ResultsPage = () => {
     //     console.log(`Added movie ${movieTitle} to wishlist,`)
     // }
 
-    const classNames  = `results-page main-item movie-search d-flex mt-5 mb-3 ${!loading ? 'fade-in' : ''}`
+    const classNames = `results-page main-item movie-search d-flex mt-5 mb-3 montserrat-font ${!loading ? 'fade-in' : ''}`
 
-    if (loading){
-        return <LoadingPage/>
+    if (loading) {
+        return <LoadingPage />
     }
 
     return (
@@ -101,10 +98,15 @@ const ResultsPage = () => {
                 currentPage={currentPageUrl}
                 totalPages={totalPages}
             />
-            <PaginationPanel currentPage={currentPageUrl} totalPages={totalPages} onPageChange={handlePageChange} />
+            {totalPages !== null ?
 
-            <MovieList movies={movies} loading={loading}/>
-            
+                <PaginationPanel currentPage={currentPageUrl} totalPages={totalPages} onPageChange={handlePageChange} />
+
+                : null}
+
+
+            <MovieList movies={movies} loading={loading} />
+
         </div>
     );
 

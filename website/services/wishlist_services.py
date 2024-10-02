@@ -15,6 +15,8 @@ def get_results_by_movie_id(results):
                 response.raise_for_status()  # Check for HTTP request errors
                 results_json = response.json()
 
+                # print(results_json)
+
                 updated_movie = {
                 'id': movie['id'],
                 'mv_id': movie['mv_id'],
@@ -71,6 +73,9 @@ def remove_from_wishlist_db(found_movie_to_delete):
 def filter_movies_by_search_if_any(movies, search_result):
         if search_result:
                 pattern = re.compile(f".*?{re.escape(search_result)}.*?", re.IGNORECASE)
-                filtered_movies = filter(lambda movie: pattern.search(movie.title), movies)
+                print("pattren:", pattern)
+                filtered_movies = filter(lambda movie: pattern.search(movie['title']), movies)
+                print("filtered:", filtered_movies)
+
                 return list(filtered_movies)
         return movies
