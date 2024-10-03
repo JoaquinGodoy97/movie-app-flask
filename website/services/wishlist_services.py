@@ -1,9 +1,10 @@
 from website.config import BASE_URL, API_KEY
-from flask import request
+from flask import request, session, jsonify
 from website.utils.db import db
 from website.models.wishlist_user_model import Wishlist_user
 from website.view.view import database_save_error_alert, database_wishlist_delete_erorr_alert, database_delete_error_alert
 import requests, re
+
 
 def get_results_by_movie_id(results):
         updated_results = [] 
@@ -46,8 +47,10 @@ def movie_to_dict(movie):
         }
 
 def add_to_wishlist_db(movie_id, movie_name, user_id):
+
         try:
                 user_data = Wishlist_user(mv_id=movie_id, title=movie_name, user_id=user_id)
+
                 db.session.add(user_data)
                 db.session.commit()
 
@@ -58,11 +61,17 @@ def add_to_wishlist_db(movie_id, movie_name, user_id):
         finally:
                 db.session.close()
 
+def is_wishlist_user_limit_reached():
+        list = Wishlist_user.query.filter_by(user_id=session['username']).all()
+        list_length = len(list)
+        return list_length >= 50
+
 def remove_from_wishlist_db(found_movie_to_delete):
         try:
                 db.session.delete(found_movie_to_delete)
                 db.session.commit()
                 database_wishlist_delete_erorr_alert(found_movie_to_delete.title, found_movie_to_delete.mv_id)
+                return jsonify({ "message": "Movie removed successfuly"})
 
         except Exception as e:
                 db.session.rollback()
@@ -73,9 +82,7 @@ def remove_from_wishlist_db(found_movie_to_delete):
 def filter_movies_by_search_if_any(movies, search_result):
         if search_result:
                 pattern = re.compile(f".*?{re.escape(search_result)}.*?", re.IGNORECASE)
-                print("pattren:", pattern)
                 filtered_movies = filter(lambda movie: pattern.search(movie['title']), movies)
-                print("filtered:", filtered_movies)
 
                 return list(filtered_movies)
         return movies

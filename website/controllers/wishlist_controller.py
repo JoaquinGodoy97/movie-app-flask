@@ -8,7 +8,7 @@ from website.view.view import (session_logout_warning, logout_redirect, display_
                     database_wishlist_save_success_alert, display_current_results)
 from website.services.auth_services import is_user_logged_in, login_required
 from website.services.wishlist_services import (get_results_by_movie_id, add_to_wishlist_db, remove_from_wishlist_db,
-                                                filter_by_usersession_and_movieid, filter_by_usersession)
+                                                filter_by_usersession_and_movieid, filter_by_usersession, is_wishlist_user_limit_reached)
 import requests
 
 wishlist = Blueprint('wishlist', __name__)
@@ -36,9 +36,11 @@ def wishlist_pages():
 
     return display_movies(movie_results, render_success='/wishlist', render_error='/wishlist')
 
-@wishlist.route('/wishlist/<search_result>/<int:current_page>/<int:movie_id>/<movie_name>', methods=["POST"])
+@wishlist.route('/wishlist/add/<int:movie_id>/<movie_name>', methods=["POST"])
 @login_required
-def add_to_wishlist(search_result, current_page, movie_name, movie_id):
+def add_to_wishlist(movie_id, movie_name):
+    # return jsonify({ "message": "Added to wishlist"})
+
     """
     Adds a movie to the user's wishlist if it doesn't already exist.
 
@@ -52,19 +54,30 @@ def add_to_wishlist(search_result, current_page, movie_name, movie_id):
         Response: Rendered template with the updated results.
     """
 
+    if not movie_id or not movie_name:
+        return jsonify ({ "error": "Could not process it."}), 400
+    
+    # return jsonify({ "message": f"{session['username']} added {movie_name} to wishlist"})
+
     movie_exists = filter_by_usersession_and_movieid(session['username'], movie_id)
 
     if movie_exists:
-        alert_movie_already_added(movie_name, movie_id)
+        # alert_movie_already_added(movie_name, movie_id)
+        return jsonify({ "error": "Movie already added."})
     else:
-        database_wishlist_save_success_alert(movie_name, movie_id)
-        add_to_wishlist_db(movie_id, movie_name, user_id=session['username'])
-        
-    return display_current_results(search_result, current_page)
 
-@wishlist.route('/wishlist/<int:current_page>/<int:movie_id>', methods=["POST"])
+        if is_wishlist_user_limit_reached():
+            return jsonify({ "error": "Limit 50 movies per user. Server in development." }), 403
+        
+        # database_wishlist_save_success_alert(movie_name, movie_id)
+        add_to_wishlist_db(movie_id, movie_name, user_id=session['username'])
+    
+    return jsonify({ "message": f"{session['username']} you added {movie_name} to your Wishlist!"})
+    # return display_current_results(search_result, current_page)
+
+@wishlist.route('/wishlist/remove/<int:movie_id>', methods=["POST"])
 @login_required
-def remove_from_wishlist(current_page, movie_id):
+def remove_from_wishlist(movie_id):
     """
     Removes a movie from the user's wishlist.
 
@@ -77,13 +90,13 @@ def remove_from_wishlist(current_page, movie_id):
     Returns:
         Response: Rendered template with the updated results.
     """
-    
     found_movie_to_delete = Wishlist_user.query.filter_by(mv_id=str(movie_id)).first()
     
     if found_movie_to_delete:
-        remove_from_wishlist_db(found_movie_to_delete)
-
-    return redirect(url_for("wishlist.wishlist_pages", current_page=current_page))
+        return remove_from_wishlist_db(found_movie_to_delete)
+    else:
+        return jsonify({ "error": "Movie not found."}), 400
+    # return redirect(url_for("wishlist.wishlist_pages", current_page=current_page))
 
 @wishlist.route('/wishlist/search', methods=["GET"])
 @login_required

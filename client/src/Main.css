@@ -38,12 +38,37 @@ body {
     box-sizing: border-box; /* Ensures padding and border are included in width */
 }
 
+.movielist-notfound-container{
+    max-width: 200px;
+    display: 'flex';
+    flex-direction: 'column';
+    justify-content: 'center';
+    align-items: 'center';
+    height: '70vh';
+}
+
+.movielist-notfound-container h3{
+    font-weight: 300;
+    margin-top: 20%;
+}
+
+.movielist-notfound-container span{
+    font-size: 10px;
+    position: absolute;
+    transform: rotateZ(30deg) translateY(120%) translateX(-80%);
+}
+
 
 .montserrat-font {
     font-family: "Montserrat", sans-serif;
     font-optical-sizing: auto;
     font-weight: 600;
     font-style: normal;
+}
+
+.movie-item svg:hover {
+    transform: scale(110%);
+    transition: 0.2s;
 }
 
 /* body{

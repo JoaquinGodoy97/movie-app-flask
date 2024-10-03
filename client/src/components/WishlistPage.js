@@ -21,44 +21,46 @@ const WishlistPage = () => {
     const [user, setUser] = useState("");
 
 
-    const fetchMovies = async (query, page = 1) => {
-        setLoading(true)
-        try {
-            const url = query ?
-                `http://localhost:5000/wishlist/search?query=${query}&page=${page}` :
-                `http://localhost:5000/wishlist?page=${page}`;
-
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                credentials: 'include',
-                mode: 'cors',
-            });
-
-            if (response.status === 401) {
-                navigate('/login');
-            }
-
-            const result = await response.json();
-
-            if (response.ok) {
-                setMovies(result.results);
-                console.log(result.results)
-                setTotalPages(result.total_pages || 1);
-            } else {
-                alert(result.error);
-            }
-        } catch (error) {
-            console.error('Error fetching movies: ', error);
-        } finally {
-            setLoading(false)
-        }
-
-    };
-
     useEffect(() => {
+
+        const fetchMovies = async (query, page = 1) => {
+            setLoading(true)
+            try {
+                const url = query ?
+                    `http://localhost:5000/wishlist/search?query=${query}&page=${page}` :
+                    `http://localhost:5000/wishlist?page=${page}`;
+    
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    mode: 'cors',
+                });
+    
+                if (response.status === 401) {
+                    navigate('/login');
+                }
+    
+                const result = await response.json();
+    
+                if (response.ok) {
+                    
+                    setMovies(result.results);
+                    console.log("What does movie have", result.results)
+                    setTotalPages(result.total_pages || 1);
+                } else {
+                    alert(result.error);
+                }
+            } catch (error) {
+                console.error('Error fetching movies: ', error);
+            } finally {
+                setLoading(false)
+            }
+    
+        };
+
         const checkSessionAndFetchMovies = async () => {
 
             await checkUserSession(setLoading, setUser, navigate)
@@ -68,6 +70,7 @@ const WishlistPage = () => {
                 await fetchMovies(searchQuery, currentPageUrl);
             }
         };
+
         checkSessionAndFetchMovies();
     }, [searchQuery, currentPageUrl, navigate]);
 
@@ -95,6 +98,34 @@ const WishlistPage = () => {
         }
     };
 
+    const handleWishlist = async (id) => {
+        try {
+            const url = `http://localhost:5000/wishlist/remove/${id}`
+        
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                mode: 'cors',
+            };
+    
+            const response = await fetch(url, options);
+            const result = await response.json();
+
+            if (result.message){
+                setMovies((oldMovieList) => oldMovieList.filter((movie)=> movie.mv_id !== id))
+            } 
+            // else if (result.message && !isOnWishlistPage) {
+            //     setMovies((oldMovieList) => oldMovieList.filter((movie)=> movie.mv_id !== id))
+            // }
+
+        } catch (error) {
+            console.error("Unable to remove:", error)
+        }
+    }
+
     const classNames = `results-page main-item movie-search d-flex mt-5 mb-3 ${!loading ? 'fade-in' : ''}`
 
     if (loading) {
@@ -105,10 +136,10 @@ const WishlistPage = () => {
             <SearchBar
                 onSearch={handleSearch}
             />
-            {totalPages > 0 ?
+            {(totalPages && currentPageUrl <= totalPages && totalPages > 1) ?
                 <PaginationPanel currentPage={currentPageUrl} totalPages={totalPages} onPageChange={handlePageChange} />
                 : null}
-            <MovieList movies={movies} loading={loading} />
+            <MovieList movies={movies} loading={loading} onWishlist={handleWishlist} />
         </div>
     )
 }

@@ -34,8 +34,9 @@ const ResultsPage = () => {
 
             const data = await response.json();
             setMovies(data.results);
+            console.log(data.results)
             setTotalPages(data.total_pages || 1);
-            console.log(data.total_pages)
+            console.log("total pages:", data.total_pages)
 
         } catch (error) {
             console.error('Error fetching movies:', error);
@@ -80,10 +81,34 @@ const ResultsPage = () => {
         }
     };
 
-    // const handleWishlist = (movieId, movieTitle) => {
+    const handleWishlist = async (id, name = "") => {
+        try {
+            const url = `http://localhost:5000/wishlist/add/${id}/${name}`;
 
-    //     console.log(`Added movie ${movieTitle} to wishlist,`)
-    // }
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                mode: 'cors',
+            };
+
+            const response = await fetch(url, options);
+            const result = await response.json();
+
+            console.log(result)
+
+            if(result.error){
+                return alert(result.error)
+            } else{
+                return alert(result.message)
+            }
+
+        } catch (error) {
+            console.error("Unable to remove:", error)
+        }
+    };
 
     const classNames = `results-page main-item movie-search d-flex mt-5 mb-3 montserrat-font ${!loading ? 'fade-in' : ''}`
 
@@ -95,17 +120,15 @@ const ResultsPage = () => {
         <div className={classNames}>
             <SearchBar
                 onSearch={handleSearch}
-                currentPage={currentPageUrl}
-                totalPages={totalPages}
             />
-            {totalPages !== null ?
+            {(totalPages && currentPageUrl <= totalPages) ?
 
                 <PaginationPanel currentPage={currentPageUrl} totalPages={totalPages} onPageChange={handlePageChange} />
 
                 : null}
 
 
-            <MovieList movies={movies} loading={loading} />
+            <MovieList movies={movies} loading={loading} onWishlist={handleWishlist} />
 
         </div>
     );

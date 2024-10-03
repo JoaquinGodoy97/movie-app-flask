@@ -62,7 +62,7 @@ def fetch_multiple_pages(search_query, start_page, total_pages):
                 for movie in results_per_page['results']:
 
                     movie_data = {
-                        'id': movie.get('id'),
+                        'mv_id': movie.get('id'),
                         'title': movie.get('title'),
                         'poster_path': movie.get('poster_path'),
                         'overview': movie.get('overview')

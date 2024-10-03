@@ -18,6 +18,7 @@ def display_movies(results, render_success, render_error): # for the moment keep
         return render_template(render_error)
     
 def display_current_results(search_result, current_page):
+    return jsonify({ "search_result": search_result, "current_page": current_page})
     return redirect(url_for("results.results_search_list", search_result=search_result, current_page=current_page))
 
 # RENDER TEMPLATES
