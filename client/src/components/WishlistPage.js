@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { SearchBar } from './SearchBar'
 import { MovieList } from './MovieList';
-import { PaginationPanel } from './PaginationPanel';
+import { PaginationPanel } from './utils/PaginationPanel';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../Main.css';
 import { checkUserSession } from './checkUserSession';
 import { LoadingPage } from './utils/LoadingPage';
+import Switch from 'react-switch';
+import { ThemeContext } from '../App'; // import the context
 
 const WishlistPage = () => {
 
@@ -127,6 +129,7 @@ const WishlistPage = () => {
     }
 
     const classNames = `results-page main-item movie-search d-flex mt-5 mb-3 ${!loading ? 'fade-in' : ''}`
+    const { theme, toggleTheme } = useContext(ThemeContext);
 
     if (loading) {
         return <LoadingPage />
@@ -136,10 +139,12 @@ const WishlistPage = () => {
             <SearchBar
                 onSearch={handleSearch}
             />
+            <MovieList movies={movies} loading={loading} onWishlist={handleWishlist} />
+
             {(totalPages && currentPageUrl <= totalPages && totalPages > 1) ?
                 <PaginationPanel currentPage={currentPageUrl} totalPages={totalPages} onPageChange={handlePageChange} />
                 : null}
-            <MovieList movies={movies} loading={loading} onWishlist={handleWishlist} />
+            <Switch className='mt-4' onChange={toggleTheme} checked={theme === 'dark'}/>
         </div>
     )
 }

@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import '../Login.css'
+import Switch from 'react-switch';
+import { ThemeContext } from '../App'; // import the context
 
 function Login() {
     const [username, setUsername] = useState('');
@@ -60,6 +62,8 @@ function Login() {
             console.error("Error submitting form:", error);
         }
     };
+
+    const { theme, toggleTheme } = useContext(ThemeContext); // access theme and toggleTheme
     
     return (
         <div className="main-item movie-search d-flex mt-5 mb-3 montserrat-font">
@@ -90,10 +94,17 @@ function Login() {
                         />
                     </div>
 
-                    <button name="login_submit" type="submit" className="btn btn-dark">Submit</button>
+                    <button name="login_submit" type="submit" className="btn btn-dark login-submit">Submit</button>
+
+                    
                 </form>
+
             </div>
+            {/* <SwitchThemeMode className='mt-4'/> */}
+            <Switch className='mt-4' onChange={toggleTheme} checked={theme === 'dark'}/>
+
         </div>
+        
     );
 }
 

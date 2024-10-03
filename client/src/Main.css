@@ -11,7 +11,26 @@ body {
     max-width: 100%;
 }
 
-.container {
+body, #root, .App {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100vw;
+    background-color: white; /* Light mode background */
+    color: black; /* Light mode text color */
+}
+
+#dark {
+    background-color: #121212; /* Dark mode background */
+    color: white; /* Dark mode text color */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Add transition */
+}
+
+#light {
+    transition: background-color 0.3s ease, color 0.3s ease; /* Add transition */
+}
+
+#light .container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center; /* Centers content and reduces large gaps */
@@ -21,6 +40,31 @@ body {
     margin: 0 auto; /* Center the container */
     padding: 0 15px; /* Add padding for responsiveness */
     
+}
+
+.login-submit{
+    font-weight: 300;
+}
+#dark .search-btn{
+    border: 2px;
+}
+
+#dark .login-submit, #dark .search-btn{
+    background-color: #FFFFFF;
+    color: #000000;
+    font-weight: 500;
+    box-shadow: rgba(17, 17, 26, 0.402) 0px 0px 16px;
+}
+
+#dark .container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Centers content and reduces large gaps */
+
+    width: 100%; /* Full width */
+    max-width: 1500px; /* Add a max width to prevent it from getting too wide */
+    margin: 0 auto; /* Center the container */
+    padding: 0 15px; /* Add padding for responsiveness */
 }
 
 .movie-search {
@@ -35,7 +79,27 @@ body {
     max-width: 200px;
     flex-grow: 1;
     margin: 10px;
-    box-sizing: border-box; /* Ensures padding and border are included in width */
+    border: 0px;
+}
+
+.card-body{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.img-duck{
+    filter: drop-shadow(7px 7px 0px rgba(123, 122, 122, 0.319));
+    max-width: 100%; /* Ensure responsive sizing */
+}
+
+.card-body .btn {
+    margin-top: auto; /* Pushes the button to the bottom */
+}
+
+#dark .movie-item{
+    box-shadow: rgba(247, 247, 247, 0.1) 0px 9px 30px;
 }
 
 .movielist-notfound-container{
@@ -57,7 +121,6 @@ body {
     position: absolute;
     transform: rotateZ(30deg) translateY(120%) translateX(-80%);
 }
-
 
 .montserrat-font {
     font-family: "Montserrat", sans-serif;

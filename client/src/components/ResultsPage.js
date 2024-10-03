@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'; // Import useLocation to access the query
 import { SearchBar } from './SearchBar';
 import { MovieList } from './MovieList';
-import { PaginationPanel } from './PaginationPanel';
+import { PaginationPanel } from './utils/PaginationPanel';
 import '../Main.css';
 import { checkUserSession } from './checkUserSession';
 import { LoadingPage } from './utils/LoadingPage';
@@ -121,14 +121,13 @@ const ResultsPage = () => {
             <SearchBar
                 onSearch={handleSearch}
             />
+            <MovieList movies={movies} loading={loading} onWishlist={handleWishlist} />
+
             {(totalPages && currentPageUrl <= totalPages) ?
 
                 <PaginationPanel currentPage={currentPageUrl} totalPages={totalPages} onPageChange={handlePageChange} />
 
                 : null}
-
-
-            <MovieList movies={movies} loading={loading} onWishlist={handleWishlist} />
 
         </div>
     );

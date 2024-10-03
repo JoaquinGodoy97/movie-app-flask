@@ -9,7 +9,7 @@ export const MovieList = ({ movies = [], loading, onWishlist }) => {
           <h3>Loading...</h3>
           <img
             style={{ maxWidth: '50%', maxHeight: '50%' }}
-            src="https://media.istockphoto.com/id/1269500670/vector/yellow-rubber-duck-icon.jpg?s=612x612&w=0&k=20&c=xO1K6beBtVaheYpgElZcWxHD0otQDD23nV9FTCQkISo="
+            src={`${process.env.PUBLIC_URL}/loadingDuck.png`}
             alt="Loading"
           />
         </div>
@@ -29,9 +29,9 @@ export const MovieList = ({ movies = [], loading, onWishlist }) => {
         <div className="movielist-notfound-container">
           <h3><i>Search not found</i></h3>
           
-          <img
+          <img className="img-duck"
             style={{ maxWidth: '50%', maxHeight: '50%' }}
-            src="https://media.istockphoto.com/id/1269500670/vector/yellow-rubber-duck-icon.jpg?s=612x612&w=0&k=20&c=xO1K6beBtVaheYpgElZcWxHD0otQDD23nV9FTCQkISo="
+            src={`${process.env.PUBLIC_URL}/loadingDuck.png`}
             alt="No movies available"
           />
           <span className="cuak!"><i>cuak!</i></span>
