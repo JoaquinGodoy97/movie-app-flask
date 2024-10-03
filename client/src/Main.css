@@ -20,6 +20,29 @@ body, #root, .App {
     color: black; /* Light mode text color */
 }
 
+/**
+    BUTTON GROUP
+*/
+
+.button-group{
+    display: flex;
+    align-items: center;
+}
+
+.button-container .side-buttons input{
+    margin-right: 10px;
+}
+
+.side-buttons{
+    display: flex;
+    align-items: center;
+    margin: 0 0 0 10;
+}
+
+.side-buttons .Switch{
+    margin-left: 20px;
+}
+
 #dark {
     background-color: #121212; /* Dark mode background */
     color: white; /* Dark mode text color */
@@ -45,16 +68,31 @@ body, #root, .App {
 .login-submit{
     font-weight: 300;
 }
+
+#light #logout{
+    background-color: #212529; /* Dark mode background */
+    color: white;
+    border: 0;
+}
+
 #dark .search-btn{
     border: 2px;
 }
 
-#dark .login-submit, #dark .search-btn{
+#light .search-btn{
+    box-shadow: rgba(17, 18, 26, 0.235) -5px 0px 10px 0px;
+}
+
+#dark .login-submit, #dark .search-btn, #dark .side-buttons #logout{
     background-color: #FFFFFF;
     color: #000000;
     font-weight: 500;
     box-shadow: rgba(17, 17, 26, 0.402) 0px 0px 16px;
+    border: 0;
+
 }
+
+
 
 #dark .container{
     display: flex;

@@ -31,7 +31,7 @@ const WishlistPage = () => {
                 const url = query ?
                     `http://localhost:5000/wishlist/search?query=${query}&page=${page}` :
                     `http://localhost:5000/wishlist?page=${page}`;
-    
+
                 const response = await fetch(url, {
                     method: 'GET',
                     headers: {
@@ -40,15 +40,15 @@ const WishlistPage = () => {
                     credentials: 'include',
                     mode: 'cors',
                 });
-    
+
                 if (response.status === 401) {
                     navigate('/login');
                 }
-    
+
                 const result = await response.json();
-    
+
                 if (response.ok) {
-                    
+
                     setMovies(result.results);
                     console.log("What does movie have", result.results)
                     setTotalPages(result.total_pages || 1);
@@ -60,7 +60,7 @@ const WishlistPage = () => {
             } finally {
                 setLoading(false)
             }
-    
+
         };
 
         const checkSessionAndFetchMovies = async () => {
@@ -103,7 +103,7 @@ const WishlistPage = () => {
     const handleWishlist = async (id) => {
         try {
             const url = `http://localhost:5000/wishlist/remove/${id}`
-        
+
             const options = {
                 method: 'POST',
                 headers: {
@@ -112,13 +112,13 @@ const WishlistPage = () => {
                 credentials: 'include',
                 mode: 'cors',
             };
-    
+
             const response = await fetch(url, options);
             const result = await response.json();
 
-            if (result.message){
-                setMovies((oldMovieList) => oldMovieList.filter((movie)=> movie.mv_id !== id))
-            } 
+            if (result.message) {
+                setMovies((oldMovieList) => oldMovieList.filter((movie) => movie.mv_id !== id))
+            }
             // else if (result.message && !isOnWishlistPage) {
             //     setMovies((oldMovieList) => oldMovieList.filter((movie)=> movie.mv_id !== id))
             // }
@@ -131,20 +131,48 @@ const WishlistPage = () => {
     const classNames = `results-page main-item movie-search d-flex mt-5 mb-3 ${!loading ? 'fade-in' : ''}`
     const { theme, toggleTheme } = useContext(ThemeContext);
 
-    if (loading) {
-        return <LoadingPage />
-    }
     return (
         <div className={classNames}>
-            <SearchBar
-                onSearch={handleSearch}
-            />
-            <MovieList movies={movies} loading={loading} onWishlist={handleWishlist} />
 
-            {(totalPages && currentPageUrl <= totalPages && totalPages > 1) ?
-                <PaginationPanel currentPage={currentPageUrl} totalPages={totalPages} onPageChange={handlePageChange} />
-                : null}
-            <Switch className='mt-4' onChange={toggleTheme} checked={theme === 'dark'}/>
+            <div className='button-container'>
+
+                <div className='button-group'>
+                    <SearchBar onSearch={handleSearch} />
+
+                    <div class="side-buttons ms-3 mb-3">
+                        <input onClick={() => { navigate('/logout') }} class="btn btn-outline-dark" name="logout" id="logout" type="submit" value="Log Out" />
+                        <a onClick={() => { navigate('/search') }} class="btn btn-dark">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="23" fill="currentColor" class="bi bi-arrow-left-square" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm11.5 5.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z" />
+                            </svg>
+                        </a>
+
+                        <Switch className='side-buttons' onChange={toggleTheme} checked={theme === 'dark'} />
+
+                    </div>
+
+
+                </div>
+            </div>
+            <div className='container'>
+                {loading ? (
+                    // Show the loading component when loading is true
+                    <LoadingPage />
+                ) : (
+                    <>
+                        <MovieList movies={movies} loading={loading} onWishlist={handleWishlist} />
+
+                        {totalPages && currentPageUrl <= totalPages && (
+                            <PaginationPanel
+                                currentPage={currentPageUrl}
+                                totalPages={totalPages}
+                                onPageChange={handlePageChange}
+                            />
+                        )}
+                    </>
+
+                )}
+            </div>
         </div>
     )
 }
