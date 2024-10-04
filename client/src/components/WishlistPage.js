@@ -128,15 +128,24 @@ const WishlistPage = () => {
         }
     }
 
-    const classNames = `results-page main-item movie-search d-flex mt-5 mb-3 ${!loading ? 'fade-in' : ''}`
+    const classNames = `main-item ${!loading ? 'fade-in' : ''}`
     const { theme, toggleTheme } = useContext(ThemeContext);
 
     return (
         <div className={classNames}>
 
-            <div className='button-container'>
+            <nav className='nav-theme sub-container'>
+                <Switch
+                    onColor="#f5f490"
+                    offColor="#333130"
+                    checkedIcon={<span className="toggle-theme-mode" role="img" aria-label="sound-on">⛅</span>}
+                    uncheckedIcon={<span className="toggle-theme-mode" role="img" aria-label="sound-off">🌘</span>}
 
-                <div className='button-group'>
+                    className='switch' onChange={toggleTheme} checked={theme === 'dark'} />
+            </nav>
+
+            <div className='button-container sub-container'>
+
                     <SearchBar onSearch={handleSearch} />
 
                     <div class="side-buttons ms-3 mb-3">
@@ -147,14 +156,11 @@ const WishlistPage = () => {
                             </svg>
                         </a>
 
-                        <Switch className='side-buttons' onChange={toggleTheme} checked={theme === 'dark'} />
-
                     </div>
 
 
-                </div>
             </div>
-            <div className='container'>
+            <div className='content-container'>
                 {loading ? (
                     // Show the loading component when loading is true
                     <LoadingPage />
@@ -164,6 +170,7 @@ const WishlistPage = () => {
 
                         {totalPages && currentPageUrl <= totalPages && (
                             <PaginationPanel
+                                className="pagination"
                                 currentPage={currentPageUrl}
                                 totalPages={totalPages}
                                 onPageChange={handlePageChange}

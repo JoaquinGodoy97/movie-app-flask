@@ -1,9 +1,0 @@
-1.      http://localhost:3000/results/search?query=batman&page=17 
-There is an item that has a name with a dash "/" this is understood as an endpoint. (fixed)
-
-2. Dark mode toggle doesn't stay on, but changes state everytime url reloads from user side.
-    ex. reloading the page.
-
-3. more info tooltip displays out of the screen.
-
-4.

@@ -4,86 +4,244 @@
     box-sizing: border-box;
 }
 
-body {
-
-    min-width: 600px; /* Set a minimum width for the entire page */
-    overflow-x: auto; /* Prevent horizontal overflow by adding a scrollbar */
-    max-width: 100%;
+body,
+html {
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+    /* Prevent horizontal overflow */
 }
 
-body, #root, .App {
+body {
+    background-color: white;
+    /* Light mode background */
+    color: black;
+    /* Light mode text color */
+    min-width: 320px;
     margin: 0;
     padding: 0;
-    height: 100vh;
-    width: 100vw;
-    background-color: white; /* Light mode background */
-    color: black; /* Light mode text color */
 }
+
+#root,
+.App {
+    display: flex;
+    /* Flexbox to make it more adaptive */
+    flex-direction: column;
+    height: 100vh;
+    /* 100% of the viewport height */
+    width: 100vw;
+    /* 100% of the viewport width */
+    background-color: white;
+    /* Ensure the whole screen is covered */
+}
+
+#dark {
+    background-color: #121212;
+    /* Dark mode background */
+    color: white;
+    /* Dark mode text color */
+    transition: background-color 0.3s ease, color 0.3s ease;
+    /* Add transition */
+}
+
+.main-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    /* background-color: rgb(51, 82, 82); */
+    /* margin: 20px 0 20px 0; */
+}
+
+.sub-container {
+    display: flex;
+    top: 0;
+    height: 15vh;
+    align-items: flex-start;
+    /* background-color: #121212; */
+}
+
+/* SEARCH AND BUTTONS*/
+
+.search-bar {
+    margin: 0;
+    padding: 0;
+}
+
+.button-container {
+    /* margin-top: 60px; */
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 60px;
+}
+
+/* SEARCH AND BUTTONS FINISH */
+
+/* 2. RESULTS / WISHLIST MOVIELIST CONTENT CONTAINER + PAGINATION */
+
+.content-container {
+    margin: 0;
+    padding: 0;
+    flex-direction: column;
+    display: flex;
+    height: 75vh;
+    width: 100%;
+    align-items: center;
+    /* background-color: #275a8d; */
+}
+
+
+.content-container div {
+    margin-bottom: 20px;
+}
+
+.pagination {
+    justify-content: center;
+}
+
+
+ul.pagination li a {
+    color: #444444;
+    font-weight: 500;
+}
+
+ul.pagination li.active {
+    background-color: #2e2e2e;
+}
+
+.active>.page-link,
+.page-link.active {
+    z-index: 3;
+    color: var(--bs-pagination-active-color);
+    background-color: #585f60;
+    border-color: #727778;
+}
+.page-selection {
+    width: 48px;
+    height: 30px;
+    color: #3f3f3f;
+}
+
+ul.pagination li.active {
+    background-color: #d8d1d100;
+}
+
+/* .movie-search {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+} */
+.nav-theme {
+    position: fixed;
+    /* background-color: rgba(179, 174, 174, 0.618); */
+    width: 100%;
+    display: flex;
+    height: 40px;
+    align-items: center;
+    justify-content: flex-end;
+    margin: 10px 0 10px 0;
+    /* Reset margin */
+    padding: 0;
+    /* Reset padding */
+    z-index: 10000;
+}
+
+
+.toggle-theme-mode {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+
+.switch {
+    display: flex;
+    align-items: end;
+    padding: 0 10px;
+    /* transform: translateX(600%) translateY(-180%); */
+}
+
+/**
+    CUAK DE PATO
+*/
+.movielist-notfound-container span {
+    font-size: 10px;
+    position: absolute;
+    transform: rotateZ(30deg) translateY(-50%) translateX(140%);
+}
+
 
 /**
     BUTTON GROUP
 */
 
-.button-group{
-    display: flex;
-    align-items: center;
+
+
+
+.button-container .side-buttons input {
+    margin-right: 20px;
 }
 
-.button-container .side-buttons input{
-    margin-right: 10px;
-}
-
-.side-buttons{
+/* .side-buttons {
     display: flex;
     align-items: center;
     margin: 0 0 0 10;
-}
+} */
 
-.side-buttons .Switch{
-    margin-left: 20px;
-}
 
-#dark {
-    background-color: #121212; /* Dark mode background */
-    color: white; /* Dark mode text color */
-    transition: background-color 0.3s ease, color 0.3s ease; /* Add transition */
-}
 
 #light {
-    transition: background-color 0.3s ease, color 0.3s ease; /* Add transition */
+    transition: background-color 0.3s ease, color 0.3s ease;
+    /* Add transition */
 }
 
-#light .container {
+/* .container{
     display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     flex-wrap: wrap;
-    justify-content: center; /* Centers content and reduces large gaps */
+    width: 100%;
+    height: 100vh;
+    align-items: center;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 0 15px;
+} */
 
-    width: 100%; /* Full width */
-    max-width: 1500px; /* Add a max width to prevent it from getting too wide */
-    margin: 0 auto; /* Center the container */
-    padding: 0 15px; /* Add padding for responsiveness */
-    
-}
+#light .container {}
 
-.login-submit{
+.login-submit {
     font-weight: 300;
+    border: 0;
+
 }
 
-#light #logout{
-    background-color: #212529; /* Dark mode background */
+#light #logout {
+    background-color: #212529;
+    /* Dark mode background */
     color: white;
     border: 0;
 }
 
-#dark .search-btn{
+#dark .search-btn {
     border: 2px;
 }
 
-#light .search-btn{
+#light .search-btn {
     box-shadow: rgba(17, 18, 26, 0.235) -5px 0px 10px 0px;
 }
 
-#dark .login-submit, #dark .search-btn, #dark .side-buttons #logout{
+#dark .login-submit,
+#dark .search-btn,
+#dark .side-buttons #logout {
     background-color: #FFFFFF;
     color: #000000;
     font-weight: 500;
@@ -93,24 +251,42 @@ body, #root, .App {
 }
 
 
-
-#dark .container{
-    display: flex;
+.container {
+    /* display: flex;
     flex-wrap: wrap;
-    justify-content: center; /* Centers content and reduces large gaps */
+    direction: column;
+    justify-content: center;
+    padding: 0 15px;
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    max-width: 1500px; */
 
-    width: 100%; /* Full width */
-    max-width: 1500px; /* Add a max width to prevent it from getting too wide */
-    margin: 0 auto; /* Center the container */
-    padding: 0 15px; /* Add padding for responsiveness */
+    .img-duck {
+        filter: drop-shadow(7px 7px 0px rgba(123, 122, 122, 0.319));
+        max-width: 100%;
+        /* Ensure responsive sizing */
+    }
+
 }
 
-.movie-search {
-    text-align: center;
+.movielist-notfound-container {
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
+    height: 70vh;
 }
+
+.movielist-notfound-container h3 {
+    font-weight: 300;
+    margin-top: 20%;
+}
+
+*/ #dark .movie-item {
+    box-shadow: rgba(247, 247, 247, 0.1) 0px 9px 30px;
+}
+
 
 .movie-item {
     width: 100%;
@@ -120,45 +296,23 @@ body, #root, .App {
     border: 0px;
 }
 
-.card-body{
+.card-body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
 }
 
-.img-duck{
-    filter: drop-shadow(7px 7px 0px rgba(123, 122, 122, 0.319));
-    max-width: 100%; /* Ensure responsive sizing */
-}
+
 
 .card-body .btn {
-    margin-top: auto; /* Pushes the button to the bottom */
+    margin-top: auto;
+    /* Pushes the button to the bottom */
 }
 
-#dark .movie-item{
-    box-shadow: rgba(247, 247, 247, 0.1) 0px 9px 30px;
-}
 
-.movielist-notfound-container{
-    max-width: 200px;
-    display: 'flex';
-    flex-direction: 'column';
-    justify-content: 'center';
-    align-items: 'center';
-    height: '70vh';
-}
 
-.movielist-notfound-container h3{
-    font-weight: 300;
-    margin-top: 20%;
-}
-
-.movielist-notfound-container span{
-    font-size: 10px;
-    position: absolute;
-    transform: rotateZ(30deg) translateY(120%) translateX(-80%);
-}
+/* FONTS */
 
 .montserrat-font {
     font-family: "Montserrat", sans-serif;
@@ -187,12 +341,12 @@ body, #root, .App {
 /* } */
 
 
-.button-container Button {
+/* .button-container Button {
     margin: 0 0 0 2.5px;
-}
+} */
 
 .input-group.search-group {
-    flex: 0 0 70%;
+    /* flex: 0 0 70%; */
     /* Takes 70% of the container's width */
 }
 
@@ -213,11 +367,6 @@ form #npage:hover{
     background-color: rgb(134, 134, 134);
 } */
 
-/* .main-item{
-    display: flex;
-    justify-content: center;
-    margin: 20px 0 20px 0;
-} */
 
 
 
@@ -265,30 +414,27 @@ form #npage:hover{
 
 @media (max-width: 800px) {
     .movie-item {
-        width: 100%;
-        /* Make each movie card take full width */
-        flex: 1 1 100%;
+        /* width: 100%;
+        flex: 1 1 100%; */
     }
 
     .search-bar {
         width: 100%;
-        /* Make the search bar full width on smaller screens */
     }
 
     .pagination-buttons {
-        flex-direction: column;
-        /* Stack buttons vertically */
-        align-items: center;
-        /* Center buttons */
+        /* flex-direction: column;
+        align-items: center; */
     }
 }
+
 @media (max-width: 600px) {
     .btn {
-        padding: 5px 10px;
-        font-size: 12px;
+        /* padding: 5px 10px;
+        font-size: 12px; */
     }
 
     h5 {
-        font-size: 14px;
+        /* font-size: 14px; */
     }
 }

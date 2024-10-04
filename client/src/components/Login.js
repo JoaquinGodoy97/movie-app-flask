@@ -19,11 +19,11 @@ function Login() {
                 setData(data);
                 console.log(data)
                 // if (!data.logged_in){
-                    navigate('/login')
+                navigate('/login')
                 // }
             })
             .catch(error => console.error("Error fetching data:", error));
-        
+
     }, [navigate]);
 
     // Handle form submission
@@ -51,10 +51,10 @@ function Login() {
             }
 
             if (response.ok) {
-                
+
                 alert(result.message)
                 navigate(result.redirect) // Home page 
-                
+
             } else {
                 alert(result.error);
             }
@@ -64,17 +64,26 @@ function Login() {
     };
 
     const { theme, toggleTheme } = useContext(ThemeContext); // access theme and toggleTheme
-    
+
     return (
-        <div className="main-item movie-search d-flex mt-5 mb-3 montserrat-font">
+        <div className="login-element montserrat-font">
+            <nav className='nav-theme'>
+                <Switch
+                    onColor="#f5f490"
+                    offColor="#333130"
+                    checkedIcon={<span className="toggle-theme-mode" role="img" aria-label="sound-on">⛅</span>}
+                    uncheckedIcon={<span className="toggle-theme-mode" role="img" aria-label="sound-off">🌘</span>}
+
+                    className='switch' onChange={toggleTheme} checked={theme === 'dark'} />
+            </nav>
             <div className="button-container">
                 <form method="POST" onSubmit={onSubmit}>
-                    <div className="mb-3">
+                    <div className="fields">
                         <label htmlFor="username" className="form-label">Username</label>
-                        <input 
-                            type="text" 
+                        <input
+                            type="text"
                             className="form-control"
-                            value={username} 
+                            value={username}
                             id="username"
                             name="username"
                             autoComplete="given-name"
@@ -82,12 +91,12 @@ function Login() {
                         />
                     </div>
 
-                    <div className="mb-3">
+                    <div className="fields">
                         <label htmlFor="password" className="form-label">Password</label>
-                        <input  
-                            type="password" 
+                        <input
+                            type="password"
                             className="form-control"
-                            value={password} 
+                            value={password}
                             id="password"
                             name="password"
                             onChange={(e) => setPassword(e.target.value)}
@@ -96,15 +105,14 @@ function Login() {
 
                     <button name="login_submit" type="submit" className="btn btn-dark login-submit">Submit</button>
 
-                    
+
                 </form>
 
             </div>
             {/* <SwitchThemeMode className='mt-4'/> */}
-            <Switch className='mt-4' onChange={toggleTheme} checked={theme === 'dark'}/>
 
         </div>
-        
+
     );
 }
 

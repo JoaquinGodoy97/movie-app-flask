@@ -18,7 +18,7 @@ export const MovieList = ({ movies = [], loading, onWishlist }) => {
   
     if (movies.length > 0) {
       return (
-        <div className="movie-list container">
+        <div className="movie-list">
           {movies.map((movie) => (
             <MovieCard key={movie.mv_id} movie={movie} onWishlist={onWishlist}/>
           ))}

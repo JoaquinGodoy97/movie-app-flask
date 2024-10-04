@@ -38,7 +38,7 @@ export const PaginationPanel = ({ currentPage, totalPages, onPageChange }) => {
     }
     return (
         <Pagination disabled={totalPages <= 1}>
-            <Pagination.First onClick={()=> onPageChange(1)} disabled={currentPage === 1}/>
+            {/* <Pagination.First onClick={()=> onPageChange(1)} disabled={currentPage === 1}/> */}
             <Pagination.Prev onClick={()=> onPageChange(currentPage - 1)} disabled={currentPage === 1}/>
 
             <span className='mx-2'>
@@ -46,7 +46,7 @@ export const PaginationPanel = ({ currentPage, totalPages, onPageChange }) => {
             </span>
             
             <Pagination.Next onClick={()=> onPageChange(currentPage + 1)} disabled={currentPage === totalPages}/>
-            <Pagination.Last onClick={()=> onPageChange(totalPages)} disabled={currentPage === totalPages}/>
+            {/* <Pagination.Last onClick={()=> onPageChange(totalPages)} disabled={currentPage === totalPages}/> */}
             {/* <Pagination size="lg">{items}</Pagination> */}
             {/* <br /> */}
 

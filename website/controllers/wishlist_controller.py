@@ -53,7 +53,7 @@ def add_to_wishlist(movie_id, movie_name):
     Returns:
         Response: Rendered template with the updated results.
     """
-
+    
     if not movie_id or not movie_name:
         return jsonify ({ "error": "Could not process it."}), 400
     
