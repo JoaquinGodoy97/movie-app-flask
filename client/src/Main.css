@@ -96,11 +96,8 @@ body {
 }
 
 
-.content-container div {
-    margin-bottom: 20px;
-}
-
-.pagination {
+.pagination-group {
+    margin-top: 20px;
     justify-content: center;
 }
 
@@ -179,11 +176,39 @@ ul.pagination li.active {
 }
 
 
+/* LOGIN PAGE */
+
+.login-element form{
+    border: 0;
+    margin: 0;
+    padding: 0;
+    /* background-color: brown; */
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    width: 20em;
+    align-items: center;
+}
+
+.login-element label{
+    font-weight: 400;
+}
+
+.login-element form .login-submit{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 120px;
+
+}
+
+/* END LOGIN PAGE */
+
+
 /**
     BUTTON GROUP
 */
-
-
 
 
 .button-container .side-buttons input {
@@ -221,7 +246,6 @@ ul.pagination li.active {
 .login-submit {
     font-weight: 300;
     border: 0;
-
 }
 
 #light #logout {
@@ -250,24 +274,10 @@ ul.pagination li.active {
 
 }
 
-
-.container {
-    /* display: flex;
-    flex-wrap: wrap;
-    direction: column;
-    justify-content: center;
-    padding: 0 15px;
-    margin: 0 auto;
-    width: 100%;
-    height: 100%;
-    max-width: 1500px; */
-
-    .img-duck {
-        filter: drop-shadow(7px 7px 0px rgba(123, 122, 122, 0.319));
-        max-width: 100%;
-        /* Ensure responsive sizing */
-    }
-
+.img-duck {
+    filter: drop-shadow(7px 7px 0px rgba(123, 122, 122, 0.319));
+    max-width: 100%;
+    /* Ensure responsive sizing */
 }
 
 .movielist-notfound-container {
@@ -283,26 +293,112 @@ ul.pagination li.active {
     margin-top: 20%;
 }
 
-*/ #dark .movie-item {
-    box-shadow: rgba(247, 247, 247, 0.1) 0px 9px 30px;
+#dark .movie-item {
+    box-shadow: rgba(247, 247, 247, 0.1) 0px 9px 20px;
 }
 
+/* MOVIE CARD */
 
+
+/* MOVIE CARD */
 .movie-item {
-    width: 100%;
-    max-width: 200px;
-    flex-grow: 1;
-    margin: 10px;
+    border-radius: 0px;
+    /* margin: 10px; */
     border: 0px;
-}
-
-.card-body {
+    padding: 0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
+    max-width: 250px;
+    height: 60vh;
+    background-color: #f8f9fa;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    overflow: hidden;
 }
 
+.card-img {
+    width: 100%;
+    height: 70%;
+    padding: 0;
+    margin: 0;
+    overflow: hidden; /* Hide any overflow to ensure the image is clipped within the container */
+
+}
+
+.card-img img {
+    transform: scale(1.02);
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* This will ensure the image completely covers the container */
+    display: block; /* Prevents any inline spacing issues */
+    border: none; /* Removes any unwanted borders */
+
+}
+
+.card {
+    border: 0 !important; 
+}
+.card-body {
+    border: 0 !important;
+    border-radius: 0;
+    height: auto; /* Let the body adjust its height naturally */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+}
+
+/* Make sure the title adjusts with screen size */
+.card-title {
+    font-size: clamp(1rem, 1.5vw, 1.2rem); /* Responsive font size */
+    margin-bottom: 5px; /* Smaller margin to reduce space between title and overview */
+    font-weight: 600;
+    max-height: 3rem; /* Limit the title height to avoid overflow */
+    overflow: hidden; /* Ensure longer titles don’t expand the card */
+    text-overflow: ellipsis; /* Add ellipsis if the title is too long */
+    line-clamp: 2;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.card-overview {
+    font-size: clamp(0.8rem, 1vw, 0.95rem); /* Responsive font size */
+    color: #666;
+    margin-top: 5px; /* Reduced margin to tighten the layout */
+    line-height: 1.2; /* Tighten up the spacing between lines */
+    max-height: 3rem; /* Prevent overflow of the overview */
+    overflow: hidden; /* Hide any overflowing text */
+    text-overflow: ellipsis;
+}
+
+.btn-sm {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.movie-info-button {
+    margin-top: 10px;
+    padding: 5px 15px;
+    color: rgb(245, 245, 245);
+    border: none;
+    cursor: pointer;
+}
+
+.movie-info-button:hover {
+    background-color: #0e1013;
+}
 
 
 .card-body .btn {
@@ -344,11 +440,6 @@ ul.pagination li.active {
 /* .button-container Button {
     margin: 0 0 0 2.5px;
 } */
-
-.input-group.search-group {
-    /* flex: 0 0 70%; */
-    /* Takes 70% of the container's width */
-}
 
 /* 
 #npage, #ppage{

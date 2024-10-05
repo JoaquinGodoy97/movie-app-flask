@@ -15,8 +15,8 @@ const MovieCard = ({ movie, onWishlist }) => {
 
     return (
 
-        <div className="card mb-3 movie-item">
-            <div className=" position-absolute top-0 end-0 translate-middle">
+        <div className="card movie-item">
+            <div className="card-content">
 
                 <a type="button" className="btn-sm" onClick={() => {
                     if (isOnWishlistPage) {
@@ -41,17 +41,20 @@ const MovieCard = ({ movie, onWishlist }) => {
 
                 </a>
             </div>
-            <img
-                src={checkPoster(movie.poster_path)}
-                className="card-img-top"
-                alt="movie_cover"
-            />
-            <div className="card-body">
-                <h5 className="card-title">{movie.title}</h5>
-
-                <ToggleOverview overview={movie.overview} />
-
+            
+            <div className="card-element card-img" >
+                <img
+                    src={checkPoster(movie.poster_path)}
+                    className="card-img-top"
+                    alt="movie_cover"
+                />
             </div>
+
+                <div  className="card-element card-body">
+                    <h5 className="card-title">{movie.title}</h5>
+
+                    <ToggleOverview className="card-overview" overview={movie.overview} />
+                </div>
         </div>
 
     );

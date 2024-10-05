@@ -37,7 +37,7 @@ export const PaginationPanel = ({ currentPage, totalPages, onPageChange }) => {
     
     }
     return (
-        <Pagination disabled={totalPages <= 1}>
+        <Pagination className='pagination-group' disabled={totalPages <= 1}>
             {/* <Pagination.First onClick={()=> onPageChange(1)} disabled={currentPage === 1}/> */}
             <Pagination.Prev onClick={()=> onPageChange(currentPage - 1)} disabled={currentPage === 1}/>
 

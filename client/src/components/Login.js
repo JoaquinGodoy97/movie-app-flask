@@ -66,17 +66,17 @@ function Login() {
     const { theme, toggleTheme } = useContext(ThemeContext); // access theme and toggleTheme
 
     return (
-        <div className="login-element montserrat-font">
+        <div className="main-item montserrat-font">
             <nav className='nav-theme'>
                 <Switch
                     onColor="#f5f490"
                     offColor="#333130"
                     checkedIcon={<span className="toggle-theme-mode" role="img" aria-label="sound-on">⛅</span>}
                     uncheckedIcon={<span className="toggle-theme-mode" role="img" aria-label="sound-off">🌘</span>}
-
                     className='switch' onChange={toggleTheme} checked={theme === 'dark'} />
+                    
             </nav>
-            <div className="button-container">
+            <div className="button-container login-element">
                 <form method="POST" onSubmit={onSubmit}>
                     <div className="fields">
                         <label htmlFor="username" className="form-label">Username</label>

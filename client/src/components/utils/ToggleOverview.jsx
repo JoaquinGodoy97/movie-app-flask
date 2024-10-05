@@ -15,7 +15,7 @@ export const ToggleOverview = ( {overview} ) => {
             delay={{ show: 0, hide: 100 }}
             overlay={renderTooltip}
         >
-            <Button variant="secondary">More info</Button>
+            <Button className='movie-info-button' variant="secondary">More info</Button>
         </OverlayTrigger>
     );
 };
