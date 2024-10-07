@@ -21,7 +21,7 @@ def get_results_by_movie_id(results):
                 updated_movie = {
                 'id': movie['id'],
                 'mv_id': movie['mv_id'],
-                'user_id': movie['user_id'],
+                'username': movie['username'],
                 'title': results_json.get('title', movie['title']),  # Use existing title if not found
                 'poster_path': results_json.get('poster_path', None),
                 'overview': results_json.get('overview', None),
@@ -32,24 +32,28 @@ def get_results_by_movie_id(results):
         return updated_results
 
 def filter_by_usersession_and_movieid(user_session, movie_id):
-        return Wishlist_user.query.filter_by(user_id=user_session, mv_id=movie_id).first()
+        return Wishlist_user.query.filter_by(username=user_session, mv_id=movie_id).first()
 
-def filter_by_usersession(user_id):
-        movies = Wishlist_user.query.filter_by(user_id=user_id).all()
+def filter_by_usersession(username):
+        
+        movies = Wishlist_user.query.filter_by(username=username).all()
         return [movie_to_dict(movie) for movie in movies]
+
+def bring_single_movie_by_user(user, movie_id):
+        return Wishlist_user.query.filter_by(username=user, mv_id=movie_id).first() is not None
 
 def movie_to_dict(movie):
         return {
                 'id': movie.id,
                 'mv_id': movie.mv_id,
                 'title': movie.title,
-                'user_id': movie.user_id
+                'username': movie.username # change the front end
         }
 
-def add_to_wishlist_db(movie_id, movie_name, user_id):
+def add_to_wishlist_db(movie_id, movie_name, username):
 
         try:
-                user_data = Wishlist_user(mv_id=movie_id, title=movie_name, user_id=user_id)
+                user_data = Wishlist_user(mv_id=movie_id, title=movie_name, username=username)
 
                 db.session.add(user_data)
                 db.session.commit()
@@ -62,7 +66,7 @@ def add_to_wishlist_db(movie_id, movie_name, user_id):
                 db.session.close()
 
 def is_wishlist_user_limit_reached():
-        list = Wishlist_user.query.filter_by(user_id=session['username']).all()
+        list = Wishlist_user.query.filter_by(username=session['username']).all()
         list_length = len(list)
         return list_length >= 50
 

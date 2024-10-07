@@ -3,6 +3,7 @@ import MovieCard from "./MovieCard"
 export const MovieList = ({ movies = [], loading, onWishlist }) => {
 
 
+
     if (loading) {
       return (
         <div className="movielist-notfound-container">
@@ -15,16 +16,11 @@ export const MovieList = ({ movies = [], loading, onWishlist }) => {
         </div>
       );
     }
+
+    // HANDLING LOADING PAGE
   
-    if (movies.length > 0) {
-      return (
-        <div className="movie-list">
-          {movies.map((movie) => (
-            <MovieCard key={movie.mv_id} movie={movie} onWishlist={onWishlist}/>
-          ))}
-        </div>
-      );
-    } else {
+    if (!movies || movies.length === null || movies.length <= 0) {
+
       return (
         <div className="movielist-notfound-container">
           <h3><i>Search not found</i></h3>
@@ -35,6 +31,15 @@ export const MovieList = ({ movies = [], loading, onWishlist }) => {
             alt="No movies available"
           />
           <span className="cuak!"><i>cuak!</i></span>
+        </div>
+      );
+      
+    } else {
+      return (
+        <div className="movie-list">
+          {movies.map((movie) => (
+            <MovieCard key={movie.mv_id} movie={movie} onWishlist={onWishlist}/>
+          ))}
         </div>
       );
     }

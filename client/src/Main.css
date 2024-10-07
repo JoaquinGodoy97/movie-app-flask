@@ -13,7 +13,7 @@ html {
 }
 
 body {
-    background-color: white;
+    background-color: #e7eaf0;
     /* Light mode background */
     color: black;
     /* Light mode text color */
@@ -31,14 +31,16 @@ body {
     /* 100% of the viewport height */
     width: 100vw;
     /* 100% of the viewport width */
-    background-color: white;
+    background-color: #e7eaf0;
     /* Ensure the whole screen is covered */
+    overflow-x: hidden;
+    overflow: none;
 }
 
 #dark {
     background-color: #121212;
     /* Dark mode background */
-    color: white;
+    color: #e7eaf0;
     /* Dark mode text color */
     transition: background-color 0.3s ease, color 0.3s ease;
     /* Add transition */
@@ -128,12 +130,6 @@ ul.pagination li.active {
     background-color: #d8d1d100;
 }
 
-/* .movie-search {
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-} */
 .nav-theme {
     position: fixed;
     /* background-color: rgba(179, 174, 174, 0.618); */
@@ -166,6 +162,9 @@ ul.pagination li.active {
     /* transform: translateX(600%) translateY(-180%); */
 }
 
+.react-switch-handle{
+    background-color: #e7eaf0;
+}
 /**
     CUAK DE PATO
 */
@@ -211,35 +210,16 @@ ul.pagination li.active {
 */
 
 
+
+
 .button-container .side-buttons input {
     margin-right: 20px;
 }
-
-/* .side-buttons {
-    display: flex;
-    align-items: center;
-    margin: 0 0 0 10;
-} */
-
-
 
 #light {
     transition: background-color 0.3s ease, color 0.3s ease;
     /* Add transition */
 }
-
-/* .container{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    width: 100%;
-    height: 100vh;
-    align-items: center;
-    max-width: 1500px;
-    margin: 0 auto;
-    padding: 0 15px;
-} */
 
 #light .container {}
 
@@ -251,7 +231,7 @@ ul.pagination li.active {
 #light #logout {
     background-color: #212529;
     /* Dark mode background */
-    color: white;
+    color: #fff;
     border: 0;
 }
 
@@ -293,7 +273,7 @@ ul.pagination li.active {
     margin-top: 20%;
 }
 
-#dark .movie-item {
+#dark .movie-card {
     box-shadow: rgba(247, 247, 247, 0.1) 0px 9px 20px;
 }
 
@@ -301,7 +281,7 @@ ul.pagination li.active {
 
 
 /* MOVIE CARD */
-.movie-item {
+.movie-card {
     border-radius: 0px;
     /* margin: 10px; */
     border: 0px;
@@ -314,7 +294,9 @@ ul.pagination li.active {
     max-width: 250px;
     height: 60vh;
     background-color: #f8f9fa;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+     */
+    /* box-shadow: inset rgb(0, 0, 0) 0px 0px 60px -12px; */
     border-radius: 8px;
     overflow: hidden;
     position: relative;
@@ -354,6 +336,24 @@ ul.pagination li.active {
     text-align: center;
 }
 
+.movie-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.movie-card {
+    /* flex: 1 1 calc(20% - 40px); */
+    min-width: 150px;
+    max-width: 180px;
+}
+
+.movie-card:hover {
+    /* box-shadow: inset 0px 0px 60px -12px rgba(0, 0, 0, 1);  */
+    /* transition: box-shadow 0.3s ease; */
+}
+
 /* Make sure the title adjusts with screen size */
 .card-title {
     font-size: clamp(1rem, 1.5vw, 1.2rem); /* Responsive font size */
@@ -376,6 +376,17 @@ ul.pagination li.active {
     max-height: 3rem; /* Prevent overflow of the overview */
     overflow: hidden; /* Hide any overflowing text */
     text-overflow: ellipsis;
+}
+
+/* HOVER OPACITY BUTON HOVER  */
+
+.btn-primary, .btn-primary:hover , .btn-primary:active{
+    background-color: #e7eaf000 !important;
+}
+
+.remove-wishlist-btn{
+    filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.796));
+    /* box-shadow: inset 0 0 10px #00000075; */
 }
 
 .btn-sm {
@@ -417,9 +428,9 @@ ul.pagination li.active {
     font-style: normal;
 }
 
-.movie-item svg:hover {
+.movie-card svg:hover {
     transform: scale(110%);
-    transition: 0.2s;
+    /* transition: 0.2s; */
 }
 
 /* body{
@@ -471,14 +482,14 @@ form #npage:hover{
 } */
 
 
-/* .movie-item h4{
+/* .movie-card h4{
     padding: 0;
     margin: 10px;
     font-family: 'Courier New', Courier, monospace;
     font-weight: bold;
     color: rgb(36, 36, 36);
 }
-*/
+ */
 
 /* .movie-info-container, .movie-container p{
     font-family: 'Open sans';
@@ -504,7 +515,7 @@ form #npage:hover{
 }
 
 @media (max-width: 800px) {
-    .movie-item {
+    .movie-card {
         /* width: 100%;
         flex: 1 1 100%; */
     }

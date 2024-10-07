@@ -8,7 +8,8 @@ from website.view.view import (session_logout_warning, logout_redirect, display_
                     database_wishlist_save_success_alert, display_current_results)
 from website.services.auth_services import is_user_logged_in, login_required
 from website.services.wishlist_services import (get_results_by_movie_id, add_to_wishlist_db, remove_from_wishlist_db,
-                                                filter_by_usersession_and_movieid, filter_by_usersession, is_wishlist_user_limit_reached)
+                                                filter_by_usersession_and_movieid, filter_by_usersession, is_wishlist_user_limit_reached,
+                                                bring_single_movie_by_user)
 import requests
 
 wishlist = Blueprint('wishlist', __name__)
@@ -131,3 +132,15 @@ def wishlist_search():
         
     return display_movies(movie_results, render_success="/wishlist/search", render_error="/wishlist")
     # return redirect(url_for("wishlist.wishlist_search", current_page=current_page, search_result=search_result))
+
+"""
+(FRONT)CHECKS FOR BUTTON PRESSED
+(BACK) IF IT WAS SAVED INTO WISHLIST THEN SEND THE MOVIE IF IT'S IN DB OF USER.
+"""
+
+@wishlist.route('/wishlist-status/<int:movie_id>', methods=['GET'])
+@login_required  # Assuming you're using Flask-Login
+def wishlist_status(movie_id):
+    
+    is_in_wishlist = bring_single_movie_by_user(session['username'], movie_id)
+    return jsonify({'in_wishlist': is_in_wishlist})
