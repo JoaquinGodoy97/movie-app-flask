@@ -36,9 +36,7 @@ const ResultsPage = () => {
 
             const data = await response.json();
             setMovies(data.results);
-            console.log(data.results)
             setTotalPages(data.total_pages || 1);
-            console.log("total pages:", data.total_pages)
 
         } catch (error) {
             console.error('Error fetching movies:', error);
@@ -78,7 +76,7 @@ const ResultsPage = () => {
     const handlePageChange = (newPage) => {
         if (newPage > 0 && newPage <= totalPages) {
             // Add logic here to fetch new data based on the page (if needed)
-            console.log(`Fetching data for page: ${newPage}`);
+            // console.log(`Fetching data for page: ${newPage}`);
             navigate(`/results/search?query=${searchQuery}&page=${newPage}`);
         }
     };
@@ -86,6 +84,7 @@ const ResultsPage = () => {
     const handleWishlist = async (id, name = "") => {
         try {
 
+            // If a movie name has "/" slash turn it to "-"
             const fixMovieName = (name) => {
                 if (name.includes("/")) {
                     return name.replace(/\//g, "-");
@@ -118,7 +117,7 @@ const ResultsPage = () => {
             }
 
         } catch (error) {
-            console.error("Unable to remove:", error)
+            console.error("Unable to add:", error)
         }
     };
 

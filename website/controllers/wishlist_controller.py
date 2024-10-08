@@ -63,7 +63,9 @@ def add_to_wishlist(movie_id, movie_name):
     movie_exists = filter_by_usersession_and_movieid(session['username'], movie_id)
 
     if movie_exists:
+        remove_from_wishlist_db(movie_exists)
         # alert_movie_already_added(movie_name, movie_id)
+        return redirect(f'/wishlist/remove/{movie_id}')
         return jsonify({ "error": "Movie already added."})
     else:
 
@@ -71,7 +73,7 @@ def add_to_wishlist(movie_id, movie_name):
             return jsonify({ "error": "Limit 50 movies per user. Server in development." }), 403
         
         # database_wishlist_save_success_alert(movie_name, movie_id)
-        add_to_wishlist_db(movie_id, movie_name, user_id=session['username'])
+        add_to_wishlist_db(movie_id, movie_name, username=session['username'])
     
     return jsonify({ "message": f"{session['username']} you added {movie_name} to your Wishlist!"})
     # return display_current_results(search_result, current_page)

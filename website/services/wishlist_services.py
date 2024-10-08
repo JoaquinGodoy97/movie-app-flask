@@ -31,8 +31,8 @@ def get_results_by_movie_id(results):
 
         return updated_results
 
-def filter_by_usersession_and_movieid(user_session, movie_id):
-        return Wishlist_user.query.filter_by(username=user_session, mv_id=movie_id).first()
+def filter_by_usersession_and_movieid(user, movie_id):
+        return Wishlist_user.query.filter_by(username=user, mv_id=movie_id).first()
 
 def filter_by_usersession(username):
         

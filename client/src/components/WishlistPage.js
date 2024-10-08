@@ -22,7 +22,6 @@ const WishlistPage = () => {
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useState("");
 
-
     useEffect(() => {
 
         const fetchMovies = async (query, page = 1) => {
@@ -50,7 +49,6 @@ const WishlistPage = () => {
                 if (response.ok) {
 
                     setMovies(result.results);
-                    console.log("What does movie have", result.results)
                     setTotalPages(result.total_pages || 1);
                 } else {
                     alert(result.error);
@@ -88,7 +86,7 @@ const WishlistPage = () => {
     const handlePageChange = (newPage) => {
         if (newPage > 0 && newPage <= totalPages) {
             // Fetch new data based on the current query and page
-            console.log(`Fetching data for page: ${newPage}`);
+            // console.log(`Fetching data for page: ${newPage}`);
 
             // If there is no search query, go to /wishlist
             if (!searchQuery) {
@@ -148,11 +146,11 @@ const WishlistPage = () => {
 
                     <SearchBar onSearch={handleSearch} />
 
-                    <div class="side-buttons ms-3 mb-3">
-                        <input onClick={() => { navigate('/logout') }} class="btn btn-outline-dark" name="logout" id="logout" type="submit" value="Log Out" />
-                        <a onClick={() => { navigate('/search') }} class="btn btn-dark">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="23" fill="currentColor" class="bi bi-arrow-left-square" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm11.5 5.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z" />
+                    <div className="side-buttons ms-3 mb-3">
+                        <input onClick={() => { navigate('/logout') }} className="btn btn-outline-dark" name="logout" id="logout" type="submit" value="Log Out" />
+                        <a onClick={() => { navigate('/search') }} className="btn btn-dark">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="23" fill="currentColor" className="bi bi-arrow-left-square" viewBox="0 0 16 16">
+                                <path fillRule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm11.5 5.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z" />
                             </svg>
                         </a>
 

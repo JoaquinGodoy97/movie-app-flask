@@ -30,12 +30,12 @@ def login():
     
     if found_user: # If found in DB
         if found_user.compare_password(password):
-            open_session(user) # f"Welcome back {user}", "success"
-            print(user, password)
-            session['username'] = user
-            welcome_message = Messages.welcome_back_user(session['username'])
+            welcome_message = open_session(user) # f"Welcome back {user}", "success" and open session['user']
+            return create_jwt(user, welcome_message)
+            # print(user, password)
+            # welcome_message = Messages.welcome_back_user(user)
 
-            return homepage_search_redirect(welcome_message, session['username'])
+            return homepage_search_redirect(welcome_message, user)
         else:
             invalid_pass_registered_user()
             return render_auth_template(error_msg=Messages.ERROR_MSG_PASSINVALID)
@@ -66,7 +66,8 @@ def get_current_user():
     user = session.get('username')
 
     if not user:
-        return jsonify({"error": "Unauthorized"}), 401
+        session['logged_in'] = False
+        return jsonify({"error": "Unauthorized", "logged_in": session['logged_in']}), 401
     
     user = user_query_filter_by_name(user)
     return jsonify(user_to_dict(user))

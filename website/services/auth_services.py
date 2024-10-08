@@ -1,8 +1,12 @@
-from flask import session, jsonify
+from flask import session, jsonify, request
 from website.models.user_model import User
 from website.utils.db import db
 from website.view.view import homepage_search_redirect, password_reminder_alert, database_save_error_alert, welcome_user_login
 from functools import wraps
+from website.utils.config import Messages
+import jwt 
+from datetime import datetime, timedelta
+# from app import ap
 
 def login_required(f):
     @wraps(f)
@@ -12,6 +16,17 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def jwt_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        token = request/args.get('token');
+        if not token:
+            return jsonify({ 'error': 'Token missing.'})
+        try:
+            payload = jwt.decode(token, app.config['SECRET_KEY'])
+        except:
+            return jsonify({ 'error': 'invalid token.'})
+        
 def add_user_to_db(user, email, password):
     """
     Adds user to the database.
@@ -41,9 +56,23 @@ def add_user_to_db(user, email, password):
     finally:
         close_session()
 
+
+#CREATE JWT
 def open_session(user):
     session['username'] = user
-    welcome_user_login(session['username'])
+    session['loggged_in'] = True
+
+    return Messages.welcome_back_user(user)
+    # welcome_user_login(session['username'])
+
+def create_jwt(user, welcome_message):
+    print("This is the secret key:",app.config['SECRET_KEY'])
+    token = jwt.encode({
+        'user': user,
+        'expiration': str(datetime.now() + timedelta(seconds=120))
+    },
+        app.config['SECRET_KEY'])
+    return jsonify({ 'token': token.decode('utf-8')})
 
 def close_session():
     session.pop('username', None)
@@ -65,5 +94,6 @@ def user_to_dict(user):
     return {
         "username": user.username,
         "id": user.id,
+        "logged_in": True
         # Add more fields as needed
     }

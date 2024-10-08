@@ -13,7 +13,19 @@ const MovieCard = ({ movie, onWishlist }) => {
             .then(data => setItemInWishlist(data.in_wishlist))
             .catch(error => console.error('Error:', error));
 
+            console.log("Whats this?", data.in_wishlist)
+
     }, [movie.mv_id]);
+
+    const handleWishlistToggle = () => {
+        if (itemInWishlist) {
+            onWishlist(movie.mv_id, movie.title);  // Call the removal action
+            setItemInWishlist(false);  // Update state to remove from wishlist
+        } else {
+            onWishlist(movie.mv_id, movie.title);  // Call the add action
+            setItemInWishlist(true);  // Update state to add to wishlist
+        }
+    };
 
     const [isHovered, setIsHovered] = useState(false);
 
@@ -52,8 +64,7 @@ const MovieCard = ({ movie, onWishlist }) => {
                         onWishlist(movie.mv_id);
                     } else {
                         // console.log("added")
-                        onWishlist(movie.mv_id, movie.title);
-                        setItemInWishlist(movie.mv_id);
+                        handleWishlistToggle()
                     }
                 }}
                 onMouseEnter={handleMouseEnter}

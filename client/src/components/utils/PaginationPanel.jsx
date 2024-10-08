@@ -3,56 +3,54 @@ import Pagination from 'react-bootstrap/Pagination';
 
 export const PaginationPanel = ({ currentPage, totalPages, onPageChange }) => {
 
-    let active = currentPage
-    const items = []
-
     function range(start, end) {
         return Array.from({ length: end - start + 1 }, (_, i) => start + i);
     }
-    
-    // function numberRange(start, end) {
-    //     console.log(`Start number: ${start}, End number: ${end}`);
-    //     return range(start, end);
-    // }
 
     const layoutPaginationItems = () => {
         const items = [];
-        const startPage = Math.max(2, currentPage - 1);
-        const endPage = Math.min(totalPages - 1, currentPage + 1);
+        const fpages = range(currentPage, currentPage + 2);
+        const lpages = range(totalPages - 3, totalPages);
+        const elipsis = null;
     
-        // Always show the first page
-        items.push(
-            <Pagination.Item key={1} active={currentPage === 1} onClick={() => onPageChange(1)}>
-                1
-            </Pagination.Item>
-        );
+        const layoutPaginationItems = () => {
+            if (lpages[0] > fpages[2]) {
+                let layout = fpages.concat(elipsis).concat(lpages);
+                return layout;
+            } 
+            
+            else {
+                return [...fpages, ...lpages];  // Ensure it returns an array even if the condition isn't met
+            }
+        };
     
-        // Insert ellipsis if there's a gap between page 1 and startPage
-        if (startPage > 2) {
-            items.push(<Pagination.Ellipsis key="start-ellipsis" />);
+        const layout = layoutPaginationItems();
+    
+        console.log("layout:", layout + " and total pages", totalPages);
+        
+        if (totalPages > 1) {
+            for (let number = currentPage; number <= totalPages; number++) {
+                if (totalPages <= 10) {
+                    items.push(
+                        <Pagination.Item key={number} active={number === currentPage} onClick={() => onPageChange(number)}>
+                            {number}
+                        </Pagination.Item>
+                    );
+                }
+                
+                else if (layout.includes(number)) {
+                    items.push(
+                        <Pagination.Item key={number} active={number === currentPage} onClick={() => onPageChange(number)}>
+                            {number}
+                        </Pagination.Item>
+                    );
+                } else if (layout.includes(null) && number !== null) {
+                    items.push(<Pagination.Ellipsis key="end-ellipsis" />);
+                    number = lpages[0];
+                }
+            }
         }
-    
-        // Show pages around the current page
-        for (let number = startPage; number <= endPage; number++) {
-            items.push(
-                <Pagination.Item key={number} active={number === currentPage} onClick={() => onPageChange(number)}>
-                    {number}
-                </Pagination.Item>
-            );
-        }
-    
-        // Insert ellipsis if there's a gap between endPage and the last page
-        if (endPage < totalPages - 1) {
-            items.push(<Pagination.Ellipsis key="end-ellipsis" />);
-        }
-    
-        // Always show the last page
-        items.push(
-            <Pagination.Item key={totalPages} active={currentPage === totalPages} onClick={() => onPageChange(totalPages)}>
-                {totalPages}
-            </Pagination.Item>
-        );
-    
+        
         return items;
     };
     
