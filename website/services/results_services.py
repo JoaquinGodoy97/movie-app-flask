@@ -1,5 +1,5 @@
 from flask import request, jsonify
-from website.config import API_URL
+from website.utils.settings import API_URL
 from website.view.view import (page_not_found_with_error_in_page, page_not_found_with_error, 
                         first_page_warning, last_page_warning, wishlist_pages_redirect, wishlist_search_redirect,
                         page_not_found_with_error_in_page, homepage_search_redirect, logout_redirect, results_pages_redirect, first_page_warning_wishlist) 

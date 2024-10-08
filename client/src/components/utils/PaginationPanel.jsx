@@ -1,4 +1,3 @@
-import React from 'react'
 import Pagination from 'react-bootstrap/Pagination';
 
 export const PaginationPanel = ({ currentPage, totalPages, onPageChange }) => {
@@ -9,48 +8,41 @@ export const PaginationPanel = ({ currentPage, totalPages, onPageChange }) => {
 
     const layoutPaginationItems = () => {
         const items = [];
-        const fpages = range(currentPage, currentPage + 2);
-        const lpages = range(totalPages - 3, totalPages);
-        const elipsis = null;
     
-        const layoutPaginationItems = () => {
-            if (lpages[0] > fpages[2]) {
-                let layout = fpages.concat(elipsis).concat(lpages);
-                return layout;
-            } 
-            
-            else {
-                return [...fpages, ...lpages];  // Ensure it returns an array even if the condition isn't met
+        // Check if total pages is less than or equal to 10
+        if (totalPages <= 10) {
+            // Display all pages when total pages are less than or equal to 10
+            for (let number = 1; number <= totalPages; number++) {
+                items.push(
+                    <Pagination.Item key={number} active={number === currentPage} onClick={() => onPageChange(number)}>
+                        {number}
+                    </Pagination.Item>
+                );
             }
-        };
+        } else {
+            // Logic for when there are more than 10 pages
+            const fpages = range(currentPage, currentPage + 2);
+            const lpages = range(totalPages - 2, totalPages);
+            const elipsis = null;
     
-        const layout = layoutPaginationItems();
+            const layout = fpages.concat(lpages[0] > fpages[2] ? [elipsis] : []).concat(lpages);
     
-        console.log("layout:", layout + " and total pages", totalPages);
-        
-        if (totalPages > 1) {
+            // console.log("layout:", layout, "and total pages", totalPages);
+    
             for (let number = currentPage; number <= totalPages; number++) {
-                if (totalPages <= 10) {
+                if (layout.includes(number)) {
                     items.push(
                         <Pagination.Item key={number} active={number === currentPage} onClick={() => onPageChange(number)}>
                             {number}
                         </Pagination.Item>
                     );
-                }
-                
-                else if (layout.includes(number)) {
-                    items.push(
-                        <Pagination.Item key={number} active={number === currentPage} onClick={() => onPageChange(number)}>
-                            {number}
-                        </Pagination.Item>
-                    );
-                } else if (layout.includes(null) && number !== null) {
+                } else if (layout.includes(null)) {
                     items.push(<Pagination.Ellipsis key="end-ellipsis" />);
-                    number = lpages[0];
+                    number = lpages[0] - 1; // Jump to the first page in lpages after the ellipsis
                 }
             }
         }
-        
+    
         return items;
     };
     

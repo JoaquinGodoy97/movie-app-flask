@@ -5,15 +5,12 @@ import { ToggleOverview } from "./utils/ToggleOverview";
 const MovieCard = ({ movie, onWishlist }) => {
 
     const [itemInWishlist, setItemInWishlist] = useState(false);
-    const [data, setData] = useState('')
 
     useEffect(() => {
         fetch(`/wishlist-status/${movie.mv_id}`)
             .then(response => response.json())
             .then(data => setItemInWishlist(data.in_wishlist))
             .catch(error => console.error('Error:', error));
-
-            console.log("Whats this?", data.in_wishlist)
 
     }, [movie.mv_id]);
 

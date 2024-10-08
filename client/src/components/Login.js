@@ -44,19 +44,27 @@ function Login() {
 
         try {
             const response = await fetch(url, options);
-            const result = await response.json();
+            const data = await response.json();
 
-            if (result.error) {
-                navigate(result.redirect);
+            if (data.error) {
+                navigate(data.redirect);
             }
 
             if (response.ok) {
 
-                alert(result.message)
-                navigate(result.redirect) // Home page 
+                if(data.token){
+                    localStorage.setItem('token', data.token)
+
+                    alert(data.message)
+                    navigate(data.redirect) // Home page
+
+
+                } else{
+                    console.log('Login failed:', data.message);
+                }
 
             } else {
-                alert(result.error);
+                alert(data.error);
             }
         } catch (error) {
             console.error("Error submitting form:", error);

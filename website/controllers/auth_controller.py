@@ -1,9 +1,9 @@
 from flask import Blueprint, request, render_template, jsonify, send_from_directory, session
-from website.services.auth_services import add_user_to_db, close_session, open_session, is_user_logged_in, validate_credentials, user_query_filter_by_name, login_required
+from website.services.auth_services import add_user_to_db, user_to_dict, open_session, is_user_logged_in, validate_credentials, user_query_filter_by_name, login_required
 from website.view.view import (homepage_search_redirect, invalid_username, invalid_pass_registered_user, invalid_pass_new_user,
                             redirect_login_auth, render_auth_template, already_loggedin_user, session_logout_warning, login_redirect)
-from website.utils.config import Messages
-
+from website.utils.settings import Messages
+from website.services.auth_services import Security
 
 auth = Blueprint("auth", __name__)
 
@@ -22,30 +22,29 @@ def index():
 def login():
     session.permanent = True
     user, email, password = (request.json.get(data) for data in ['username', 'email', 'password'])
-    print("User received from postman:", user)
 
     found_user = user_query_filter_by_name(user)
-    
-    valid_user, valid_pass = validate_credentials(user, password)
+    validated_user, validated_password = validate_credentials(found_user.username, found_user.password)
     
     if found_user: # If found in DB
         if found_user.compare_password(password):
-            welcome_message = open_session(user) # f"Welcome back {user}", "success" and open session['user']
-            return create_jwt(user, welcome_message)
+            welcome_message = open_session(found_user.username) # f"Welcome back {user}", "success" and open session['user']
+            encoded_token = Security.generate_token(found_user)
+
             # print(user, password)
             # welcome_message = Messages.welcome_back_user(user)
 
-            return homepage_search_redirect(welcome_message, user)
+            return homepage_search_redirect(encoded_token ,message=welcome_message)
         else:
             invalid_pass_registered_user()
             return render_auth_template(error_msg=Messages.ERROR_MSG_PASSINVALID)
             # return jsonify({'error': 'Invalid Password', 'redirect': '/login' }), 403
         
     else:
-        if not valid_user:
+        if not validated_user:
             invalid_username()
             return login_redirect()
-        elif not valid_pass:
+        elif not validated_password:
             invalid_pass_new_user()
             return login_redirect()
             
@@ -60,8 +59,6 @@ def logout():
 
 @auth.route('/@me')
 def get_current_user():
-
-    from website.services.auth_services import user_to_dict
 
     user = session.get('username')
 

@@ -1,6 +1,6 @@
 from flask import jsonify
 from website.view.view import homepage_search_redirect, go_to_first_page_redirect
-from website.utils.config import Services
+from website.utils.settings import Services
 # from website.controllers.search_controller import sear
 
 

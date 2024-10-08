@@ -1,8 +1,6 @@
 from flask import Blueprint, render_template, request, url_for, redirect, session, jsonify, json
 from .results_controller import handle_form, get_set_of_movies
 from website.models.wishlist_user_model import Wishlist_user
-from website.utils.db import db
-from website.config import BASE_URL, API_KEY
 from website.view.view import (session_logout_warning, logout_redirect, display_movies, wishlist_redirect, 
                     alert_no_movie_added_wishlist, alert_movie_already_added, render_wishlist_template,
                     database_wishlist_save_success_alert, display_current_results)

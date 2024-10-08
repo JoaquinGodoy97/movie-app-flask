@@ -433,6 +433,12 @@ ul.pagination li.active {
     /* transition: 0.2s; */
 }
 
+.toast-message{
+    position: fixed;
+    right: 20;
+    bottom: 20;
+}
+
 /* body{
     max-width: 1500px;
     height: 200vh;

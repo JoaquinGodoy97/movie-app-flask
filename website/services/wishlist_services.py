@@ -1,4 +1,4 @@
-from website.config import BASE_URL, API_KEY
+from website.utils.settings import BASE_URL, API_KEY
 from flask import request, session, jsonify
 from website.utils.db import db
 from website.models.wishlist_user_model import Wishlist_user

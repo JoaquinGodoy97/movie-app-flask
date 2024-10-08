@@ -1,1 +1,3 @@
 2024-08-14 05:28:36,274 - ./my_app - ERROR - An error occurred: ('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))
+2024-10-08 07:23:55,823 - ./my_app - ERROR - An error occurred: Invalid URL "BASE_URL + '/search/movie?' + 'api_key=' + API_KEY&query=one piece": No scheme supplied. Perhaps you meant https://BASE_URL + '/search/movie?' + 'api_key=' + API_KEY&query=one piece?
+2024-10-08 07:26:15,379 - ./my_app - ERROR - An error occurred: Invalid URL "BASE_URL + '/search/movie?' + 'api_key=' + API_KEY&query=one piece": No scheme supplied. Perhaps you meant https://BASE_URL + '/search/movie?' + 'api_key=' + API_KEY&query=one piece?

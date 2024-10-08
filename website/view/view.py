@@ -67,9 +67,8 @@ def wishlist_pages_redirect(current_page):
 def results_pages_redirect(current_page, search_result):
     return redirect(url_for('results.results_search_list', search_result=search_result, current_page=current_page))
 
-def homepage_search_redirect(message="", user_loggedin=None):
-    return jsonify({ 'message': message, 'user_loggedin': user_loggedin, "redirect": "/search"})
-
+def homepage_search_redirect(token, message="", user_loggedin=None):
+    return jsonify({ 'message': message, 'user_loggedin': user_loggedin, "redirect": "/search", 'token': token})
 
 def wishlist_redirect():
     return redirect(url_for('wishlist.wishlist_pages', current_page=1))

@@ -1,11 +1,10 @@
-from flask import Flask, request, send_from_directory
+from flask import Flask, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from website.utils.db import db, DB_NAME
 from os import path #operating system
 from flask_migrate import Migrate
-from website.view.view import render_page_not_found
-import logging
 from flask_cors import CORS
+from decouple import config
 
 migrate = Migrate()
 
@@ -17,7 +16,7 @@ def create_app():
 
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SECRET_KEY']= "milanesa"
+    app.config['SECRET_KEY']= config('SECRET_KEY')
     
     # Initialize the SQLAlchemy instance with the app
     db.init_app(app)

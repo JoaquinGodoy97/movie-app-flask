@@ -27,6 +27,9 @@ const WishlistPage = () => {
         const fetchMovies = async (query, page = 1) => {
             setLoading(true)
             try {
+
+                const token = localStorage.getItem('token')
+
                 const url = query ?
                     `http://localhost:5000/wishlist/search?query=${query}&page=${page}` :
                     `http://localhost:5000/wishlist?page=${page}`;
@@ -34,6 +37,7 @@ const WishlistPage = () => {
                 const response = await fetch(url, {
                     method: 'GET',
                     headers: {
+                        'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     },
                     credentials: 'include',

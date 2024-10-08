@@ -24,9 +24,12 @@ function Homepage() {
             return;
         }
 
+        const token = localStorage.getItem('token');
+
         const response = await fetch('http://localhost:5000/search', {
             method: 'POST',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             credentials: 'include',

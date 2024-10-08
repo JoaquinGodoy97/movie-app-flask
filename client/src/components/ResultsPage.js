@@ -8,8 +8,10 @@ import { checkUserSession } from './checkUserSession';
 import { LoadingPage } from './utils/LoadingPage';
 import { ThemeContext } from '../App';
 import Switch from 'react-switch'
+import { useToast } from './utils/ToastMessage';
 
 const ResultsPage = () => {
+    const { showToast } = useToast();
     const [movies, setMovies] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
     const navigate = useNavigate();
@@ -26,9 +28,12 @@ const ResultsPage = () => {
         setLoading(true)
 
         try {
+
+            const token = localStorage.getItem('token')
             const response = await fetch(`http://localhost:5000/results/search?query=${query}&page=${page}`, {
                 method: 'GET',
                 headers: {
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 credentials: 'include',
@@ -92,6 +97,7 @@ const ResultsPage = () => {
                 return name; // Return the original name if no "/" is found
             };
 
+            const token = localStorage.getItem('token')
             const movie_name = fixMovieName(name);
 
             const url = `http://localhost:5000/wishlist/add/${id}/${movie_name}`;
@@ -99,6 +105,7 @@ const ResultsPage = () => {
             const options = {
                 method: 'POST',
                 headers: {
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 credentials: 'include',
@@ -113,7 +120,8 @@ const ResultsPage = () => {
             if (result.error) {
                 return alert(result.error)
             } else {
-                return alert(result.message)
+                showToast(result.message)
+                // return alert(result.message)
             }
 
         } catch (error) {

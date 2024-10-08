@@ -8,6 +8,7 @@ import WishlistPage from './components/WishlistPage';
 // import SwitchThemeMode from './components/utils/SwitchThemeMode';
 import Switch from "react-switch";
 import './App.css';
+import { ToastProvider } from './components/utils/ToastMessage';
 
 export const ThemeContext = createContext(null)
 
@@ -19,23 +20,25 @@ function App() {
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme}}>
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      <ToastProvider>
 
-    <div className="App" id={theme}>
-      {/* The theme switch */}
-      {/* Your routing */}
-      <Router>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/logout" element={<Logout />} />
-          <Route path="/search" element={<Homepage />} />
-          <Route path="/results/search" element={<ResultsPage />} />
-          <Route path="/wishlist" element={<WishlistPage />} />
-          <Route path="/wishlist/search" element={<WishlistPage />} />
-        </Routes>
-      </Router>
-    </div>
+        <div className="App" id={theme}>
+          {/* The theme switch */}
+          {/* Your routing */}
+          <Router>
+            <Routes>
+              <Route path="/" element={<Login />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/logout" element={<Logout />} />
+              <Route path="/search" element={<Homepage />} />
+              <Route path="/results/search" element={<ResultsPage />} />
+              <Route path="/wishlist" element={<WishlistPage />} />
+              <Route path="/wishlist/search" element={<WishlistPage />} />
+            </Routes>
+          </Router>
+        </div>
+      </ToastProvider>
     </ThemeContext.Provider>
 
   );

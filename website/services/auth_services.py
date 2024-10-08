@@ -3,30 +3,45 @@ from website.models.user_model import User
 from website.utils.db import db
 from website.view.view import homepage_search_redirect, password_reminder_alert, database_save_error_alert, welcome_user_login
 from functools import wraps
-from website.utils.config import Messages
+from website.utils.settings import Messages
 import jwt 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+from decouple import config
 # from app import ap
 
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'username' not in session:
-            return jsonify({'error': 'Unauthorized', 'redirect': '/login'}), 401
+            return jsonify({'error': 'Unauthorized decorator', 'redirect': '/login'}), 401
         return f(*args, **kwargs)
     return decorated_function
 
-def jwt_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        token = request/args.get('token');
-        if not token:
-            return jsonify({ 'error': 'Token missing.'})
-        try:
-            payload = jwt.decode(token, app.config['SECRET_KEY'])
-        except:
-            return jsonify({ 'error': 'invalid token.'})
-        
+class Security():
+    secret = config('JWT_KEY')
+
+    @classmethod
+    def generate_token(cls, authenticated_user):
+        payload = {
+            "iat": datetime.now(timezone.utc),
+            'exp': datetime.now(timezone.utc) + timedelta(minutes=10),
+            'username': authenticated_user.username
+        }
+        return jwt.encode(payload, cls.secret, algorithm="HS256")
+    
+    @classmethod
+    def verify_token(cls, headers):
+        if 'Authorization' in headers.keys():
+            authorization=headers['Authorization']
+            jwt_payload = authorization.split(" ")[1]
+            
+            try:
+                
+                return jwt.decode(jwt_payload, cls.secret, algorithms=["HS256"])
+            except (jwt.ExpiredSignatureError, jwt.InvalidIssuerError):
+                print("Error: The token has expired")
+        return False
+
 def add_user_to_db(user, email, password):
     """
     Adds user to the database.
@@ -65,15 +80,6 @@ def open_session(user):
     return Messages.welcome_back_user(user)
     # welcome_user_login(session['username'])
 
-def create_jwt(user, welcome_message):
-    print("This is the secret key:",app.config['SECRET_KEY'])
-    token = jwt.encode({
-        'user': user,
-        'expiration': str(datetime.now() + timedelta(seconds=120))
-    },
-        app.config['SECRET_KEY'])
-    return jsonify({ 'token': token.decode('utf-8')})
-
 def close_session():
     session.pop('username', None)
 
@@ -82,9 +88,9 @@ def is_user_logged_in(session):
 
 def validate_credentials(username, password):
     """Helper function to validate username and password."""
-    valid_user = User.validate_user(username)
-    valid_password = User.validate_password(password)
-    return valid_user, valid_password
+    validated_user = User.validate_user(username)
+    validated_password = User.validate_password(password)
+    return validated_user, validated_password
 
 def user_query_filter_by_name(user):
     found_user = User.query.filter_by(username=user).first() # modificar
