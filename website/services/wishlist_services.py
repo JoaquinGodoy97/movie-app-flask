@@ -10,7 +10,7 @@ def get_results_by_movie_id(results):
         updated_results = [] 
 
         for movie in results:
-                api_url = BASE_URL + "/movie/" + str(movie['mv_id']) + "?" + API_KEY
+                api_url = BASE_URL + "/movie/" + str(movie['mv_id']) + "?api_key=" + API_KEY
                 
                 response = requests.get(api_url)
                 response.raise_for_status()  # Check for HTTP request errors

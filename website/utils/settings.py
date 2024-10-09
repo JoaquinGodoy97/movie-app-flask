@@ -26,11 +26,15 @@ class Messages:
     ERROR_MSG_PASSINVALID = 'Invalid Password'
     MOVIES_NOT_FOUND = "No movies found."
     PAGE_NOT_FOUND = "Page not found."
+    USER_CREATED = "User created successfuly."
     
     @staticmethod
     def welcome_back_user(user):
         return f"Welcome back, {user}!"
     
+    @staticmethod
+    def user_created(user, password):
+        USER_CREATED = f"User '{user}' created successfuly. Don't forget your password is: {password}"    
 # RESULTS_SERVICE_ENDPOINT = 'results.results_search_list'
 # RESULTS_SERVICE_ENDPOINT = "results"
 # HOMEPAGE_SERVICE_ENDPOINT = 'homepage.search'

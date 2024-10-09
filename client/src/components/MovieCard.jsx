@@ -5,9 +5,19 @@ import { ToggleOverview } from "./utils/ToggleOverview";
 const MovieCard = ({ movie, onWishlist }) => {
 
     const [itemInWishlist, setItemInWishlist] = useState(false);
+    const [data, setData] = useState('')
 
     useEffect(() => {
-        fetch(`/wishlist-status/${movie.mv_id}`)
+
+        const token = localStorage.getItem('token');
+        fetch(`/wishlist-status/${movie.mv_id}`, {
+            
+            headers: {
+                'Authorization': `Bearer ${token}`  // Send the token in Authorization header
+            },
+            credentials: 'include'
+            
+        })
             .then(response => response.json())
             .then(data => setItemInWishlist(data.in_wishlist))
             .catch(error => console.error('Error:', error));
@@ -16,10 +26,10 @@ const MovieCard = ({ movie, onWishlist }) => {
 
     const handleWishlistToggle = () => {
         if (itemInWishlist) {
-            onWishlist(movie.mv_id, movie.title);  // Call the removal action
+            onWishlist(movie.mv_id, movie.title, itemInWishlist);  // Call the removal action
             setItemInWishlist(false);  // Update state to remove from wishlist
         } else {
-            onWishlist(movie.mv_id, movie.title);  // Call the add action
+            onWishlist(movie.mv_id, movie.title, itemInWishlist);  // Call the add action
             setItemInWishlist(true);  // Update state to add to wishlist
         }
     };

@@ -6,7 +6,7 @@ def display_movies(results, render_success, render_error): # for the moment keep
     if results:
         movie_set = results['movie_set']
         total_pages = results['total_pages']
-        print(total_pages)
+        print("Total pages in display movies function:",total_pages)
         # current_page = results['current_page']
         # search_result = results['search_result']
         # current_user = session['username']
@@ -24,7 +24,7 @@ def display_current_results(search_result, current_page):
 # RENDER TEMPLATES
 
 def render_auth_template(error_msg=""):
-    return jsonify({"error": error_msg, "redirect": "/login"}), 403
+    return jsonify({"error": error_msg, "redirect": "/login"}), 401
     return render_template("auth.html")
 
 def render_homepage_template():
@@ -39,7 +39,7 @@ def render_page_not_found():
 # REDIRECTS
 
 def redirect_login_auth():
-    return jsonify({ "redirect": "/login" })
+    return jsonify({ "message": "Could not create user. I think(?)", "redirect": "/login"})
     # return redirect(url_for("auth.index"))
 
 def login_redirect():
@@ -67,8 +67,8 @@ def wishlist_pages_redirect(current_page):
 def results_pages_redirect(current_page, search_result):
     return redirect(url_for('results.results_search_list', search_result=search_result, current_page=current_page))
 
-def homepage_search_redirect(token, message="", user_loggedin=None):
-    return jsonify({ 'message': message, 'user_loggedin': user_loggedin, "redirect": "/search", 'token': token})
+def homepage_search_redirect(token="", message="", user_loggedin=None):
+    return jsonify({ 'message': message, "redirect": "/search", 'token': token})
 
 def wishlist_redirect():
     return redirect(url_for('wishlist.wishlist_pages', current_page=1))
@@ -110,13 +110,13 @@ def already_loggedin_user(user_session):
     return flash(f'Logged in as {user_session}', 'success')
 
 def invalid_pass_new_user():
-    return flash("If you are new insert a invalid password. Write a password between 5-9 characters long no spaces.", "warning")
+    return jsonify({"message":"If you are new insert a invalid password. Write a password between 5-9 characters long no spaces."})
 
 def invalid_pass_registered_user():
-    return flash(f"Invalid Password. Write a password between 5-9 characters long no spaces.", "danger")
+    return jsonify({ "message":f"Invalid Password. Write a password between 5-9 characters long no spaces."})
 
 def invalid_username():
-    return flash(f"Invalid Username. Write a Username between 5-9 characters long no spaces.", "danger")
+    return jsonify({ "error":f"Invalid Username. Write a Username between 5-9 characters long no spaces."})
 
 def password_reminder_alert(user, password): # New user
     return flash(f"You've logged in as {user}. Please don't forget your password is {password}", "success")

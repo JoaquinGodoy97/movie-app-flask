@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom'
 import '../Login.css'
 import Switch from 'react-switch';
 import { ThemeContext } from '../App'; // import the context
+import { useToast } from './utils/ToastMessage';
 
 function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
     const [data, setData] = useState('');
+    const {showToast} = useToast();
 
     // Check if the user is logged in when the component mounts
     useEffect(() => {
@@ -52,12 +54,13 @@ function Login() {
 
             if (response.ok) {
 
+                console.log(data.token)
+                localStorage.setItem('token', data.token)
+                
                 if(data.token){
-                    localStorage.setItem('token', data.token)
-
-                    alert(data.message)
+                    
+                    showToast(data.message)
                     navigate(data.redirect) // Home page
-
 
                 } else{
                     console.log('Login failed:', data.message);

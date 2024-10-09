@@ -17,6 +17,7 @@ function Logout() {
             const result = await response.json()
 
             if (response.ok) {
+                localStorage.removeItem('token')
                 navigate(result.redirect); // /login
             } else {
                 alert(result.error);

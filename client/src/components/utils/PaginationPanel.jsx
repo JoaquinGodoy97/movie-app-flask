@@ -31,11 +31,13 @@ export const PaginationPanel = ({ currentPage, totalPages, onPageChange }) => {
     
             for (let number = currentPage; number <= totalPages; number++) {
                 if (layout.includes(number)) {
+                    
                     items.push(
                         <Pagination.Item key={number} active={number === currentPage} onClick={() => onPageChange(number)}>
                             {number}
                         </Pagination.Item>
                     );
+
                 } else if (layout.includes(null)) {
                     items.push(<Pagination.Ellipsis key="end-ellipsis" />);
                     number = lpages[0] - 1; // Jump to the first page in lpages after the ellipsis

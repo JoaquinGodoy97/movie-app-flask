@@ -4,7 +4,7 @@ from website.models.wishlist_user_model import Wishlist_user
 from website.view.view import (session_logout_warning, logout_redirect, display_movies, wishlist_redirect, 
                     alert_no_movie_added_wishlist, alert_movie_already_added, render_wishlist_template,
                     database_wishlist_save_success_alert, display_current_results)
-from website.services.auth_services import is_user_logged_in, login_required
+from website.services.auth_services import is_user_logged_in, login_required, Security
 from website.services.wishlist_services import (get_results_by_movie_id, add_to_wishlist_db, remove_from_wishlist_db,
                                                 filter_by_usersession_and_movieid, filter_by_usersession, is_wishlist_user_limit_reached,
                                                 bring_single_movie_by_user)
@@ -13,13 +13,18 @@ import requests
 wishlist = Blueprint('wishlist', __name__)
 
 @wishlist.route('/wishlist', methods=["GET"])
-@login_required
+# @login_required
 def wishlist_pages():
+
+    has_acess = Security.verify_token(request.headers)
+    
+    if not has_acess:
+        return jsonify({ "message": "Unauthorized."})
     
     search_result = request.args.get('query', '')
     current_page = request.args.get('page', 1, type=int)
 
-    results = filter_by_usersession(session['username'])
+    results = filter_by_usersession(has_acess['username'])
 
     # if not results:
     #     alert_no_movie_added_wishlist()
@@ -63,7 +68,6 @@ def add_to_wishlist(movie_id, movie_name):
     if movie_exists:
         remove_from_wishlist_db(movie_exists)
         # alert_movie_already_added(movie_name, movie_id)
-        return redirect(f'/wishlist/remove/{movie_id}')
         return jsonify({ "error": "Movie already added."})
     else:
 
@@ -103,6 +107,11 @@ def remove_from_wishlist(movie_id):
 @login_required
 def wishlist_search():
 
+    has_acess = Security.verify_token(request.headers)
+    
+    if not has_acess:
+        return jsonify({ "message": "Unauthorized."})
+
     from website.services.wishlist_services import filter_movies_by_search_if_any
 
     search_result = request.args.get('query', '')
@@ -139,8 +148,11 @@ def wishlist_search():
 """
 
 @wishlist.route('/wishlist-status/<int:movie_id>', methods=['GET'])
-@login_required  # Assuming you're using Flask-Login
+# @login_required
 def wishlist_status(movie_id):
+    token = Security.verify_token(request.headers)
     
-    is_in_wishlist = bring_single_movie_by_user(session['username'], movie_id)
+    user = token['username']
+    
+    is_in_wishlist = bring_single_movie_by_user(user, movie_id)
     return jsonify({'in_wishlist': is_in_wishlist})

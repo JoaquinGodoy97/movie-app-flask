@@ -52,6 +52,8 @@ const WishlistPage = () => {
 
                 if (response.ok) {
 
+                    console.log(result.total_pages)
+
                     setMovies(result.results);
                     setTotalPages(result.total_pages || 1);
                 } else {

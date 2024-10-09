@@ -32,14 +32,21 @@ class Security():
     @classmethod
     def verify_token(cls, headers):
         if 'Authorization' in headers.keys():
-            authorization=headers['Authorization']
+            authorization = headers['Authorization']
             jwt_payload = authorization.split(" ")[1]
+            print("JWT Payload:", jwt_payload)
             
             try:
-                
                 return jwt.decode(jwt_payload, cls.secret, algorithms=["HS256"])
-            except (jwt.ExpiredSignatureError, jwt.InvalidIssuerError):
+            except jwt.ExpiredSignatureError:
                 print("Error: The token has expired")
+                return False
+            except (jwt.DecodeError, jwt.InvalidTokenError):
+                print("Error: Invalid token")
+                return False
+            except jwt.InvalidIssuerError:
+                print("Error: Invalid issuer")
+                return False
         return False
 
 def add_user_to_db(user, email, password):
@@ -54,25 +61,26 @@ def add_user_to_db(user, email, password):
     Returns:
         Response: Rendered template with the updated results.
     """
-    session['username'] = user
-    
+    print(user, password)
     try:
+        
         user_db = User(user, email, password)
+        print(user_db)
         db.session.add(user_db)
         db.session.commit()
 
-        password_reminder_alert(user, password) # routing alert // business logic
-        return homepage_search_redirect()
+        # password_reminder_alert(user, password) # routing alert // business logic
+        # return homepage_search_redirect()
     
     except Exception as e:
         db.session.rollback()
-        database_save_error_alert(e)
+        # database_save_error_alert(e)
+        print('failed to create user')
 
     finally:
         close_session()
 
 
-#CREATE JWT
 def open_session(user):
     session['username'] = user
     session['loggged_in'] = True
@@ -100,6 +108,5 @@ def user_to_dict(user):
     return {
         "username": user.username,
         "id": user.id,
-        "logged_in": True
         # Add more fields as needed
     }

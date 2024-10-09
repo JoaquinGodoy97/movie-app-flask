@@ -1,7 +1,14 @@
 
 const fetchWithDelay = async () => {
     await new Promise(resolve => setTimeout(resolve, 1000));  // Delay of 1 second
-    return fetch("http://localhost:5000/@me", { credentials: 'include' });
+
+    const token = localStorage.getItem('token');
+    return fetch("http://localhost:5000/@me", {
+        headers: {
+            'Authorization': `Bearer ${token}`  // Send the token in Authorization header
+        },
+        credentials: 'include'
+    });
 };
 
 export const checkUserSession = async (setLoading, setUser, navigate) => {
@@ -11,21 +18,19 @@ export const checkUserSession = async (setLoading, setUser, navigate) => {
         const response = await fetchWithDelay();
         // console.log('Response status:', response.status); // Debugging response 
     
-        if (response.status === 401) {
-            // Handle 401 Unauthorized explicitly
-            navigate('/login');
-            return;  // Exit function
-        }
-
-        if (!response.ok) {
-            throw new Error('Failed to fetch user session');
-        }
+        // if (response.status === 401) {
+        //     // Handle 401 Unauthorized explicitly
+        //     navigate('/login');
+        //     return;  // Exit function
+        // }
 
         const data = await response.json();
+        console.log("User data:", data)
         
         if (response.status === 401) {
             navigate('/login');
         } else {
+            console.log("Whats,data?", data)
             setUser(data);
         }
     } catch (error) {

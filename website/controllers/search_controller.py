@@ -8,7 +8,6 @@ from website.services.auth_services import login_required, Security
 homepage = Blueprint('homepage', __name__)
 
 @homepage.route('/search', methods=['POST'])
-@login_required
 def search():
     """
     Handles homepage search submission and reformatting of search input.

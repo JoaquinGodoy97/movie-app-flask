@@ -86,7 +86,7 @@ const ResultsPage = () => {
         }
     };
 
-    const handleWishlist = async (id, name = "") => {
+    const handleWishlist = async (id, name = "", isInWishlist) => {
         try {
 
             // If a movie name has "/" slash turn it to "-"
@@ -100,7 +100,10 @@ const ResultsPage = () => {
             const token = localStorage.getItem('token')
             const movie_name = fixMovieName(name);
 
-            const url = `http://localhost:5000/wishlist/add/${id}/${movie_name}`;
+
+            const url = isInWishlist ?
+                `http://localhost:5000/wishlist/remove/${id}`:
+                `http://localhost:5000/wishlist/add/${id}/${movie_name}`;
 
             const options = {
                 method: 'POST',
@@ -121,7 +124,6 @@ const ResultsPage = () => {
                 return alert(result.error)
             } else {
                 showToast(result.message)
-                // return alert(result.message)
             }
 
         } catch (error) {
