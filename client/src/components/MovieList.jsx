@@ -1,8 +1,6 @@
 import MovieCard from "./MovieCard"
 
-export const MovieList = ({ movies = [], loading, onWishlist }) => {
-
-
+export const MovieList = ({ movies = [], loading, onWishlist, itsOnWishlist }) => {
 
     if (loading) {
       return (
@@ -38,7 +36,7 @@ export const MovieList = ({ movies = [], loading, onWishlist }) => {
       return (
         <div className="movie-list">
           {movies.map((movie) => (
-            <MovieCard key={movie.mv_id} movie={movie} onWishlist={onWishlist}/>
+            <MovieCard key={movie.mv_id} movie={movie} onWishlist={onWishlist} itsOnWishlist={itsOnWishlist}/>
           ))}
         </div>
       );

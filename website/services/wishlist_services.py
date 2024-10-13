@@ -65,8 +65,8 @@ def add_to_wishlist_db(movie_id, movie_name, username):
         finally:
                 db.session.close()
 
-def is_wishlist_user_limit_reached():
-        list = Wishlist_user.query.filter_by(username=session['username']).all()
+def is_wishlist_user_limit_reached(user):
+        list = Wishlist_user.query.filter_by(username=user).all()
         list_length = len(list)
         return list_length >= 50
 
@@ -90,3 +90,16 @@ def filter_movies_by_search_if_any(movies, search_result):
 
                 return list(filtered_movies)
         return movies
+
+def bring_multiple_movies_by_user(user, movie_ids):
+        # Assuming you have a User and a Wishlist model
+        # Query the wishlist table for this user and the provided movie IDs
+        wishlist_items = Wishlist_user.query.filter(Wishlist_user.username == user, Wishlist_user.mv_id.in_(movie_ids)).all()
+        
+        # Create a dictionary with movie_id as keys and True/False as values
+        wishlist_statuses = {mv_id: False for mv_id in movie_ids}  # Initialize all to False
+        
+        for item in wishlist_items:
+                wishlist_statuses[item.mv_id] = True  # Set to True for movies in the wishlist
+        
+        return wishlist_statuses

@@ -1,26 +1,29 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { SearchBar } from './SearchBar'
+import { SearchBar } from './utils/SearchBar'
 import { MovieList } from './MovieList';
 import { PaginationPanel } from './utils/PaginationPanel';
 import { useLocation, useNavigate } from 'react-router-dom';
-import '../Main.css';
 import { checkUserSession } from './checkUserSession';
 import { LoadingPage } from './utils/LoadingPage';
 import Switch from 'react-switch';
-import { ThemeContext } from '../App'; // import the context
+import { ThemeContext } from '../App';
+import { useToast } from './utils/ToastMessage';
+import '../Main.css';
 
 const WishlistPage = () => {
 
     const [movies, setMovies] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
     const navigate = useNavigate();
-
+    const [wishlistFetched, setWishlistFetched] = useState(false);
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search)
     const searchQuery = queryParams.get('query') || "";
     const currentPageUrl = parseInt(queryParams.get('page')) || 1;
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useState("");
+    const { showToast } = useToast();
+    
 
     useEffect(() => {
 
@@ -28,13 +31,20 @@ const WishlistPage = () => {
             setLoading(true)
             try {
 
-                const token = localStorage.getItem('token')
+                const token = localStorage.getItem('token');
+                
+                if (!token) {
+                    // If there's no token, redirect to login or handle accordingly
+                    console.log('No token found, redirecting to login.');
+                    navigate("/login")
+                    // Redirect logic here, e.g. navigate('/login');
+                    return;
+                }
 
                 const url = query ?
                     `http://localhost:5000/wishlist/search?query=${query}&page=${page}` :
                     `http://localhost:5000/wishlist?page=${page}`;
-
-                const response = await fetch(url, {
+                const options = {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -42,7 +52,9 @@ const WishlistPage = () => {
                     },
                     credentials: 'include',
                     mode: 'cors',
-                });
+                }
+
+                const response = await fetch(url, options);
 
                 if (response.status === 401) {
                     navigate('/login');
@@ -52,12 +64,11 @@ const WishlistPage = () => {
 
                 if (response.ok) {
 
-                    console.log(result.total_pages)
-
                     setMovies(result.results);
                     setTotalPages(result.total_pages || 1);
+                    setWishlistFetched(false);
                 } else {
-                    alert(result.error);
+                    showToast(result.error);
                 }
             } catch (error) {
                 console.error('Error fetching movies: ', error);
@@ -80,6 +91,34 @@ const WishlistPage = () => {
         checkSessionAndFetchMovies();
     }, [searchQuery, currentPageUrl, navigate]);
 
+    useEffect(() => {
+        const fetchWishlistStatuses = async (movies) => {
+            const token = localStorage.getItem('token');
+            const movieIds = movies.map(movie => movie.mv_id);
+
+            const response = await fetch('/wishlist-status', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({ movie_ids: movieIds })
+            });
+
+            const data = await response.json();
+            setMovies(movies.map(movie => ({
+                ...movie,
+                inWishlist: data.statuses[movie.mv_id]  // Update with wishlist status
+            })));
+        };
+
+        if (!wishlistFetched && movies.length > 0) {
+            fetchWishlistStatuses(movies);
+            setWishlistFetched(true);  // Mark wishlist fetching as done
+        }
+    }, [movies, wishlistFetched]);  // Only run this effect after `movies` is fetched
+
     const handleSearch = (query) => {
         if (!query) {
             navigate(`/wishlist?page=1`);
@@ -91,45 +130,46 @@ const WishlistPage = () => {
 
     const handlePageChange = (newPage) => {
         if (newPage > 0 && newPage <= totalPages) {
-            // Fetch new data based on the current query and page
             // console.log(`Fetching data for page: ${newPage}`);
 
-            // If there is no search query, go to /wishlist
             if (!searchQuery) {
                 navigate(`/wishlist/?page=${newPage}`);
             } else {
-                // If there is a search query, go to /wishlist/search
                 navigate(`/wishlist/search?query=${searchQuery}&?page=${newPage}`);
             }
         }
     };
 
-    const handleWishlist = async (id) => {
+    const handleWishlist = async (id, title = "", itemInWishlist = true) => {
+
+        // setLoading(true); 
+        const token = localStorage.getItem('token')
+        
+        const url = `http://localhost:5000/wishlist/remove/${id}`
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            credentials: 'include',
+            mode: 'cors',
+        };
+
         try {
-            const url = `http://localhost:5000/wishlist/remove/${id}`
-
-            const options = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                credentials: 'include',
-                mode: 'cors',
-            };
-
             const response = await fetch(url, options);
             const result = await response.json();
-
+        
             if (result.message) {
                 setMovies((oldMovieList) => oldMovieList.filter((movie) => movie.mv_id !== id))
             }
             // else if (result.message && !isOnWishlistPage) {
             //     setMovies((oldMovieList) => oldMovieList.filter((movie)=> movie.mv_id !== id))
             // }
-
         } catch (error) {
             console.error("Unable to remove:", error)
-        }
+        } 
+        
     }
 
     const classNames = `main-item ${!loading ? 'fade-in' : ''}`
@@ -150,23 +190,22 @@ const WishlistPage = () => {
 
             <div className='button-container sub-container'>
 
-                    <SearchBar onSearch={handleSearch} />
+                <SearchBar onSearch={handleSearch} />
 
-                    <div className="side-buttons ms-3 mb-3">
-                        <input onClick={() => { navigate('/logout') }} className="btn btn-outline-dark" name="logout" id="logout" type="submit" value="Log Out" />
-                        <a onClick={() => { navigate('/search') }} className="btn btn-dark">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="23" fill="currentColor" className="bi bi-arrow-left-square" viewBox="0 0 16 16">
-                                <path fillRule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm11.5 5.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z" />
-                            </svg>
-                        </a>
+                <div className="side-buttons ms-3 mb-3">
+                    <input onClick={() => { navigate('/logout') }} className="btn btn-outline-dark" name="logout" id="logout" type="submit" value="Log Out" />
+                    <a onClick={() => { navigate('/search') }} className="btn btn-dark">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="23" fill="currentColor" className="bi bi-house-door-fill" viewBox="0 0 16 16">
+                            <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                        </svg>
+                    </a>
 
-                    </div>
+                </div>
 
 
             </div>
             <div className='content-container'>
                 {loading ? (
-                    // Show the loading component when loading is true
                     <LoadingPage />
                 ) : (
                     <>

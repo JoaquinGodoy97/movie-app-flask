@@ -1,23 +1,34 @@
-import React, { useState, createContext } from 'react';
+import React, { useState, createContext, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './components/Login';
 import Logout from './components/Logout';
 import Homepage from './components/Homepage';
 import ResultsPage from './components/ResultsPage';
 import WishlistPage from './components/WishlistPage';
-// import SwitchThemeMode from './components/utils/SwitchThemeMode';
-import Switch from "react-switch";
-import './App.css';
 import { ToastProvider } from './components/utils/ToastMessage';
+import './App.css';
 
 export const ThemeContext = createContext(null)
 
 function App() {
-  const [theme, setTheme] = useState('light')
+
+  const [theme, setTheme] = useState(() => {
+      return localStorage.getItem('theme') || 'light';
+  });
 
   const toggleTheme = () => {
-    setTheme((curr) => (curr === 'light' ? 'dark' : 'light'))
-  };
+    
+    setTheme((current) => {
+        const newTheme = current === 'light' ? 'dark' : 'light';
+        localStorage.setItem('theme', newTheme);  // Save to localStorage
+        return newTheme;
+    });
+
+  }
+
+  useEffect(() => {
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>

@@ -18,11 +18,9 @@ def search():
     has_access = Security.verify_token(request.headers)
 
     if has_access:
-        print('token valid')
 
         data = request.json
         search_result = data.get('search')
-        print(search_result)
         # search_result = request.args.get('query', '')
         # current_page = request.args.get('page', 1, type=int)
 
@@ -41,4 +39,4 @@ def search():
         # # If no search_result, return an error message
         return jsonify({'error': 'No search query provided'})
     else:
-        return jsonify({ 'message': 'Unauthorized tokin.', 'status': 401})
+        return jsonify({ 'message': 'Unauthorized token.', 'redirect': '/login'}), 401

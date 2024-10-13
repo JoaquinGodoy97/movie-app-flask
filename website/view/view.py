@@ -6,7 +6,6 @@ def display_movies(results, render_success, render_error): # for the moment keep
     if results:
         movie_set = results['movie_set']
         total_pages = results['total_pages']
-        print("Total pages in display movies function:",total_pages)
         # current_page = results['current_page']
         # search_result = results['search_result']
         # current_user = session['username']

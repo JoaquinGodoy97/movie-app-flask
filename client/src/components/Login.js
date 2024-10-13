@@ -1,35 +1,83 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
-import '../Login.css'
 import Switch from 'react-switch';
-import { ThemeContext } from '../App'; // import the context
+import { ThemeContext } from '../App';
 import { useToast } from './utils/ToastMessage';
+import { isLoggedIn } from './checkUserSession';
+import { LoadingPage } from './utils/LoadingPage';
+import '../Login.css'
 
 function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
-    const [data, setData] = useState('');
-    const {showToast} = useToast();
+    const [loading, setLoading] = useState(false); // I changed the state so It's not loading constantly
+    const { showToast } = useToast();
+    // const [data, setData] = useState('');
 
-    // Check if the user is logged in when the component mounts
     useEffect(() => {
 
-        fetch("http://localhost:5000") // "/" redirects "/login" 5000 (Flask) / 3000 (React)
-            .then(res => res.json())
-            .then(data => {
-                setData(data);
-                console.log(data)
-                // if (!data.logged_in){
-                navigate('/login')
-                // }
-            })
-            .catch(error => console.error("Error fetching data:", error));
+        const token = localStorage.getItem('token');
+        if (!token) {
+            // If there's no token, redirect to login or handle accordingly
+            console.log('No token found, redirecting to login.');
+            navigate("/login")
+            // Redirect logic here, e.g. navigate('/login');
+            return;
+        }
+
+        const fetchData = async () => {
+            setLoading(true)
+            
+            const url = 'http://localhost:5000';
+            const options = {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                credentials: 'include',
+            };
+            try {
+                const response = await fetch(url, options);
+
+                if (response.status === 401) {
+                    // If the token is invalid or expired, remove it and redirect to login
+                    console.log('Invalid or expired token, logging out.');
+                    localStorage.removeItem('token');
+                    navigate('/login');
+                    return;
+                }
+
+            } catch (error) {
+                console.log('Error fetching data:', error);
+            } finally {
+                setLoading(false)
+
+            }
+        };
+
+        if (isLoggedIn) {
+            setLoading(true)
+
+            try {
+                navigate('/search')
+                showToast('Already logged in.')
+            } catch {
+                console.log("Failed to check if it's logged in")
+            }
+            finally {
+                setLoading(false)
+            }
+        }
+
+        fetchData();  // Call the async function
 
     }, [navigate]);
 
-    // Handle form submission
     const onSubmit = async (e) => {
+        setLoading(true)
+
         e.preventDefault();
 
         const loginData = { username, password };
@@ -54,29 +102,35 @@ function Login() {
 
             if (response.ok) {
 
-                console.log(data.token)
                 localStorage.setItem('token', data.token)
-                
-                if(data.token){
-                    
+
+                if (data.token) {
                     showToast(data.message)
                     navigate(data.redirect) // Home page
 
-                } else{
+                } else {
                     console.log('Login failed:', data.message);
                 }
 
             } else {
                 alert(data.error);
-            }
+                }
         } catch (error) {
             console.error("Error submitting form:", error);
+        } finally {
+            setLoading(false)
         }
     };
 
     const { theme, toggleTheme } = useContext(ThemeContext); // access theme and toggleTheme
 
+    if (loading) {
+        return <LoadingPage />
+    }
+
     return (
+
+
         <div className="main-item montserrat-font">
             <nav className='nav-theme'>
                 <Switch
@@ -85,7 +139,7 @@ function Login() {
                     checkedIcon={<span className="toggle-theme-mode" role="img" aria-label="sound-on">⛅</span>}
                     uncheckedIcon={<span className="toggle-theme-mode" role="img" aria-label="sound-off">🌘</span>}
                     className='switch' onChange={toggleTheme} checked={theme === 'dark'} />
-                    
+
             </nav>
             <div className="button-container login-element">
                 <form method="POST" onSubmit={onSubmit}>
@@ -120,7 +174,6 @@ function Login() {
                 </form>
 
             </div>
-            {/* <SwitchThemeMode className='mt-4'/> */}
 
         </div>
 

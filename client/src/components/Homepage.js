@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SearchBar } from './SearchBar';
-import '../Main.css';
+import { SearchBar } from './utils/SearchBar';
 import { checkUserSession } from './checkUserSession';
 import { LoadingPage } from './utils/LoadingPage';
 import Switch from 'react-switch'
-import { ThemeContext } from '../App'; // import the context
+import { ThemeContext } from '../App';
+import '../Main.css';
 
 function Homepage() {
 
@@ -25,7 +25,6 @@ function Homepage() {
         }
 
         const token = localStorage.getItem('token');
-
         const response = await fetch('http://localhost:5000/search', {
             method: 'POST',
             headers: {
@@ -42,12 +41,11 @@ function Homepage() {
         }
 
         const result = await response.json();
+        setUser(result.username)
 
         if (result.redirect) {
-            console.log(result)
             navigate(`/results/search?query=${query}&page=1`)
         } else {
-            // Handle any other response from backend
             console.error("error in search", result)
         }
     }
@@ -60,7 +58,7 @@ function Homepage() {
     }
 
     if (!user) {
-        return null;  // Optionally render nothing if not logged in
+        return null; 
     }
 
     return (

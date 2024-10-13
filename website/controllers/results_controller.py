@@ -26,9 +26,6 @@ def results_search_list():
     has_access = Security.verify_token(request.headers)
 
     if has_access:
-        # if not is_user_logged_in(session):
-        #     message = "User not logged in"
-        #     return logout_redirect(message=message)
         
         search_result = request.args.get('query', '')
         current_page = request.args.get('page', 1, type=int)

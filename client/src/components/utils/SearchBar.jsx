@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export const SearchBar = ({ onSearch, initialQuery }) => {
     const [ searchQuery, setSearchQuery ] = useState(initialQuery || "");
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     
     const handleSubmit = (e) => {
         e.preventDefault();
+        const atResultsPage = window.location.pathname.includes("/results/search")
+        if(!searchQuery && atResultsPage){
+            return navigate("/search")
+        }
         if (!searchQuery.trim()) {
+
             alert("Please enter a search term");
             return;
         }

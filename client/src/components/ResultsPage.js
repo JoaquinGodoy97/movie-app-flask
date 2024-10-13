@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'; // Import useLocation to access the query
-import { SearchBar } from './SearchBar';
+import { SearchBar } from './utils/SearchBar';
 import { MovieList } from './MovieList';
 import { PaginationPanel } from './utils/PaginationPanel';
 import '../Main.css';
@@ -16,6 +16,7 @@ const ResultsPage = () => {
     const [totalPages, setTotalPages] = useState(1);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const [ wishlistFetched, setWishlistFetched ] = useState(false);
 
     // Use location to read the query from the URL
     const location = useLocation();
@@ -60,6 +61,34 @@ const ResultsPage = () => {
         checkSessionAndFetchMovies();
     }, [searchQuery, currentPageUrl, navigate]);
 
+    useEffect(() => {
+        const fetchWishlistStatuses = async (movies) => {
+            const token = localStorage.getItem('token');
+            const movieIds = movies.map(movie => movie.mv_id);
+
+            const response = await fetch('/wishlist-status', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({ movie_ids: movieIds })
+            });
+
+            const data = await response.json();
+            setMovies(movies.map(movie => ({
+                ...movie,
+                inWishlist: data.statuses[movie.mv_id]  // Update with wishlist status
+            })));
+        };
+
+        if (!wishlistFetched && movies.length > 0) {
+            fetchWishlistStatuses(movies);
+            setWishlistFetched(true);  // Mark wishlist fetching as done
+        }
+    }, [movies, wishlistFetched]); 
+
     // This effect runs whenever the searchQuery or currentPage changes
     // useEffect(() => {
     //     if (searchQuery && currentPageUrl) {
@@ -86,7 +115,7 @@ const ResultsPage = () => {
         }
     };
 
-    const handleWishlist = async (id, name = "", isInWishlist) => {
+    const handleWishlist = async (id, name = "", currentInWishlist) => {
         try {
 
             // If a movie name has "/" slash turn it to "-"
@@ -101,7 +130,7 @@ const ResultsPage = () => {
             const movie_name = fixMovieName(name);
 
 
-            const url = isInWishlist ?
+            const url = currentInWishlist ?
                 `http://localhost:5000/wishlist/remove/${id}`:
                 `http://localhost:5000/wishlist/add/${id}/${movie_name}`;
 
@@ -118,14 +147,13 @@ const ResultsPage = () => {
             const response = await fetch(url, options);
             const result = await response.json();
 
-            console.log(result)
-
-            if (result.error) {
-                return alert(result.error)
-            } else {
+            if (response.ok && result.message) {
+                // Update the movie's `inWishlist` status in the `movies` array
+                setMovies((prevMovies) => prevMovies.map((movie) =>
+                    movie.mv_id === id ? { ...movie, inWishlist: !currentInWishlist } : movie
+                ));
                 showToast(result.message)
             }
-
         } catch (error) {
             console.error("Unable to add:", error)
         }

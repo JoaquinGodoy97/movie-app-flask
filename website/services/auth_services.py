@@ -24,7 +24,7 @@ class Security():
     def generate_token(cls, authenticated_user):
         payload = {
             "iat": datetime.now(timezone.utc),
-            'exp': datetime.now(timezone.utc) + timedelta(minutes=10),
+            'exp': datetime.now(timezone.utc) + timedelta(minutes=20),
             'username': authenticated_user.username
         }
         return jwt.encode(payload, cls.secret, algorithm="HS256")
@@ -34,7 +34,7 @@ class Security():
         if 'Authorization' in headers.keys():
             authorization = headers['Authorization']
             jwt_payload = authorization.split(" ")[1]
-            print("JWT Payload:", jwt_payload)
+            # print("JWT Payload:", jwt_payload)
             
             try:
                 return jwt.decode(jwt_payload, cls.secret, algorithms=["HS256"])
@@ -65,7 +65,6 @@ def add_user_to_db(user, email, password):
     try:
         
         user_db = User(user, email, password)
-        print(user_db)
         db.session.add(user_db)
         db.session.commit()
 
@@ -86,7 +85,6 @@ def open_session(user):
     session['loggged_in'] = True
 
     return Messages.welcome_back_user(user)
-    # welcome_user_login(session['username'])
 
 def close_session():
     session.pop('username', None)
