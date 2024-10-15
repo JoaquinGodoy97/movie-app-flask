@@ -2,10 +2,10 @@ import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Switch from 'react-switch';
 import { ThemeContext } from '../App';
-import { useToast } from './utils/ToastMessage';
+import { useToast } from '../utils/ToastMessage';
 import { isLoggedIn } from './checkUserSession';
-import { LoadingPage } from './utils/LoadingPage';
-import '../Login.css'
+import { LoadingPage } from '../utils/LoadingPage';
+import '../styles/Login.css'
 
 function Login() {
     const [username, setUsername] = useState('');

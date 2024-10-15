@@ -1,0 +1,75 @@
+import { useCallback, useState } from 'react';
+
+export const useWishlist = (showToast, setMovies) => {
+
+    // const [wishlistFetched, setWishlistFetched] = useState(false)
+    const fetchWishlistStatuses = async (movies) => {
+        const token = localStorage.getItem('token');
+        const movieIds = movies.map(movie => movie.mv_id);
+        const response = await fetch('/wishlist-status', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ movie_ids: movieIds })
+        });
+
+        // Update with wishlist status
+        const data = await response.json();
+        setMovies(movies.map(movie => ({
+            ...movie,
+            inWishlist: data.statuses[movie.mv_id]  
+        })));
+    };
+
+    const handleWishlist = useCallback(async (id, name = "", currentInWishlist) => {
+        
+        try {
+            // If a movie name has "/" slash turn it to "-"
+            const fixMovieName = (name) => {
+                if (name.includes("/")) {
+                    return name.replace(/\//g, "-");
+                }
+                return name; // Return the original name if no "/" is found
+            };
+
+            const token = localStorage.getItem('token')
+            const movie_name = fixMovieName(name);
+
+            const url = currentInWishlist ?
+                `http://localhost:5000/wishlist/remove/${id}`:
+                `http://localhost:5000/wishlist/add/${id}/${movie_name}`;
+
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                mode: 'cors',
+            };
+
+            const response = await fetch(url, options);
+            const data = await response.json();
+
+            if (response.ok && data.message) {
+
+                console.log("This is data", data)
+
+                // Update the movie's `inWishlist` status in the `movies` array
+                setMovies((prevMovies) => prevMovies.map((movie) =>
+                    movie.mv_id === id ? { ...movie, inWishlist: !currentInWishlist } : movie
+                ));
+                showToast(data.message)
+            }
+        } catch (error) {
+            console.error("Unable to add:", error)
+        }
+    }, [showToast]);
+
+    return { fetchWishlistStatuses, handleWishlist };
+
+}

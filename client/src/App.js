@@ -5,8 +5,8 @@ import Logout from './components/Logout';
 import Homepage from './components/Homepage';
 import ResultsPage from './components/ResultsPage';
 import WishlistPage from './components/WishlistPage';
-import { ToastProvider } from './components/utils/ToastMessage';
-import './App.css';
+import { ToastProvider } from './utils/ToastMessage';
+import './styles/App.css';
 
 export const ThemeContext = createContext(null)
 

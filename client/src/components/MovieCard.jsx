@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Button } from "react-bootstrap";
-import { ToggleOverview } from "./utils/ToggleOverview";
+import { ToggleOverview } from "../utils/ToggleOverview";
+import React, { memo } from 'react';
 
-const MovieCard = ({ movie, onWishlist }) => {
+const MovieCard = memo (({ movie, onWishlist }) => {
 
     // const [data, setData] = useState('')
     const [loading, setLoading] = useState(false);
@@ -109,6 +110,6 @@ const MovieCard = ({ movie, onWishlist }) => {
         </div>
 
     );
-};
+});
 
 export default MovieCard;

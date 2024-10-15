@@ -10,11 +10,11 @@ export const checkUserSession = async (setLoading, setUser, navigate) => {
     setLoading(true); 
 
     try {
+        console.log("Fetching user session...");
         const response = await fetchWithDelay();
         const data = await response.json();
-        // console.log("User data:", data)
-        // console.log(response.status)
-        
+
+        console.log("Response status:", response.status);
         if (response.status === 401) {
             navigate(data.redirect);
         } 
@@ -25,13 +25,13 @@ export const checkUserSession = async (setLoading, setUser, navigate) => {
     } catch (error) {
         console.error('Error during user session check:', error);
     } finally {
-        setLoading(false); 
+        setLoading(false);
+        console.log("Loading state set to false.");
     }
 };
 
 export const isLoggedIn = () => {
     const token = localStorage.getItem('token');
-    
     // Check if token exists and optionally verify the token (you can use JWT decoding libraries)
     return !!token;  // Returns true if token exists, false otherwise
 };

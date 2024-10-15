@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useContext } from 'react'
-import { SearchBar } from './utils/SearchBar'
+import React, { useState, useEffect, useContext, useCallback} from 'react'
+import { SearchBar } from '../utils/SearchBar'
 import { MovieList } from './MovieList';
-import { PaginationPanel } from './utils/PaginationPanel';
+import { PaginationPanel } from '../utils/PaginationPanel';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { checkUserSession } from './checkUserSession';
-import { LoadingPage } from './utils/LoadingPage';
+import { LoadingPage } from '../utils/LoadingPage';
 import Switch from 'react-switch';
 import { ThemeContext } from '../App';
-import { useToast } from './utils/ToastMessage';
-import '../Main.css';
+import { useToast } from '../utils/ToastMessage';
+import '../styles/Main.css';
 
 const WishlistPage = () => {
 
@@ -140,7 +140,7 @@ const WishlistPage = () => {
         }
     };
 
-    const handleWishlist = async (id, title = "", itemInWishlist = true) => {
+    const handleWishlist = useCallback(async (id, title = "", itemInWishlist = true) => {
 
         // setLoading(true); 
         const token = localStorage.getItem('token')
@@ -170,7 +170,7 @@ const WishlistPage = () => {
             console.error("Unable to remove:", error)
         } 
         
-    }
+    }, []);
 
     const classNames = `main-item ${!loading ? 'fade-in' : ''}`
     const { theme, toggleTheme } = useContext(ThemeContext);
