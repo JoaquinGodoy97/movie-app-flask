@@ -10,11 +10,9 @@ export const checkUserSession = async (setLoading, setUser, navigate) => {
     setLoading(true); 
 
     try {
-        console.log("Fetching user session...");
         const response = await fetchWithDelay();
         const data = await response.json();
 
-        console.log("Response status:", response.status);
         if (response.status === 401) {
             navigate(data.redirect);
         } 
@@ -26,7 +24,6 @@ export const checkUserSession = async (setLoading, setUser, navigate) => {
         console.error('Error during user session check:', error);
     } finally {
         setLoading(false);
-        console.log("Loading state set to false.");
     }
 };
 

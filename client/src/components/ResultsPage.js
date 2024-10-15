@@ -20,7 +20,6 @@ const ResultsPage = () => {
     // const [totalPages, setTotalPages] = useState(1);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
-    const [wishlistFetched, setWishlistFetched] = useState(false);
     const [newMovies, setNewMovies] = useState([]); // Temporary state for new movies
 
     const location = useLocation();
@@ -30,35 +29,7 @@ const ResultsPage = () => {
     // const currentPageUrl = parseInt(queryParams.get('page')) || 1;
     const { movies, setMovies, totalPages, fetchMovies } = useFetchMovies();
     const { fetchWishlistStatuses, handleWishlist, tempMovies } = useWishlist(showToast, setMovies);
-
-    // const fetchMovies = async (query, page = 1) => {
-    //     setLoading(true)
-
-    //     try {
-
-    //         const token = localStorage.getItem('token')
-    //         const response = await fetch(`http://localhost:5000/results/search?query=${query}&page=${page}`, {
-    //             method: 'GET',
-    //             headers: {
-    //                 'Authorization': `Bearer ${token}`,
-    //                 'Content-Type': 'application/json'
-    //             },
-    //             credentials: 'include',
-    //         });
-
-    //         const data = await response.json();
-    //         // setMovies(data.results);
-    //         // if (infiniteScroll):
-    //         setNewMovies(data.results);
-    //         // setMovies(prevMovies => [...prevMovies, ...data.results])
-    //         setTotalPages(data.total_pages || 1);
-
-    //     } catch (error) {
-    //         console.error('Error fetching movies:', error);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
+    const [wishlistFetched, setWishlistFetched] = useState(false)
 
     useEffect(() => {
         const pageFromUrl = parseInt(queryParams.get('page')) || 1;
@@ -75,33 +46,29 @@ const ResultsPage = () => {
 
             if (searchQuery && currentPage <= totalPages) {
                 if (currentPage === 1) {
-                    setMovies([]);  
+
+                    setMovies([]); // Restarts movies everytime current page is 1.
                 }
                 await fetchMovies(searchQuery, currentPage, setLoading);
-                // console.log("Movies after fetch:", movies); // Log after fetching
             }
         };
     
         checkSessionAndFetchMovies();
-    }, [searchQuery, currentPage]);
+    }, [currentPage]);
 
     useEffect(() => {
-        console.log("Show tempmovies:", )
 
-        if (!wishlistFetched && movies.length > 0) {
-            // setLoading(true)
+        if (!wishlistFetched && movies.length > 0){
             fetchWishlistStatuses(movies);
-            setWishlistFetched(true);  // Mark wishlist fetching as done
-            // setLoading(false)
+            setWishlistFetched(true)
         }
+
     }, [movies, wishlistFetched, fetchWishlistStatuses]);
 
-    // This effect runs whenever the searchQuery or currentPage changes
-    // useEffect(() => {
-    //     if (searchQuery && currentPageUrl) {
-    //         fetchMovies(searchQuery, currentPageUrl); 
-    //     }
-    // }, [searchQuery, currentPageUrl]);
+    // Resetting `wishlistFetched` only when `movies` change
+    useEffect(() => {
+        setWishlistFetched(false);
+    }, [movies.length]);
 
     const handleSearch = useCallback((query) => {
         if (!query) {

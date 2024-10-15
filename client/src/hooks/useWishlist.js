@@ -1,28 +1,38 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
 export const useWishlist = (showToast, setMovies) => {
 
-    // const [wishlistFetched, setWishlistFetched] = useState(false)
-    const fetchWishlistStatuses = async (movies) => {
-        const token = localStorage.getItem('token');
-        const movieIds = movies.map(movie => movie.mv_id);
-        const response = await fetch('/wishlist-status', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include',
-            body: JSON.stringify({ movie_ids: movieIds })
-        });
+    const fetchWishlistStatuses = useCallback(async (movies, wishlistFetched) => {
 
-        // Update with wishlist status
-        const data = await response.json();
-        setMovies(movies.map(movie => ({
-            ...movie,
-            inWishlist: data.statuses[movie.mv_id]  
-        })));
-    };
+        console.log("This should be false", wishlistFetched)
+        console.log(movies.length)
+        
+        try {
+            const token = localStorage.getItem('token');
+            const movieIds = movies.map(movie => movie.mv_id);
+            const response = await fetch('/wishlist-status', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({ movie_ids: movieIds })
+            });
+    
+            // Update with wishlist status
+            const data = await response.json();
+
+            setMovies(movies.map(movie => ({
+                ...movie,
+                inWishlist: data.statuses[movie.mv_id]  
+            })));
+
+        } catch (err) {
+            console.log("Unable to fetch:", err)
+        } 
+
+    });
 
     const handleWishlist = useCallback(async (id, name = "", currentInWishlist) => {
         
@@ -57,18 +67,18 @@ export const useWishlist = (showToast, setMovies) => {
 
             if (response.ok && data.message) {
 
-                console.log("This is data", data)
-
                 // Update the movie's `inWishlist` status in the `movies` array
                 setMovies((prevMovies) => prevMovies.map((movie) =>
                     movie.mv_id === id ? { ...movie, inWishlist: !currentInWishlist } : movie
                 ));
+
+                // Toast message Added/Removed
                 showToast(data.message)
             }
         } catch (error) {
             console.error("Unable to add:", error)
         }
-    }, [showToast]);
+    }, [showToast, setMovies]);
 
     return { fetchWishlistStatuses, handleWishlist };
 
