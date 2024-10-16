@@ -2,8 +2,10 @@ import { useCallback } from 'react';
 
 export const useWishlist = (showToast, setMovies) => {
 
-    const fetchWishlistStatuses = useCallback(async (movies, wishlistFetched) => {
+    const atWishlistPage = window.location.pathname.includes("/wishlist");
 
+    const fetchWishlistStatuses = useCallback(async (movies, wishlistFetched) => {
+    
         console.log("This should be false", wishlistFetched)
         console.log(movies.length)
         
@@ -32,7 +34,7 @@ export const useWishlist = (showToast, setMovies) => {
             console.log("Unable to fetch:", err)
         } 
 
-    });
+    }, [setMovies]);
 
     const handleWishlist = useCallback(async (id, name = "", currentInWishlist) => {
         
@@ -68,17 +70,23 @@ export const useWishlist = (showToast, setMovies) => {
             if (response.ok && data.message) {
 
                 // Update the movie's `inWishlist` status in the `movies` array
-                setMovies((prevMovies) => prevMovies.map((movie) =>
-                    movie.mv_id === id ? { ...movie, inWishlist: !currentInWishlist } : movie
-                ));
-
+                if (data.method === 'remove' && atWishlistPage) {
+                    setTimeout(() => {
+                        setMovies((prevMovies) => prevMovies.filter((movie) => movie.mv_id !== id)); // Remove after transition
+                    }, 1000); // Match the transition duration (0.6s)
+                } else {
+                    setMovies((prevMovies) => prevMovies.map((movie) =>
+                        movie.mv_id === id ? { ...movie, inWishlist: !currentInWishlist } : movie
+                    ));
+                }
+                
                 // Toast message Added/Removed
                 showToast(data.message)
             }
         } catch (error) {
             console.error("Unable to add:", error)
         }
-    }, [showToast, setMovies]);
+    }, [showToast, setMovies, atWishlistPage]);
 
     return { fetchWishlistStatuses, handleWishlist };
 

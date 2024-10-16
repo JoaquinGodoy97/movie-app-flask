@@ -1,32 +1,47 @@
-
-
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 export const useFetchMovies = () => {
 
     const [movies, setMovies] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
-    const [newMovies, setNewMovies] = useState([]);
 
     const fetchMovies = async (query, page = 1, setLoading) => {
-        setLoading(true)
 
+        const atWishlistPage = window.location.pathname.includes("/wishlist");
+
+        setLoading(true)
         try {
+
+            let url;
             const token = localStorage.getItem('token')
-            const response = await fetch(`http://localhost:5000/results/search?query=${query}&page=${page}`, {
+            const options = {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 credentials: 'include',
-            });
+            }
+
+            if (atWishlistPage){
+                url = query ?
+                    `http://localhost:5000/wishlist/search?query=${query}&page=${page}` :
+                    `http://localhost:5000/wishlist?page=${page}`;
+            } else {
+                url = `http://localhost:5000/results/search?query=${query}&page=${page}`;
+            }
+            
+            const response = await fetch(url, options);
 
             const data = await response.json();
             console.log("Fetched movies:", data);
-            // setNewMovies(data.results);
-            console.log(newMovies)
+            // if (atWishlistPage){
+            //     setMovies(prevMovies => [...prevMovies, ...data.results])
+            // } else {
             setMovies(prevMovies => [...prevMovies, ...data.results])
+            // }
+            // setMovies(data.results)
+            
             setTotalPages(data.total_pages || 1);
 
         } catch (error) {
@@ -37,14 +52,13 @@ export const useFetchMovies = () => {
 
     };
 
-    useEffect(() => {
-        if (newMovies.length > 0) {
-            setMovies((prevMovies) => [...prevMovies, ...newMovies]);
-        }
-    }, [newMovies]);
+    // useEffect(() => {
+    //     if (movies.length > 0) {
+    //         setMovies((prevMovies) => [...prevMovies, ...movies]);
+    //     }
+    // }, [movies]);
 
     return { movies, setMovies, totalPages, fetchMovies };
-
 
 }
 

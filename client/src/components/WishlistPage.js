@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useCallback} from 'react'
+import React, { useState, useEffect, useContext, useCallback } from 'react'
 import { SearchBar } from '../utils/SearchBar'
 import { MovieList } from './MovieList';
 import { PaginationPanel } from '../utils/PaginationPanel';
@@ -9,11 +9,11 @@ import Switch from 'react-switch';
 import { ThemeContext } from '../App';
 import { useToast } from '../utils/ToastMessage';
 import '../styles/Main.css';
+import { useFetchMovies } from '../hooks/useFetchMovies';
+import { useWishlist } from '../hooks/useWishlist';
 
 const WishlistPage = () => {
 
-    const [movies, setMovies] = useState([]);
-    const [totalPages, setTotalPages] = useState(1);
     const navigate = useNavigate();
     const [wishlistFetched, setWishlistFetched] = useState(false);
     const location = useLocation();
@@ -23,95 +23,34 @@ const WishlistPage = () => {
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useState("");
     const { showToast } = useToast();
-    
+    const [currentPage, setCurrentPage] = useState(1);
+    const { movies, setMovies, totalPages, fetchMovies } = useFetchMovies();
+    const { fetchWishlistStatuses, handleWishlist } = useWishlist(showToast, setMovies);
+    const [ infiniteScroll, setInfiniteScroll] = useState(true);
+    const atWishlistPage = window.location.pathname.includes("/wishlist");
+
+    useEffect(() => {
+        const pageFromUrl = parseInt(queryParams.get('page')) || 1;
+        setCurrentPage(pageFromUrl);
+    }, [location.search])
 
     useEffect(() => {
 
-        const fetchMovies = async (query, page = 1) => {
-            setLoading(true)
-            try {
-
-                const token = localStorage.getItem('token');
-                
-                if (!token) {
-                    // If there's no token, redirect to login or handle accordingly
-                    console.log('No token found, redirecting to login.');
-                    navigate("/login")
-                    // Redirect logic here, e.g. navigate('/login');
-                    return;
-                }
-
-                const url = query ?
-                    `http://localhost:5000/wishlist/search?query=${query}&page=${page}` :
-                    `http://localhost:5000/wishlist?page=${page}`;
-                const options = {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    credentials: 'include',
-                    mode: 'cors',
-                }
-
-                const response = await fetch(url, options);
-
-                if (response.status === 401) {
-                    navigate('/login');
-                }
-
-                const result = await response.json();
-
-                if (response.ok) {
-
-                    setMovies(result.results);
-                    setTotalPages(result.total_pages || 1);
-                    setWishlistFetched(false);
-                } else {
-                    showToast(result.error);
-                }
-            } catch (error) {
-                console.error('Error fetching movies: ', error);
-            } finally {
-                setLoading(false)
-            }
-
-        };
-
         const checkSessionAndFetchMovies = async () => {
-
             await checkUserSession(setLoading, setUser, navigate)
+            if ((searchQuery && atWishlistPage) || currentPage <= totalPages) {
+                if (currentPage === 1) {
 
-            if (searchQuery || currentPageUrl) {
-
-                await fetchMovies(searchQuery, currentPageUrl);
+                    setMovies([]); // Restarts movies everytime current page is 1.
+                }
+                await fetchMovies(searchQuery, currentPage, setLoading);
             }
         };
 
         checkSessionAndFetchMovies();
-    }, [searchQuery, currentPageUrl, navigate]);
+    }, [currentPage]);
 
     useEffect(() => {
-        const fetchWishlistStatuses = async (movies) => {
-            const token = localStorage.getItem('token');
-            const movieIds = movies.map(movie => movie.mv_id);
-
-            const response = await fetch('/wishlist-status', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                credentials: 'include',
-                body: JSON.stringify({ movie_ids: movieIds })
-            });
-
-            const data = await response.json();
-            setMovies(movies.map(movie => ({
-                ...movie,
-                inWishlist: data.statuses[movie.mv_id]  // Update with wishlist status
-            })));
-        };
 
         if (!wishlistFetched && movies.length > 0) {
             fetchWishlistStatuses(movies);
@@ -119,61 +58,43 @@ const WishlistPage = () => {
         }
     }, [movies, wishlistFetched]);  // Only run this effect after `movies` is fetched
 
-    const handleSearch = (query) => {
+    useEffect(() => {
+        setWishlistFetched(false);
+    }, [movies.length]);
+
+    const handleSearch = useCallback((query) => {
         if (!query) {
             navigate(`/wishlist?page=1`);
         }
         navigate(`/wishlist/search?query=${query}&page=${currentPageUrl}`)
+    }, [navigate]);
 
-    };
 
 
     const handlePageChange = (newPage) => {
         if (newPage > 0 && newPage <= totalPages) {
             // console.log(`Fetching data for page: ${newPage}`);
 
-            if (!searchQuery) {
-                navigate(`/wishlist/?page=${newPage}`);
+            if (infiniteScroll){
+                setCurrentPage(newPage)
             } else {
-                navigate(`/wishlist/search?query=${searchQuery}&?page=${newPage}`);
+                if (!searchQuery) {
+                navigate(`/wishlist/?page=${newPage}`);
+                } else {
+                    navigate(`/wishlist/search?query=${searchQuery}&?page=${newPage}`);
+                }
             }
+
+            
         }
     };
 
-    const handleWishlist = useCallback(async (id, title = "", itemInWishlist = true) => {
-
-        // setLoading(true); 
-        const token = localStorage.getItem('token')
-        
-        const url = `http://localhost:5000/wishlist/remove/${id}`
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            credentials: 'include',
-            mode: 'cors',
-        };
-
-        try {
-            const response = await fetch(url, options);
-            const result = await response.json();
-        
-            if (result.message) {
-                setMovies((oldMovieList) => oldMovieList.filter((movie) => movie.mv_id !== id))
-            }
-            // else if (result.message && !isOnWishlistPage) {
-            //     setMovies((oldMovieList) => oldMovieList.filter((movie)=> movie.mv_id !== id))
-            // }
-        } catch (error) {
-            console.error("Unable to remove:", error)
-        } 
-        
-    }, []);
-
     const classNames = `main-item ${!loading ? 'fade-in' : ''}`
     const { theme, toggleTheme } = useContext(ThemeContext);
+
+    if (loading){
+        <LoadingPage />
+    }
 
     return (
         <div className={classNames}>
@@ -205,19 +126,30 @@ const WishlistPage = () => {
 
             </div>
             <div className='content-container'>
-                {loading ? (
+                {loading && currentPage === 1? (
+                    // Show the loading component when loading is true
                     <LoadingPage />
                 ) : (
                     <>
-                        <MovieList movies={movies} loading={loading} onWishlist={handleWishlist} />
-
-                        {totalPages && currentPageUrl <= totalPages && (
-                            <PaginationPanel
-                                className="pagination"
-                                currentPage={currentPageUrl}
-                                totalPages={totalPages}
-                                onPageChange={handlePageChange}
-                            />
+                        {movies.length > 0 ? (
+                            <>
+                                <MovieList
+                                    movies={movies}
+                                    loading={loading}
+                                    onWishlist={handleWishlist}
+                                    onPageChange={handlePageChange}
+                                    currentPage={currentPage}
+                                />
+                                {totalPages && currentPage <= totalPages && (
+                                    <PaginationPanel
+                                        currentPage={currentPage}
+                                        totalPages={totalPages}
+                                        onPageChange={handlePageChange}
+                                    />
+                                ) && !infiniteScroll}
+                            </>
+                        ) : (
+                            !loading && <div>No movies found.</div> // Handle no movies case
                         )}
                     </>
 

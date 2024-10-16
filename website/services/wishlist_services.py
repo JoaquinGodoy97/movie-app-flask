@@ -75,7 +75,7 @@ def remove_from_wishlist_db(found_movie_to_delete):
                 db.session.delete(found_movie_to_delete)
                 db.session.commit()
                 database_wishlist_delete_erorr_alert(found_movie_to_delete.title, found_movie_to_delete.mv_id)
-                return jsonify({ "message": "Movie removed successfuly"})
+                return jsonify({ "message": "Movie removed successfuly", "method": 'remove'})
 
         except Exception as e:
                 db.session.rollback()

@@ -85,7 +85,7 @@ def add_to_wishlist(movie_id, movie_name):
         # database_wishlist_save_success_alert(movie_name, movie_id)
         add_to_wishlist_db(movie_id, movie_name, username=user)
     
-    return jsonify({ "message": f"{user} you added {movie_name} to your Wishlist!"})
+    return jsonify({ "message": f"{user} you added {movie_name} to your Wishlist!", 'method': 'add'})
     # return display_current_results(search_result, current_page)
 
 @wishlist.route('/wishlist/remove/<int:movie_id>', methods=["POST"])

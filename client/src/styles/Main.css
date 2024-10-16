@@ -364,10 +364,27 @@ ul.pagination li.active {
     max-width: 180px;
 }
 
-.movie-card:hover {
+.movie-card:hover, .movie-card:focus, .hidden {
     /* box-shadow: inset 0px 0px 60px -12px rgba(0, 0, 0, 1);  */
     /* transition: box-shadow 0.3s ease; */
+    transition: box-shadow 2s ease-in-out, opacity .6s ease, transform .6s ease-out;
 }
+
+@keyframes shrinkOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0px)
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.8) translate(0%, 0%);
+        filter: blur(5px);
+        margin: 0;
+        padding: 0;
+    }
+}
+
 
 /* Make sure the title adjusts with screen size */
 .card-title {

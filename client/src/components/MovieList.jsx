@@ -2,12 +2,11 @@ import { useCallback, useRef } from "react";
 import MovieCard from "./MovieCard"
 import { LoadingPage } from '../utils/LoadingPage';
 
-export const MovieList = ({ movies = [], loading, onWishlist, itsOnWishlist, currentPage, onPageChange }) => {
+export const MovieList = ({ movies = [], loading, onWishlist, currentPage, onPageChange }) => {
 
   const observer = useRef();
 
   // if (infiniteScroll)
-
   const lastMovieSet = useCallback(node => {
     if (loading) return
 
@@ -37,11 +36,11 @@ export const MovieList = ({ movies = [], loading, onWishlist, itsOnWishlist, cur
         })}
 
       {/* Render the loading spinner at the bottom of the movie list when fetching new movies */}
-      {loading && !movies.length && (
+      {loading && movies.legth? (
         <div className="loading-spinner">
           <LoadingPage />
         </div>
-      )}
+      ) : null}
     </div>
   );
 };

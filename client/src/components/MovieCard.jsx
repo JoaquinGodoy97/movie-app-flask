@@ -7,23 +7,7 @@ const MovieCard = memo (({ movie, onWishlist }) => {
 
     // const [data, setData] = useState('')
     const [loading, setLoading] = useState(false);
-
-    // useEffect(() => {
-
-    //     const token = localStorage.getItem('token');
-    //     fetch(`/wishlist-status/${movie.mv_id}`, {
-            
-    //         headers: {
-    //             'Authorization': `Bearer ${token}`  // Send the token in Authorization header
-    //         },
-    //         credentials: 'include'
-            
-    //     })
-    //         .then(response => response.json())
-    //         .then(data => setItemInWishlist(data.in_wishlist))
-    //         .catch(error => console.error('Error:', error));
-
-    // }, [movie.mv_id]);
+    const [isHidden, setIsHidden] = useState(false)
 
     const handleWishlistToggle = async () => {
 
@@ -31,7 +15,11 @@ const MovieCard = memo (({ movie, onWishlist }) => {
         try {
             if (movie.inWishlist) {
                 await onWishlist(movie.mv_id, movie.title, true);  // Call the removal action
+                if (atWishlistPage) {
+                    setIsHidden(true); // Hide the card if it's removed on the Wishlist Page
+                }
             } else {
+
                 await onWishlist(movie.mv_id, movie.title, false);  // Call the add action
             }
         } catch (err) {
@@ -50,10 +38,13 @@ const MovieCard = memo (({ movie, onWishlist }) => {
 
     // Dynamic styles box-shadow: inset 0 0 10px;
     const cardStyle = {
-        transition: 'opacity 0.3s ease, box-shadow 0.3s ease', // 
         opacity: isHovered ? 0.9 : 1, // Change opacity when hovered/
         boxShadow: isHovered ? 'inset rgb(0, 0, 0) 0px 0px 60px -12px' : null,// Darken the card when hovered
-        // backgroundColor: isHovered ? 'rgba(0, 0, 0, 0.235)' : '#f8f9fa', // Darken the card when hovered
+        transform: isHidden ? 'scale(0%)' : null, // Apply CSS to hide the card
+        overflow: isHidden ? 'hidden' : null, // Apply CSS to hide the card
+        opacity: isHidden ? 0.5 : 1,
+        animation: isHidden ? 'shrinkOut 0.6s ease-out forwards' : null,
+        
     };
 
     const POSTER_URL = "https://image.tmdb.org/t/p/w200"
@@ -70,7 +61,7 @@ const MovieCard = memo (({ movie, onWishlist }) => {
 
     return (
 
-        <div className="card movie-card" style={cardStyle}>
+        <div className={`card movie-card ${isHidden ? 'hidden' : ''}`} style={cardStyle}>
             <div className="card-content">
 
                 <Button type="button" disabled={loading} className="btn-sm" onClick={handleWishlistToggle}
