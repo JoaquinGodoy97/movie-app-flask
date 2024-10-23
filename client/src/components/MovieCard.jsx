@@ -6,14 +6,14 @@ import React, { memo } from 'react';
 const MovieCard = memo (({ movie, onWishlist }) => {
 
     // const [data, setData] = useState('')
-    const [loading, setLoading] = useState(false);
+    const [processingAction, setprocessingAction] = useState(false);
     const [isHidden, setIsHidden] = useState(false)
 
     const handleWishlistToggle = async () => {
 
-        setLoading(true)
+        setprocessingAction(true)
         try {
-            if (movie.inWishlist) {
+            if (movie.inWishlist || atWishlistPage) {
                 await onWishlist(movie.mv_id, movie.title, true);  // Call the removal action
                 if (atWishlistPage) {
                     setIsHidden(true); // Hide the card if it's removed on the Wishlist Page
@@ -26,7 +26,7 @@ const MovieCard = memo (({ movie, onWishlist }) => {
             console.log(err)
         } 
         finally {
-            setLoading(false)
+            setprocessingAction(false)
         }
     };
 
@@ -64,7 +64,7 @@ const MovieCard = memo (({ movie, onWishlist }) => {
         <div className={`card movie-card ${isHidden ? 'hidden' : ''}`} style={cardStyle}>
             <div className="card-content">
 
-                <Button type="button" disabled={loading} className="btn-sm" onClick={handleWishlistToggle}
+                <Button type="button" disabled={processingAction} className="btn-sm" onClick={handleWishlistToggle}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 >

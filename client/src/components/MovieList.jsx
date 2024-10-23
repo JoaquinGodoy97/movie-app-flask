@@ -1,28 +1,27 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useEffect } from "react";
 import MovieCard from "./MovieCard"
 import { LoadingPage } from '../utils/LoadingPage';
 
-export const MovieList = ({ movies = [], loading, onWishlist, currentPage, onPageChange }) => {
+export const MovieList = ({ movies = [], loading, onWishlist, currentPage, onPageChange, totalPages }) => {
 
   const observer = useRef();
 
-  // if (infiniteScroll)
   const lastMovieSet = useCallback(node => {
     if (loading) return
 
+    console.log(totalPages, 'is the state of totalpages now in movielist.')
     if (observer.current) observer.current.disconnect()
 
     observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && !loading) {
+      if (entries[0].isIntersecting && !loading && currentPage <= totalPages) {
         onPageChange(currentPage + 1)
       }
     }, {
       threshold: 1.0 // Adjust threshold to load when the loadingRef is fully in view
   });
+    if (node) observer.current.observe(node);
 
-    if (node) observer.current.observe(node)
-
-  }, [loading, currentPage, onPageChange]);
+  }, [onPageChange]);
 
   return (
     <div className={`movie-list ${loading ? 'loading' : ''}`}>
@@ -36,7 +35,7 @@ export const MovieList = ({ movies = [], loading, onWishlist, currentPage, onPag
         })}
 
       {/* Render the loading spinner at the bottom of the movie list when fetching new movies */}
-      {loading && movies.legth? (
+      {loading ? (
         <div className="loading-spinner">
           <LoadingPage />
         </div>

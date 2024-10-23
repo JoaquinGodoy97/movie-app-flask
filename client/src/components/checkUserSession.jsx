@@ -11,13 +11,15 @@ export const checkUserSession = async (setLoading, setUser, navigate) => {
 
     try {
         const response = await fetchWithDelay();
+        console.log("Session check response:", response);
         const data = await response.json();
 
         if (response.status === 401) {
+            console.warn("Unauthorized session. Redirecting...");
             navigate(data.redirect);
         } 
         else {
-            // console.log('Why is data.username redirecting wishlist/username?', data)
+            console.log("User session valid:", data);
             setUser(data);
         }
     } catch (error) {

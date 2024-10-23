@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'; // Import useLocation to access the query
 import Switch from 'react-switch';
 import { ThemeContext } from '../App';
@@ -13,47 +13,60 @@ import { checkUserSession } from './checkUserSession';
 import { MovieList } from './MovieList';
 
 const ResultsPage = () => {
+    const navigate = useNavigate();
+    const [wishlistFetched, setWishlistFetched] = useState(false)
+    const location = useLocation();
     const [infiniteScroll, setInfiniteScroll] = useState(true);
+    
+    const queryParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
+    
     const { showToast } = useToast();
     // const [movies, setMovies] = useState([]);
     const [currentPage, setCurrentPage] = useState(1); // Track current page
     // const [totalPages, setTotalPages] = useState(1);
-    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
-    const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
+    // const queryParams = new URLSearchParams(location.search);
     const searchQuery = queryParams.get('query') || '';
     const [user, setUser] = useState(null);
     // const currentPageUrl = parseInt(queryParams.get('page')) || 1;
     const { movies, setMovies, totalPages, fetchMovies } = useFetchMovies();
     const { fetchWishlistStatuses, handleWishlist } = useWishlist(showToast, setMovies);
-    const [wishlistFetched, setWishlistFetched] = useState(false)
+    const atResultsPage = window.location.pathname.includes("/results");
+
+    // useEffect(() => {
+    //     const pageFromUrl = parseInt(queryParams.get('page')) || 1;
+    //     setCurrentPage(pageFromUrl);
+    // }, [location.search])
+    useEffect(() => {
+        const checkSession = async () => {
+            console.log('Checking user session...');
+            const userSession = await checkUserSession(setLoading, setUser, navigate);
+            if (!userSession) return;  // Stop if session is invalid
+        };
+
+        checkSession();  // Run session check only once on mount
+    }, []);
 
     useEffect(() => {
-        const pageFromUrl = parseInt(queryParams.get('page')) || 1;
-        setCurrentPage(pageFromUrl);
-    }, [location.search])
+        const fetchInitialMovies = async () => {
 
-    useEffect(() => {
-        const checkSessionAndFetchMovies = async () => {
-            await checkUserSession(setLoading, setUser, navigate);
+            const resetMovies = currentPage === 1 && searchQuery.length > 0;
+            console.log("Fetching movies for page:", currentPage);
+            console.log("total pages:", totalPages)
 
-            // console.log("Search Query:", searchQuery);
-            // console.log("Current Page:", currentPage);
-            // console.log("Total Pages:", totalPages);
-
-            if (searchQuery && currentPage <= totalPages) {
+            if (totalPages >= 1 && atResultsPage && !loading && totalPages) {
+                console.log(totalPages, "after")
                 if (currentPage === 1) {
-
-                    setMovies([]); // Restarts movies everytime current page is 1.
+                    console.log("reseting?")
+                    setMovies([]);  // Reset movies for the first page
                 }
-                await fetchMovies(searchQuery, currentPage, setLoading);
+                await fetchMovies(searchQuery, currentPage, setLoading, resetMovies);
             }
         };
-    
-        checkSessionAndFetchMovies();
-    }, [currentPage]);
+
+        fetchInitialMovies();
+    }, [currentPage, searchQuery, fetchMovies, loading]);
 
     useEffect(() => {
 
@@ -69,21 +82,34 @@ const ResultsPage = () => {
         setWishlistFetched(false);
     }, [movies.length]);
 
-    const handleSearch = useCallback((query) => {
+    const handleSearch = (query, page) => {
         if (!query) {
             alert("Please enter a search term");
             return;
         }
-
+        setCurrentPage(1);
         // Navigate to the results page with the search query
-        navigate(`/results/search?query=${query}&page=1`);
-    }, [navigate]);
+        navigate(`/results/search?query=${query}&page=${page}`);
+    }
 
     const handlePageChange = (newPage) => {
-        if (newPage > 0 && newPage <= totalPages) {
+        console.log(currentPage, newPage, newPage <= totalPages)
+        console.log("Whats the state of movies length:", movies.length)
 
+        if (newPage > currentPage && newPage <= totalPages){
+
+            console.log("1st validation")
+        }
+
+        if (atResultsPage && newPage > 0 && !loading) {
+            console.log(`2d validation Changing page to: ${newPage}`);
             setCurrentPage(newPage)
-            // navigate(`/results/search?query=${searchQuery}&page=${newPage}`);
+
+            // navigate(`/wishlist?page=${newPage}`);
+        }   else if (!atResultsPage){
+
+            console.log("3rd validation")
+            navigate(`/wishlist/search?query=${searchQuery}&page=${newPage}`);
         }
     };
 
@@ -118,7 +144,7 @@ const ResultsPage = () => {
                 </div>
             </div>
             <div className='content-container'>
-                {loading && !infiniteScroll ? (
+                {loading && movies.length < 1 ? (
                     // Show the loading component when loading is true
                     <LoadingPage />
                 ) : (
@@ -132,6 +158,7 @@ const ResultsPage = () => {
                                     onWishlist={handleWishlist}
                                     onPageChange={handlePageChange}
                                     currentPage={currentPage}
+                                    totalPages={totalPages}
                                 />
                                 {totalPages && currentPage <= totalPages && (
                                     <PaginationPanel

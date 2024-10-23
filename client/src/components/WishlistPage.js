@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react'
+import React, { useState, useEffect, useContext, useCallback, useMemo } from 'react'
 import { SearchBar } from '../utils/SearchBar'
 import { MovieList } from './MovieList';
 import { PaginationPanel } from '../utils/PaginationPanel';
@@ -17,7 +17,9 @@ const WishlistPage = () => {
     const navigate = useNavigate();
     const [wishlistFetched, setWishlistFetched] = useState(false);
     const location = useLocation();
-    const queryParams = new URLSearchParams(location.search)
+    const queryParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
+
+    // const queryParams = new URLSearchParams(location.search)
     const searchQuery = queryParams.get('query') || "";
     const currentPageUrl = parseInt(queryParams.get('page')) || 1;
     const [loading, setLoading] = useState(false);
@@ -29,72 +31,102 @@ const WishlistPage = () => {
     const [ infiniteScroll, setInfiniteScroll] = useState(true);
     const atWishlistPage = window.location.pathname.includes("/wishlist");
 
-    useEffect(() => {
-        const pageFromUrl = parseInt(queryParams.get('page')) || 1;
-        setCurrentPage(pageFromUrl);
-    }, [location.search])
 
     useEffect(() => {
+        // const pageFromUrl = parseInt(queryParams.get('page')) || 1;
+        // if (pageFromUrl !== currentPage) {
+        //     console.log(`Updating currentPage from URL: ${pageFromUrl}`);
 
-        const checkSessionAndFetchMovies = async () => {
-            await checkUserSession(setLoading, setUser, navigate)
-            if ((searchQuery && atWishlistPage) || currentPage <= totalPages) {
+        //     setCurrentPage(pageFromUrl);
+        // }
+    }, []);
+
+    useEffect(() => {
+        const checkSession = async () => {
+            console.log('Checking user session...');
+            const userSession = await checkUserSession(setLoading, setUser, navigate);
+            if (!userSession) return;  // Stop if session is invalid
+        };
+
+        checkSession();  // Run session check only once on mount
+    }, []);
+
+    useEffect(() => {
+        const fetchInitialMovies = async () => {
+            console.log("Fetching movies for page:", currentPage);
+            console.log("total pages:", totalPages)
+            const resetMovies = currentPage === 1 && searchQuery.length > 0;
+
+            if (totalPages >= 1 && atWishlistPage && !loading) {
+                console.log(totalPages, "after")
                 if (currentPage === 1) {
-
-                    setMovies([]); // Restarts movies everytime current page is 1.
+                    setMovies([]);  // Reset movies for the first page
                 }
-                await fetchMovies(searchQuery, currentPage, setLoading);
+                await fetchMovies(searchQuery, currentPage, setLoading, resetMovies);
             }
         };
 
-        checkSessionAndFetchMovies();
-    }, [currentPage]);
+        fetchInitialMovies();
+    }, [currentPage, searchQuery, fetchMovies]);
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        if (!wishlistFetched && movies.length > 0) {
-            fetchWishlistStatuses(movies);
-            setWishlistFetched(true);  // Mark wishlist fetching as done
-        }
-    }, [movies, wishlistFetched]);  // Only run this effect after `movies` is fetched
+    //     if (!wishlistFetched && movies.length > 0) {
+    //         fetchWishlistStatuses(movies);
+    //         setWishlistFetched(true);  // Mark wishlist fetching as done
+    //     }
 
-    useEffect(() => {
-        setWishlistFetched(false);
-    }, [movies.length]);
 
-    const handleSearch = useCallback((query) => {
+    // }, [movies, wishlistFetched, fetchWishlistStatuses]);  // Only run this effect after `movies` is fetched
+
+    // useEffect(() => {
+    //     setWishlistFetched(false);
+    // }, [movies.length]);
+
+    const handleSearch = useCallback((query, page) => {
         if (!query) {
             navigate(`/wishlist?page=1`);
         }
-        navigate(`/wishlist/search?query=${query}&page=${currentPageUrl}`)
-    }, [navigate]);
+
+        setCurrentPage(1)
+        navigate(`/wishlist/search?query=${query}&page=${page}`)
+    }, []);
 
 
 
     const handlePageChange = (newPage) => {
-        if (newPage > 0 && newPage <= totalPages) {
-            // console.log(`Fetching data for page: ${newPage}`);
 
-            if (infiniteScroll){
-                setCurrentPage(newPage)
-            } else {
-                if (!searchQuery) {
-                navigate(`/wishlist/?page=${newPage}`);
-                } else {
-                    navigate(`/wishlist/search?query=${searchQuery}&?page=${newPage}`);
-                }
-            }
+        console.log(currentPage, newPage, newPage <= totalPages)
+        console.log("Whats the state of movies length:", movies.length)
 
-            
+        if (newPage > currentPage && newPage <= totalPages){
+
+            console.log("1st validation")
         }
-    };
+
+        if (atWishlistPage && newPage > 0 && !loading) {
+            console.log(`2d validation Changing page to: ${newPage}`);
+            setCurrentPage(newPage)
+
+            // navigate(`/wishlist?page=${newPage}`);
+        }   else if (!atWishlistPage){
+
+            console.log("3rd validation")
+            navigate(`/wishlist/search?query=${searchQuery}&page=${newPage}`);
+        }
+        // if (newPage !== currentPage && newPage > 0 && newPage <= totalPages) {
+    //         setCurrentPage(newPage);  // Update state directly
+    //         if (!searchQuery) {
+        
+        // }
+    } ;
 
     const classNames = `main-item ${!loading ? 'fade-in' : ''}`
     const { theme, toggleTheme } = useContext(ThemeContext);
 
-    if (loading){
-        <LoadingPage />
-    }
+    // if (loading){
+    //     return <LoadingPage />
+    // }
 
     return (
         <div className={classNames}>
@@ -126,7 +158,7 @@ const WishlistPage = () => {
 
             </div>
             <div className='content-container'>
-                {loading && currentPage === 1? (
+                {loading && !infiniteScroll? (
                     // Show the loading component when loading is true
                     <LoadingPage />
                 ) : (
@@ -139,6 +171,7 @@ const WishlistPage = () => {
                                     onWishlist={handleWishlist}
                                     onPageChange={handlePageChange}
                                     currentPage={currentPage}
+                                    totalPages={totalPages}
                                 />
                                 {totalPages && currentPage <= totalPages && (
                                     <PaginationPanel

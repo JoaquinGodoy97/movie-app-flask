@@ -4,11 +4,9 @@ export const useWishlist = (showToast, setMovies) => {
 
     const atWishlistPage = window.location.pathname.includes("/wishlist");
 
-    const fetchWishlistStatuses = useCallback(async (movies, wishlistFetched) => {
+    const fetchWishlistStatuses = useCallback(async (movies) => {
+        if (movies.length === 0) return; 
     
-        console.log("This should be false", wishlistFetched)
-        console.log(movies.length)
-        
         try {
             const token = localStorage.getItem('token');
             const movieIds = movies.map(movie => movie.mv_id);
@@ -27,7 +25,7 @@ export const useWishlist = (showToast, setMovies) => {
 
             setMovies(movies.map(movie => ({
                 ...movie,
-                inWishlist: data.statuses[movie.mv_id]  
+                inWishlist: data.statuses[movie.mv_id] || false // Default to false if not found
             })));
 
         } catch (err) {
@@ -74,14 +72,16 @@ export const useWishlist = (showToast, setMovies) => {
                     setTimeout(() => {
                         setMovies((prevMovies) => prevMovies.filter((movie) => movie.mv_id !== id)); // Remove after transition
                     }, 1000); // Match the transition duration (0.6s)
+                    showToast(data.message)
+
                 } else {
                     setMovies((prevMovies) => prevMovies.map((movie) =>
                         movie.mv_id === id ? { ...movie, inWishlist: !currentInWishlist } : movie
                     ));
+                    showToast(data.message)
                 }
                 
                 // Toast message Added/Removed
-                showToast(data.message)
             }
         } catch (error) {
             console.error("Unable to add:", error)

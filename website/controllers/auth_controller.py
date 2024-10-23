@@ -81,6 +81,7 @@ def get_current_user():
     try:
         username = user_data.get('username')
         if username:
+            print('sucess')
             return jsonify({'username': username})
         else:
             return jsonify({'error': 'Invalid token'}), 401

@@ -9,13 +9,28 @@
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/app.py",
-            "args": ["run", "--no-debugger", "--no-reload"],
+            "args": [
+                "run",
+                "--no-debugger",
+                "--no-reload"
+            ],
             "env": {
                 "FLASK_APP": "app.py", // Ensure the FLASK_APP is set to your entry file
                 "FLASK_ENV": "development"
             },
             "console": "integratedTerminal",
             "justMyCode": false
+        },
+        {
+            "name": "React: Start",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}/client",
+            "sourceMaps": true,
+            "preLaunchTask": "yarn start",
+            "runtimeExecutable": "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe",
+            "internalConsoleOptions": "openOnSessionStart"
         }
     ]
 }
