@@ -34,7 +34,7 @@ body {
     background-color: #e7eaf0;
     /* Ensure the whole screen is covered */
     overflow-x: hidden;
-    
+
     overflow: none;
 }
 
@@ -121,6 +121,7 @@ ul.pagination li.active {
     background-color: #585f60;
     border-color: #727778;
 }
+
 .page-selection {
     width: 48px;
     height: 30px;
@@ -163,9 +164,10 @@ ul.pagination li.active {
     /* transform: translateX(600%) translateY(-180%); */
 }
 
-.react-switch-handle{
+.react-switch-handle {
     background-color: #e7eaf0;
 }
+
 /**
     CUAK DE PATO
 */
@@ -178,7 +180,7 @@ ul.pagination li.active {
 
 /* LOGIN PAGE */
 
-.login-element form{
+.login-element form {
     border: 0;
     margin: 0;
     padding: 0;
@@ -191,11 +193,11 @@ ul.pagination li.active {
     align-items: center;
 }
 
-.login-element label{
+.login-element label {
     font-weight: 400;
 }
 
-.login-element form .login-submit{
+.login-element form .login-submit {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -309,7 +311,8 @@ ul.pagination li.active {
     height: 70%;
     padding: 0;
     margin: 0;
-    overflow: hidden; /* Hide any overflow to ensure the image is clipped within the container */
+    overflow: hidden;
+    /* Hide any overflow to ensure the image is clipped within the container */
 
 }
 
@@ -317,19 +320,24 @@ ul.pagination li.active {
     transform: scale(1.02);
     width: 100%;
     height: 100%;
-    object-fit: cover; /* This will ensure the image completely covers the container */
-    display: block; /* Prevents any inline spacing issues */
-    border: none; /* Removes any unwanted borders */
+    object-fit: cover;
+    /* This will ensure the image completely covers the container */
+    display: block;
+    /* Prevents any inline spacing issues */
+    border: none;
+    /* Removes any unwanted borders */
 
 }
 
 .card {
-    border: 0 !important; 
+    border: 0 !important;
 }
+
 .card-body {
     border: 0 !important;
     border-radius: 0;
-    height: auto; /* Let the body adjust its height naturally */
+    height: auto;
+    /* Let the body adjust its height naturally */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -360,11 +368,14 @@ ul.pagination li.active {
 
 .movie-card {
     /* flex: 1 1 calc(20% - 40px); */
+    min-height: 150px;
     min-width: 150px;
     max-width: 180px;
 }
 
-.movie-card:hover, .movie-card:focus, .hidden {
+.movie-card:hover,
+.movie-card:focus,
+.hidden {
     /* box-shadow: inset 0px 0px 60px -12px rgba(0, 0, 0, 1);  */
     /* transition: box-shadow 0.3s ease; */
     transition: box-shadow 2s ease-in-out, opacity .6s ease, transform .6s ease-out;
@@ -376,6 +387,7 @@ ul.pagination li.active {
         transform: scale(1);
         filter: blur(0px)
     }
+
     to {
         opacity: 0;
         transform: scale(0.8) translate(0%, 0%);
@@ -388,12 +400,17 @@ ul.pagination li.active {
 
 /* Make sure the title adjusts with screen size */
 .card-title {
-    font-size: clamp(1rem, 1.5vw, 1.2rem); /* Responsive font size */
-    margin-bottom: 5px; /* Smaller margin to reduce space between title and overview */
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    /* Responsive font size */
+    margin-bottom: 5px;
+    /* Smaller margin to reduce space between title and overview */
     font-weight: 600;
-    max-height: 3rem; /* Limit the title height to avoid overflow */
-    overflow: hidden; /* Ensure longer titles don’t expand the card */
-    text-overflow: ellipsis; /* Add ellipsis if the title is too long */
+    max-height: 3rem;
+    /* Limit the title height to avoid overflow */
+    overflow: hidden;
+    /* Ensure longer titles don’t expand the card */
+    text-overflow: ellipsis;
+    /* Add ellipsis if the title is too long */
     line-clamp: 2;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -401,22 +418,29 @@ ul.pagination li.active {
 }
 
 .card-overview {
-    font-size: clamp(0.8rem, 1vw, 0.95rem); /* Responsive font size */
+    font-size: clamp(0.8rem, 1vw, 0.95rem);
+    /* Responsive font size */
     color: #666;
-    margin-top: 5px; /* Reduced margin to tighten the layout */
-    line-height: 1.2; /* Tighten up the spacing between lines */
-    max-height: 3rem; /* Prevent overflow of the overview */
-    overflow: hidden; /* Hide any overflowing text */
+    margin-top: 5px;
+    /* Reduced margin to tighten the layout */
+    line-height: 1.2;
+    /* Tighten up the spacing between lines */
+    max-height: 3rem;
+    /* Prevent overflow of the overview */
+    overflow: hidden;
+    /* Hide any overflowing text */
     text-overflow: ellipsis;
 }
 
 /* HOVER OPACITY BUTON HOVER  */
 
-.btn-primary, .btn-primary:hover , .btn-primary:active{
+.btn-primary,
+.btn-primary:hover,
+.btn-primary:active {
     background-color: #e7eaf000 !important;
 }
 
-.remove-wishlist-btn{
+.remove-wishlist-btn {
     filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.796));
     /* box-shadow: inset 0 0 10px #00000075; */
 }
@@ -465,11 +489,205 @@ ul.pagination li.active {
     /* transition: 0.2s; */
 }
 
-.toast-message{
+.toast-message {
     position: fixed;
     right: 20;
     bottom: 20;
 }
+
+
+/* ADMIN PANEL */
+
+.admin-panel {
+    overflow-y: scroll;
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: top; */
+    /* align-items: top; */
+    max-height: 60vh;
+    width: 60vh;
+    /* background-color: rgb(211, 205, 205); */
+    /* border: 1px solid #f8f9fa2f; */
+    /* border-radius: 15px; */
+    border-radius: 30px;
+    background: #FFFFFF;
+    box-shadow: rgba(87, 87, 87, 0.47) 0px 30px 50px -12px inset, rgba(0, 0, 0, 0.445) 0px 18px 26px -18px inset;
+}
+
+
+.admin-panel-item {
+    color: #121212;
+    width: 100%;
+    height: 40px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 20px 20px 35px;
+    flex-shrink: 0;
+}
+
+.admin-panel-item>* {}
+
+/* Customize Scrollbar */
+.admin-panel::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Opera */
+    /* Width of the scrollbar */
+}
+
+.admin-panel::-webkit-scrollbar-track {
+    background: #c3323200;
+    /* Color of the track */
+    overflow: hidden;
+}
+
+.admin-panel::-webkit-scrollbar-thumb {
+    background-color: #888;
+    /* Color of the thumb */
+    border-radius: 12px;
+    /* Roundness of the thumb */
+    border: 3px solid #121111;
+    /*Padding around thumb */
+}
+
+.admin-panel::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+    /* Color of the thumb on hover */
+}
+
+.admin-panel-btn-container {
+    display: flex;
+}
+
+.admin-panel-btn-container div {
+    padding-right: 2px;
+}
+
+
+/* BUtton inside admin-panel */
+/* From Uiverse.io by vinodjangid07 */
+div>.button {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: rgb(20, 20, 20);
+    border: none;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.164);
+    cursor: pointer;
+    transition-duration: 0.3s;
+    overflow: hidden;
+    position: relative;
+    gap: 2px;
+}
+
+.svgIcon {
+    width: 12px;
+    transition-duration: 0.3s;
+}
+
+.svgIcon path {
+    fill: white;
+}
+
+.button:hover {
+    transition-duration: 0.3s;
+    background-color: rgb(255, 69, 69);
+    align-items: center;
+    gap: 0;
+}
+
+.bin-top {
+    transform-origin: bottom right;
+}
+
+.button:hover .bin-top {
+    transition-duration: 0.5s;
+    transform: rotate(160deg);
+}
+
+
+
+/* .wishlist-btn-container */
+/* From Uiverse.io by KSAplay */ 
+.wishlist-btn-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.wishlist-btn-container {
+    transform: scale(0.8);
+    display: block;
+    position: relative;
+    cursor: pointer;
+    font-size: 20px;
+    user-select: none;
+    transition: 100ms;
+}
+
+.checkmark {
+    top: 0;
+    left: 0;
+    height: 2em;
+    width: 2em;
+    transition: 100ms;
+    animation: dislike_effect 400ms ease;
+}
+
+.wishlist-btn-container .checkmark path {
+    stroke: rgb(197, 190, 190);
+}
+
+.wishlist-btn-container input:checked~.checkmark path {
+    fill: #ff5353;
+    stroke-width: 0;
+}
+
+.wishlist-btn-container input:checked~.checkmark {
+    animation: like_effect 400ms ease;
+}
+
+.wishlist-btn-container:hover {
+    transform: scale(1.1);
+}
+
+@keyframes like_effect {
+    0% {
+        transform: scale(0);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes dislike_effect {
+    0% {
+        transform: scale(0);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
 
 /* body{
     max-width: 1500px;

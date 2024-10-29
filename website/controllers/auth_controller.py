@@ -84,7 +84,7 @@ def get_current_user():
             print('sucess')
             return jsonify({'username': username})
         else:
-            return jsonify({'error': 'Invalid token'}), 401
+            return jsonify({'error': 'Invalid token', 'redirect': '/login'}), 401
 
     except Exception as e:
         print(f"Exception during token verification: {e}")  # Log any unexpected exceptions

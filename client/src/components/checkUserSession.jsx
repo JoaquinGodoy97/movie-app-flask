@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 const fetchWithDelay = async () => {
     // await new Promise(resolve => setTimeout(resolve, 1000));  // Delay of 1 second
     return fetch("http://localhost:5000/@me", { headers: {
@@ -6,28 +9,36 @@ const fetchWithDelay = async () => {
     credentials: 'include' });
 };
 
-export const checkUserSession = async (setLoading, setUser, navigate) => {
-    setLoading(true); 
+export const useCheckUserSession = () => {
+    const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState(null);
+    const navigate = useNavigate();
 
-    try {
-        const response = await fetchWithDelay();
-        console.log("Session check response:", response);
-        const data = await response.json();
+    useEffect(() => {
+        const checkUserSession = async () => {
+            try {
+                const response = await fetchWithDelay();
+                const data = await response.json();
+                if (response.status === 401) {
+                    navigate(data.redirect);
+                } 
+                else {
+                    console.log("User data: ", data)
+                    setUser(data);
+                }
+            } catch (error) {
+                console.error('Error during user session check:', error);
+                navigate('/login')
+            } finally {
+                setLoading(false)
+            }
+        };
 
-        if (response.status === 401) {
-            console.warn("Unauthorized session. Redirecting...");
-            navigate(data.redirect);
-        } 
-        else {
-            console.log("User session valid:", data);
-            setUser(data);
-        }
-    } catch (error) {
-        console.error('Error during user session check:', error);
-    } finally {
-        setLoading(false);
-    }
-};
+        checkUserSession();
+    }, [navigate])
+
+    return { loading, user}
+}
 
 export const isLoggedIn = () => {
     const token = localStorage.getItem('token');

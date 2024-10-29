@@ -72,16 +72,13 @@ export const useWishlist = (showToast, setMovies) => {
                     setTimeout(() => {
                         setMovies((prevMovies) => prevMovies.filter((movie) => movie.mv_id !== id)); // Remove after transition
                     }, 1000); // Match the transition duration (0.6s)
-                    showToast(data.message)
 
                 } else {
                     setMovies((prevMovies) => prevMovies.map((movie) =>
                         movie.mv_id === id ? { ...movie, inWishlist: !currentInWishlist } : movie
                     ));
-                    showToast(data.message)
                 }
-                
-                // Toast message Added/Removed
+                showToast(data.message)
             }
         } catch (error) {
             console.error("Unable to add:", error)

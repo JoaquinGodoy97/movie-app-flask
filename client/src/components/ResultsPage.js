@@ -9,8 +9,9 @@ import { LoadingPage } from '../utils/LoadingPage';
 import { PaginationPanel } from '../utils/PaginationPanel';
 import { SearchBar } from '../utils/SearchBar';
 import { useToast } from '../utils/ToastMessage';
-import { checkUserSession } from './checkUserSession';
 import { MovieList } from './MovieList';
+import { useCheckUserSession } from './checkUserSession';
+
 
 const ResultsPage = () => {
     const navigate = useNavigate();
@@ -21,52 +22,51 @@ const ResultsPage = () => {
     const queryParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
     
     const { showToast } = useToast();
-    // const [movies, setMovies] = useState([]);
     const [currentPage, setCurrentPage] = useState(1); // Track current page
-    // const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
+    const [loadingComponent, setLoadingComponent] = useState(false);
 
-    // const queryParams = new URLSearchParams(location.search);
     const searchQuery = queryParams.get('query') || '';
-    const [user, setUser] = useState(null);
-    // const currentPageUrl = parseInt(queryParams.get('page')) || 1;
     const { movies, setMovies, totalPages, fetchMovies } = useFetchMovies();
     const { fetchWishlistStatuses, handleWishlist } = useWishlist(showToast, setMovies);
     const atResultsPage = window.location.pathname.includes("/results");
+    const { loading: sessionLoading, user: sessionUser } = useCheckUserSession();
 
     // useEffect(() => {
     //     const pageFromUrl = parseInt(queryParams.get('page')) || 1;
     //     setCurrentPage(pageFromUrl);
     // }, [location.search])
-    useEffect(() => {
-        const checkSession = async () => {
-            console.log('Checking user session...');
-            const userSession = await checkUserSession(setLoading, setUser, navigate);
-            if (!userSession) return;  // Stop if session is invalid
-        };
+    // useEffect(() => {
+    //     const checkSession = async () => {
+    //         console.log('Checking user session...');
+    //         setLoading(true)
+    //         try {
+    //             const userSession = await checkUserSession(setUser, navigate);
+    //             if (!userSession) return;  // Stop if session is invalid
+    //         } finally {
+    //             setLoading(false)
+    //         }
+    //     };
 
-        checkSession();  // Run session check only once on mount
-    }, []);
+    //     checkSession();  // Run session check only once on mount
+    // }, []);
 
     useEffect(() => {
         const fetchInitialMovies = async () => {
 
-            const resetMovies = currentPage === 1 && searchQuery.length > 0;
-            console.log("Fetching movies for page:", currentPage);
-            console.log("total pages:", totalPages)
-
-            if (totalPages >= 1 && atResultsPage && !loading && totalPages) {
-                console.log(totalPages, "after")
-                if (currentPage === 1) {
-                    console.log("reseting?")
+            setLoadingComponent(true)
+                if (currentPage === 1 && searchQuery.length > 0) {
                     setMovies([]);  // Reset movies for the first page
                 }
-                await fetchMovies(searchQuery, currentPage, setLoading, resetMovies);
-            }
+                fetchMovies(searchQuery, currentPage, infiniteScroll)
+                .then(() => setLoadingComponent(false))
+                .catch((error) => {
+                    setLoadingComponent(false);
+                });
         };
 
         fetchInitialMovies();
-    }, [currentPage, searchQuery, fetchMovies, loading]);
+    }, [currentPage, searchQuery, fetchMovies, setMovies, infiniteScroll]);
 
     useEffect(() => {
 
@@ -94,27 +94,23 @@ const ResultsPage = () => {
 
     const handlePageChange = (newPage) => {
         console.log(currentPage, newPage, newPage <= totalPages)
-        console.log("Whats the state of movies length:", movies.length)
-
-        if (newPage > currentPage && newPage <= totalPages){
-
-            console.log("1st validation")
-        }
 
         if (atResultsPage && newPage > 0 && !loading) {
             console.log(`2d validation Changing page to: ${newPage}`);
             setCurrentPage(newPage)
-
-            // navigate(`/wishlist?page=${newPage}`);
-        }   else if (!atResultsPage){
-
-            console.log("3rd validation")
-            navigate(`/wishlist/search?query=${searchQuery}&page=${newPage}`);
-        }
+        }   
+        
     };
 
     const classNames = `main-item montserrat-font ${!loading ? 'fade-in' : ''}`
     const { theme, toggleTheme } = useContext(ThemeContext);
+
+    if (sessionLoading) {
+        return <LoadingPage />
+    }
+    if (!sessionUser) {
+        return null
+    }
 
     return (
         <div className={classNames}>
@@ -144,37 +140,25 @@ const ResultsPage = () => {
                 </div>
             </div>
             <div className='content-container'>
-                {loading && movies.length < 1 ? (
-                    // Show the loading component when loading is true
-                    <LoadingPage />
-                ) : (
-                    // When loading is false, display PaginationPanel and MovieList
                     <>
-                        {movies.length > 0 ? (
-                            <>
-                                <MovieList
-                                    movies={movies}
-                                    loading={loading}
-                                    onWishlist={handleWishlist}
-                                    onPageChange={handlePageChange}
-                                    currentPage={currentPage}
-                                    totalPages={totalPages}
-                                />
-                                {totalPages && currentPage <= totalPages && (
-                                    <PaginationPanel
-                                        currentPage={currentPage}
-                                        totalPages={totalPages}
-                                        onPageChange={handlePageChange}
-                                    />
-                                ) && !infiniteScroll}
-                            </>
-                        ) : (
-                            !loading && <div>No movies found.</div> // Handle no movies case
-                        )}
+                        <MovieList
+                            movies={movies}
+                            loading={loadingComponent}
+                            onWishlist={handleWishlist}
+                            onPageChange={handlePageChange}
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            infiniteScroll={infiniteScroll}
+                        />
+                        {totalPages && currentPage <= totalPages && !infiniteScroll && totalPages > 1? (
+                        <PaginationPanel
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={handlePageChange}
+                        />
+                    ) : null}
                     </>
-                )}
             </div>
-
         </div>
     );
 };
