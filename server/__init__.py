@@ -1,7 +1,7 @@
 from flask import Flask, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from server.utils.db import db, DB_NAME
-from os import path #operating system
+from os import path, environ #operating system
 from flask_migrate import Migrate
 from flask_cors import CORS
 from decouple import config
@@ -12,7 +12,9 @@ def create_app():
 
     app = Flask(__name__, static_folder='../client/public', static_url_path='')
     
-    CORS(app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:3000"}})
+    # Allow CORS from local and production frontends 
+    frontend_url = environ.get('FRONTEND_URL', 'http://localhost:3000') 
+    CORS(app, supports_credentials=True, resources={r"/*": {"origins": frontend_url}})
 
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
