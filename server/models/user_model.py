@@ -1,4 +1,4 @@
-from website.utils.db import db
+from server.utils.db import db
 import re
 
 class User(db.Model):

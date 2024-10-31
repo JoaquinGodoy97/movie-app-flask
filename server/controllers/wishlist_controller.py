@@ -1,11 +1,11 @@
 from flask import Blueprint, render_template, request, url_for, redirect, session, jsonify, json
 from .results_controller import handle_form, get_set_of_movies
-from website.models.wishlist_user_model import Wishlist_user
-from website.view.view import (session_logout_warning, logout_redirect, display_movies, wishlist_redirect, 
+from server.models.wishlist_user_model import Wishlist_user
+from server.view.view import (session_logout_warning, logout_redirect, display_movies, wishlist_redirect, 
                     alert_no_movie_added_wishlist, alert_movie_already_added, render_wishlist_template,
                     database_wishlist_save_success_alert, display_current_results)
-from website.services.auth_services import Security
-from website.services.wishlist_services import (get_results_by_movie_id, add_to_wishlist_db, remove_from_wishlist_db,
+from server.services.auth_services import Security
+from server.services.wishlist_services import (get_results_by_movie_id, add_to_wishlist_db, remove_from_wishlist_db,
                                                 filter_by_usersession_and_movieid, filter_by_usersession, is_wishlist_user_limit_reached,
                                                 bring_single_movie_by_user, filter_movies_by_search_if_any, bring_multiple_movies_by_user)
 

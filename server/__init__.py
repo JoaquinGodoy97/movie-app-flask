@@ -1,6 +1,6 @@
 from flask import Flask, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
-from website.utils.db import db, DB_NAME
+from server.utils.db import db, DB_NAME
 from os import path #operating system
 from flask_migrate import Migrate
 from flask_cors import CORS
@@ -51,7 +51,7 @@ def create_app():
     return app
 
 def create_database(app):
-    if not path.exists('website/' + DB_NAME):
+    if not path.exists('server/' + DB_NAME):
         with app.app_context():  # Ensure app context is available
             db.create_all()
         print('Created Database!')

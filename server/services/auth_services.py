@@ -1,9 +1,9 @@
 from flask import session, jsonify, request
-from website.models.user_model import User
-from website.utils.db import db
-from website.view.view import homepage_search_redirect, password_reminder_alert, database_save_error_alert, welcome_user_login
+from server.models.user_model import User
+from server.utils.db import db
+from server.view.view import homepage_search_redirect, password_reminder_alert, database_save_error_alert, welcome_user_login
 from functools import wraps
-from website.utils.settings import Messages
+from server.utils.settings import Messages
 import jwt 
 from datetime import datetime, timedelta, timezone
 from decouple import config

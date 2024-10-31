@@ -1,8 +1,8 @@
-from website.utils.settings import BASE_URL, API_KEY
+from server.utils.settings import BASE_URL, API_KEY
 from flask import request, session, jsonify
-from website.utils.db import db
-from website.models.wishlist_user_model import Wishlist_user
-from website.view.view import database_save_error_alert, database_wishlist_delete_erorr_alert, database_delete_error_alert
+from server.utils.db import db
+from server.models.wishlist_user_model import Wishlist_user
+from server.view.view import database_save_error_alert, database_wishlist_delete_erorr_alert, database_delete_error_alert
 import requests, re
 
 

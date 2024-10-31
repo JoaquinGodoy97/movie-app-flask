@@ -1,4 +1,4 @@
-from website.utils.db import db
+from server.utils.db import db
 # from sqlalchemy.orm import Mapped
 # from sqlalchemy.orm import mapped_column
 

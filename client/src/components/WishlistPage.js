@@ -49,7 +49,7 @@ const WishlistPage = () => {
     }, [currentPage, searchQuery, fetchMovies, setMovies, infiniteScroll]);
 
     const handleSearch = useCallback((query, page) => {
-        if (!query) {
+        if (!query) {   
             navigate(`/wishlist?page=1`);
         }
 

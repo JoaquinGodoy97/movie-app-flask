@@ -1,4 +1,4 @@
-from website.view.view import page_not_found_warning, page_not_found_wishlist_warning
+from server.view.view import page_not_found_warning, page_not_found_wishlist_warning
 
 class Movies:
     def __init__(self, movie_list):

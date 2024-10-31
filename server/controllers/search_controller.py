@@ -1,8 +1,8 @@
 from flask import request, Blueprint, session, jsonify
-from website.services.search_services import search_results
-from website.view.view import logout_redirect, homepage_search_redirect, render_homepage_template
-from website.utils.settings import Services
-from website.services.auth_services import login_required, Security
+from server.services.search_services import search_results
+from server.view.view import logout_redirect, homepage_search_redirect, render_homepage_template
+from server.utils.settings import Services
+from server.services.auth_services import login_required, Security
 
 
 homepage = Blueprint('homepage', __name__)

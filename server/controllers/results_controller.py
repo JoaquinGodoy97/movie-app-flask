@@ -1,8 +1,8 @@
 from flask import session, Blueprint, request, jsonify
-from website.view.view import (logout_redirect, display_movies, homepage_search_redirect, page_not_found_warning)
-from website.services.results_services import fetch_movie_results, get_set_of_movies, fetch_multiple_pages, handle_form
-from website.services.auth_services import is_user_logged_in, Security
-from website.utils.settings import Messages
+from server.view.view import (logout_redirect, display_movies, homepage_search_redirect, page_not_found_warning)
+from server.services.results_services import fetch_movie_results, get_set_of_movies, fetch_multiple_pages, handle_form
+from server.services.auth_services import is_user_logged_in, Security
+from server.utils.settings import Messages
 
 results = Blueprint('results', __name__)
 

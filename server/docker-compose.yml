@@ -1,0 +1,23 @@
+services:
+  frontend:
+    build:
+      context: ./app/client
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    command: sh -c "yarn install && yarn build && yarn start"
+    networks:
+      - my-network
+
+  backend:
+    build:
+      context: ./app/server
+    ports:
+      - "5000:5000"
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge

@@ -1,10 +1,18 @@
-FROM python:3.12.4
+# Use the official Python image
+FROM python:3.12
 
-WORKDIR /api-movies
+# Set the working directory
+WORKDIR /app
 
-COPY requirements.txt .
-COPY . /api-movies
-
+# Copy requirements file and install dependencies
+COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["python", "app.py"]
+# Copy the rest of the application
+COPY . .
+
+# Expose port
+EXPOSE 5000
+
+# Run the application
+CMD ["flask", "run", "--host=0.0.0.0"]

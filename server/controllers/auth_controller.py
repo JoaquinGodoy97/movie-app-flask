@@ -1,9 +1,9 @@
 from flask import Blueprint, request, render_template, jsonify, send_from_directory, session
-from website.services.auth_services import add_user_to_db, user_to_dict, open_session, is_user_logged_in, validate_credentials, user_query_filter_by_name, login_required
-from website.view.view import (homepage_search_redirect, invalid_username, invalid_pass_registered_user, invalid_pass_new_user,
+from server.services.auth_services import add_user_to_db, user_to_dict, open_session, is_user_logged_in, validate_credentials, user_query_filter_by_name, login_required
+from server.view.view import (homepage_search_redirect, invalid_username, invalid_pass_registered_user, invalid_pass_new_user,
                             redirect_login_auth, render_auth_template, already_loggedin_user, session_logout_warning, login_redirect)
-from website.utils.settings import Messages
-from website.services.auth_services import Security
+from server.utils.settings import Messages
+from server.services.auth_services import Security
 
 auth = Blueprint("auth", __name__)
 
