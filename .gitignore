@@ -34,3 +34,5 @@ view-copy.py
 Errors.txt
 
 tables.py
+.vscode
+database_backup.db

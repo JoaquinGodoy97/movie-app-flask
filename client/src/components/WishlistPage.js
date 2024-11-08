@@ -63,7 +63,14 @@ const WishlistPage = () => {
             console.log(`handlePagechange => Changing to page: ${newPage}`);
             setCurrentPage(newPage)
 
-            // navigate(`/wishlist?page=${newPage}`);
+            if (!infiniteScroll) {
+            navigate(`/wishlist?page=${newPage}`);
+
+                if (searchQuery) {
+                    navigate(`/wishlist/search?query=${searchQuery}&page=${newPage}`)
+                }
+            }
+
         }
 
     };
