@@ -1,5 +1,5 @@
 # Use the official Node.js image
-FROM node:14-alpine
+FROM node:18-alpine
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -16,3 +16,4 @@ RUN yarn build
 
 # Start the app
 CMD ["yarn", "start"]
+

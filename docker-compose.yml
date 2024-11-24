@@ -1,7 +1,8 @@
 services:
   frontend:
     build:
-      context: ./app/client
+      context: ./client
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     environment:
@@ -12,9 +13,12 @@ services:
 
   backend:
     build:
-      context: ./app/server
+      context: ./
+      dockerfile: Dockerfile
     ports:
       - "5000:5000"
+    environment:
+    - FLASK_APP=app.py
     networks:
       - my-network
 
