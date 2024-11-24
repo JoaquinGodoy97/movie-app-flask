@@ -38,3 +38,5 @@ tables.py
 database_backup.db
 
 favicon/
+
+.env
