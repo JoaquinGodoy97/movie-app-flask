@@ -6,7 +6,11 @@ WORKDIR /usr/src/app
 
 # Install app dependencies
 COPY package.json yarn.lock ./
-RUN yarn install
+
+# Add this line before `RUN yarn install`
+ENV NODE_ENV=development
+
+RUN yarn install --frozen-lockfile
 
 # Copy app source
 COPY . .
