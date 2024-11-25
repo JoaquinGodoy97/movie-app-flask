@@ -1,11 +1,19 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 
 export const useFetchMovies = () => {
+    const abortController = useRef(new AbortController()); // Create a new controller
     const [movies, setMovies] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
 
     const fetchMovies = useCallback(async (query, page = 1, infiniteScroll) => {
+        // Abort the previous request if still active
+        if (abortController.current) {
+            abortController.current.abort();
+        }
+        // Create a new controller for the new request
+        abortController.current = new AbortController();
         const atWishlistPage = window.location.pathname.includes("/wishlist");
+        
         try {
             let url;
             const token = localStorage.getItem('token');
@@ -16,11 +24,14 @@ export const useFetchMovies = () => {
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include',
+                signal: abortController.current.signal,
             };
             if (atWishlistPage) {
+
                 url = query
                     ? `http://localhost:5000/wishlist/search?query=${query}&page=${page}`
                     : `http://localhost:5000/wishlist?page=${page}`;
+                    
             } else {
                 url = `http://localhost:5000/results/search?query=${query}&page=${page}`;
             }
@@ -41,7 +52,13 @@ export const useFetchMovies = () => {
                 console.log("No more results. Last page.");
             }
         } catch (error) {
-            console.error('Error fetching movies:', error);
+            if (error.name === 'AbortError') {
+                // Suppress AbortError logs as they are expected
+                console.log('Fetch aborted: A new request was started or component unmounted.');
+            } else {
+                // Log unexpected errors only
+                console.error('Error fetching movies:', error);
+            }
         }
     }, []);
 

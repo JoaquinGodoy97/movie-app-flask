@@ -40,13 +40,13 @@ export const MovieList = ({ movies = [], loading, onWishlist, currentPage, onPag
             );
       })}
 
-      {loading? (
+      {loading ? (
         <div className="loading-spinner " style={loadingOverListStyle}>
           <LoadingPage />
         </div>
       ) : (
         <>
-          {movies.length <= 1 ? <div>No Movies Found.</div> : null}
+          {movies.length <= 1 && !movies ? <div>No Movies Found.</div> : null}
         </>
       )}
       

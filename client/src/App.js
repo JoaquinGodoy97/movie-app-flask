@@ -16,6 +16,11 @@ function App() {
       return localStorage.getItem('theme') || 'light';
   });
 
+  const [scrollMode, setScrollMode] = useState(() => {
+    const savedScrollMode = localStorage.getItem('scrollMode');
+    return savedScrollMode !== null ? JSON.parse(savedScrollMode) : false;
+  })
+
   const toggleTheme = () => {
     
     setTheme((current) => {
@@ -23,15 +28,25 @@ function App() {
         localStorage.setItem('theme', newTheme);  // Save to localStorage
         return newTheme;
     });
+  }
+
+  const togglePageMode = () => {
+  
+    setScrollMode((current) => {
+        const newScrollMode = !current;
+        localStorage.setItem('scrollMode', JSON.stringify(newScrollMode));
+        return newScrollMode;
+    });
 
   }
 
   useEffect(() => {
     localStorage.setItem('theme', theme);
-  }, [theme]);
+    localStorage.setItem('scrollMode', scrollMode);
+  }, [theme, scrollMode]);
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, scrollMode, togglePageMode }}>
       <ToastProvider>
 
         <div className="App" id={theme}>

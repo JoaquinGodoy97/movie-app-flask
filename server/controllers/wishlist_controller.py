@@ -167,7 +167,6 @@ def wishlist_status():
     user = token['username']
 
     movie_ids = request.json.get('movie_ids')  # Accept a list of movie IDs
-
     # Fetch all wishlist statuses for the user in one query
     statuses = bring_multiple_movies_by_user(user, movie_ids)
     

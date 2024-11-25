@@ -24,9 +24,16 @@ const WishlistPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const { movies, setMovies, totalPages, fetchMovies } = useFetchMovies();
     const { fetchWishlistStatuses, handleWishlist } = useWishlist(showToast, setMovies);
-    const [infiniteScroll, setInfiniteScroll] = useState(false);
+    // const [infiniteScroll, setInfiniteScroll] = useState(false);
     const atWishlistPage = window.location.pathname.includes("/wishlist");
     const { loading: sessionLoading, user: sessionUser } = useCheckUserSession();
+    const { theme, toggleTheme, scrollMode, togglePageMode } = useContext(ThemeContext);
+
+    useEffect(() => {
+        // Reset state on mode switch
+        setCurrentPage(1);
+        setMovies([]);
+    }, [scrollMode]); 
 
     useEffect(() => {
         const fetchInitialMovies = () => {
@@ -36,17 +43,17 @@ const WishlistPage = () => {
             if (currentPage === 1 && searchQuery.length > 0) {
                 setMovies([]);  // Reset movies for the first page
             }
-            fetchMovies(searchQuery, currentPage, infiniteScroll)
+
+            fetchMovies(searchQuery, currentPage, scrollMode)
                 .then(() => setLoadingComponent(false))
                 .catch((error) => {
                     setLoadingComponent(false);
                 });
-            // setLoading(false)
-
         };
 
         fetchInitialMovies();
-    }, [currentPage, searchQuery, fetchMovies, setMovies, infiniteScroll]);
+    }, [currentPage, searchQuery, fetchMovies, setMovies, scrollMode]);
+
 
     const handleSearch = useCallback((query, page) => {
         if (!query) {   
@@ -63,24 +70,28 @@ const WishlistPage = () => {
             console.log(`handlePagechange => Changing to page: ${newPage}`);
             setCurrentPage(newPage)
 
-            if (!infiniteScroll) {
-            navigate(`/wishlist?page=${newPage}`);
+            if (!scrollMode) {
+                navigate(`/wishlist?page=${newPage}`);
 
                 if (searchQuery) {
                     navigate(`/wishlist/search?query=${searchQuery}&page=${newPage}`)
                 }
+            } 
+            else {
+                navigate(`/wishlist?page=1`);
             }
-
-        }
+        } 
 
     };
 
     const classNames = `main-item ${!loading ? 'fade-in' : ''}`
-    const { theme, toggleTheme } = useContext(ThemeContext);
 
-    if (sessionLoading) {
-        return <LoadingPage />
-    }
+    console.log('Scroll Mode:', scrollMode);
+
+    // if (sessionLoading && totalPages === 1 && scrollMode) {
+    //     return <LoadingPage />
+    // }   
+
     if (!sessionUser) {
         return null
     }
@@ -96,6 +107,14 @@ const WishlistPage = () => {
                     uncheckedIcon={<span className="toggle-theme-mode" role="img" aria-label="sound-off">🌘</span>}
 
                     className='switch' onChange={toggleTheme} checked={theme === 'dark'} />
+
+                <Switch
+                    onColor="#333130"
+                    offColor="#333130"
+                    checkedIcon={<span className="toggle-scroll-mode" role="img" aria-label="sound-on">page</span>}
+                    uncheckedIcon={<span className="toggle-scroll-mode" role="img" aria-label="sound-off">scroll</span>}
+
+                    className='switch' onChange={togglePageMode} checked={!scrollMode} />
             </nav>
 
             <div className='button-container sub-container'>
@@ -122,9 +141,9 @@ const WishlistPage = () => {
                         onPageChange={handlePageChange}
                         currentPage={currentPage}
                         totalPages={totalPages}
-                        infiniteScroll={infiniteScroll}
+                        infiniteScroll={scrollMode}
                     />
-                    {totalPages && currentPage <= totalPages && !infiniteScroll && totalPages > 1? (
+                    {totalPages && currentPage <= totalPages && !loadingComponent && totalPages > 1 && !scrollMode? (
                         <PaginationPanel
                             currentPage={currentPage}
                             totalPages={totalPages}

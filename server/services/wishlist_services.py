@@ -95,7 +95,6 @@ def bring_multiple_movies_by_user(user, movie_ids):
         # Assuming you have a User and a Wishlist model
         # Query the wishlist table for this user and the provided movie IDs
         wishlist_items = Wishlist_user.query.filter(Wishlist_user.username == user, Wishlist_user.mv_id.in_(movie_ids)).all()
-        
         # Create a dictionary with movie_id as keys and True/False as values
         wishlist_statuses = {mv_id: False for mv_id in movie_ids}  # Initialize all to False
         

@@ -17,7 +17,6 @@ const ResultsPage = () => {
     const navigate = useNavigate();
     const [wishlistFetched, setWishlistFetched] = useState(false)
     const location = useLocation();
-    const [infiniteScroll, setInfiniteScroll] = useState(true);
     
     const queryParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
     
@@ -32,25 +31,19 @@ const ResultsPage = () => {
     const atResultsPage = window.location.pathname.includes("/results");
     const { loading: sessionLoading, user: sessionUser } = useCheckUserSession();
 
-    // useEffect(() => {
-    //     const pageFromUrl = parseInt(queryParams.get('page')) || 1;
-    //     setCurrentPage(pageFromUrl);
-    // }, [location.search])
-    // useEffect(() => {
-    //     const checkSession = async () => {
-    //         console.log('Checking user session...');
-    //         setLoading(true)
-    //         try {
-    //             const userSession = await checkUserSession(setUser, navigate);
-    //             if (!userSession) return;  // Stop if session is invalid
-    //         } finally {
-    //             setLoading(false)
-    //         }
-    //     };
+    const { theme, toggleTheme, scrollMode, togglePageMode } = useContext(ThemeContext);
 
-    //     checkSession();  // Run session check only once on mount
-    // }, []);
-
+    useEffect(() => {
+        // Reset state on mode switch
+        setLoadingComponent(true)
+        try {
+            setCurrentPage(1);
+            setMovies([]);
+        } finally {
+            setLoadingComponent(false)
+        }
+    }, [scrollMode]); 
+    
     useEffect(() => {
         const fetchInitialMovies = async () => {
 
@@ -58,7 +51,7 @@ const ResultsPage = () => {
                 if (currentPage === 1 && searchQuery.length > 0) {
                     setMovies([]);  // Reset movies for the first page
                 }
-                fetchMovies(searchQuery, currentPage, infiniteScroll)
+                fetchMovies(searchQuery, currentPage, scrollMode)
                 .then(() => setLoadingComponent(false))
                 .catch((error) => {
                     setLoadingComponent(false);
@@ -66,7 +59,7 @@ const ResultsPage = () => {
         };
 
         fetchInitialMovies();
-    }, [currentPage, searchQuery, fetchMovies, setMovies, infiniteScroll]);
+    }, [currentPage, searchQuery, fetchMovies, setMovies, scrollMode]);
 
     useEffect(() => {
 
@@ -93,21 +86,30 @@ const ResultsPage = () => {
     }
 
     const handlePageChange = (newPage) => {
-        console.log(currentPage, newPage, newPage <= totalPages)
 
         if (atResultsPage && newPage > 0 && !loading) {
-            console.log(`2d validation Changing page to: ${newPage}`);
             setCurrentPage(newPage)
+
+            if (!scrollMode) {
+                navigate(`/results?page=${newPage}`);
+
+                if (searchQuery) {
+                    navigate(`/results/search?query=${searchQuery}&page=${newPage}`)
+                }
+            }
+
+            else {
+                navigate(`/results/search?query=${searchQuery}&page=1`);
+            }
         }   
         
     };
 
     const classNames = `main-item montserrat-font ${!loading ? 'fade-in' : ''}`
-    const { theme, toggleTheme } = useContext(ThemeContext);
 
-    if (sessionLoading) {
-        return <LoadingPage />
-    }
+    // if (sessionLoading && totalPages === 1) {
+    //     return <LoadingPage />
+    // }
     if (!sessionUser) {
         return null
     }
@@ -123,6 +125,15 @@ const ResultsPage = () => {
                     uncheckedIcon={<span className="toggle-theme-mode" role="img" aria-label="sound-off">🌘</span>}
 
                     className='switch' onChange={toggleTheme} checked={theme === 'dark'} />
+                
+                <Switch
+                    onColor="#333130"
+                    offColor="#333130"
+                    checkedIcon={<span className="toggle-scroll-mode" role="img" aria-label="sound-on">page</span>}
+                    uncheckedIcon={<span className="toggle-scroll-mode" role="img" aria-label="sound-off">scroll</span>}
+
+                    className='switch' onChange={togglePageMode} checked={!scrollMode} />
+            
             </nav>
 
             <div className='button-container sub-container'>
@@ -148,9 +159,9 @@ const ResultsPage = () => {
                             onPageChange={handlePageChange}
                             currentPage={currentPage}
                             totalPages={totalPages}
-                            infiniteScroll={infiniteScroll}
+                            infiniteScroll={scrollMode}
                         />
-                        {totalPages && currentPage <= totalPages && !infiniteScroll && totalPages > 1? (
+                        {totalPages && currentPage <= totalPages && !scrollMode && !loadingComponent && !loading && totalPages > 1? (
                         <PaginationPanel
                             currentPage={currentPage}
                             totalPages={totalPages}
