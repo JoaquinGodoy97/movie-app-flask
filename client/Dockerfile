@@ -7,16 +7,15 @@ WORKDIR /usr/src/app
 # Install app dependencies
 COPY package.json yarn.lock ./
 
-# Add this line before `RUN yarn install`
-ENV NODE_ENV=development
-
-RUN yarn install --frozen-lockfile
+RUN yarn install --frozen-lockfile --production
 
 # Copy app source
 COPY . .
 
 # Build the app
 RUN yarn build
+
+EXPOSE 3000
 
 # Start the app
 CMD ["yarn", "start"]

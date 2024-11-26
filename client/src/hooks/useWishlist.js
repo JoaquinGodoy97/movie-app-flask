@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 
 export const useWishlist = (showToast, setMovies) => {
 
+    const apiBaseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : process.env.REACT_APP_BACKEND_URL;
     const atWishlistPage = window.location.pathname.includes("/wishlist");
 
     const fetchWishlistStatuses = useCallback(async (movies) => {
@@ -10,7 +11,7 @@ export const useWishlist = (showToast, setMovies) => {
         try {
             const token = localStorage.getItem('token');
             const movieIds = movies.map(movie => movie.mv_id);
-            const response = await fetch('/wishlist-status', {
+            const response = await fetch(`${apiBaseUrl}/wishlist-status`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -49,10 +50,12 @@ export const useWishlist = (showToast, setMovies) => {
 
             const token = localStorage.getItem('token')
             const movie_name = fixMovieName(name);
+            const apiBaseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : process.env.REACT_APP_BACKEND_URL;
+
 
             const url = currentInWishlist ?
-                `http://localhost:5000/wishlist/remove/${id}`:
-                `http://localhost:5000/wishlist/add/${id}/${movie_name}`;
+                `${apiBaseUrl}/wishlist/remove/${id}`:
+                `${apiBaseUrl}/wishlist/add/${id}/${movie_name}`;
 
             const options = {
                 method: 'POST',

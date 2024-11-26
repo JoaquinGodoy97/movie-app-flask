@@ -16,6 +16,7 @@ export const useFetchMovies = () => {
         
         try {
             let url;
+            const apiBaseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : process.env.REACT_APP_BACKEND_URL;
             const token = localStorage.getItem('token');
             const options = {
                 method: 'GET',
@@ -29,11 +30,11 @@ export const useFetchMovies = () => {
             if (atWishlistPage) {
 
                 url = query
-                    ? `http://localhost:5000/wishlist/search?query=${query}&page=${page}`
-                    : `http://localhost:5000/wishlist?page=${page}`;
+                    ? `${apiBaseUrl}/wishlist/search?query=${query}&page=${page}`
+                    : `${apiBaseUrl}/wishlist?page=${page}`;
                     
             } else {
-                url = `http://localhost:5000/results/search?query=${query}&page=${page}`;
+                url = `${apiBaseUrl}/results/search?query=${query}&page=${page}`;
             }
 
             const response = await fetch(url, options);

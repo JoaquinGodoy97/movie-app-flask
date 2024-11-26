@@ -30,8 +30,9 @@ function Homepage() {
 
         setLoading(true)
         try {
+            const apiBaseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : process.env.REACT_APP_BACKEND_URL;
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:5000/search', {
+            const response = await fetch(`${apiBaseUrl}/search`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
