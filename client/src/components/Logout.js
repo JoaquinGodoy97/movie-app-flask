@@ -6,7 +6,9 @@ function Logout() {
 
     useEffect(() => {
         const logout = async () => {
-            const response = await fetch('http://localhost:5000/logout', {
+            const apiBaseUrl = process.env.REACT_APP_BACKEND_URL;
+            
+            const response = await fetch(`${apiBaseUrl}/logout`, {
                 headers: {
                     "Content-type": "application/json"
                 },

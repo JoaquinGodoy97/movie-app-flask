@@ -29,7 +29,7 @@ function Login() {
         const fetchData = async () => {
             setLoading(true)
             
-            const url = 'http://localhost:5000';
+            const apiBaseUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
             const options = {
                 method: "GET",
                 headers: {
@@ -39,7 +39,7 @@ function Login() {
                 credentials: 'include',
             };
             try {
-                const response = await fetch(url, options);
+                const response = await fetch(apiBaseUrl, options);
 
                 if (response.status === 401) {
                     // If the token is invalid or expired, remove it and redirect to login
@@ -82,7 +82,10 @@ function Login() {
 
         const loginData = { username, password };
 
-        const url = "http://localhost:5000/login";
+
+        const apiBaseUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+        console.log(apiBaseUrl)
+        const url = `${apiBaseUrl}/login`;
         const options = {
             method: "POST",
             headers: {
