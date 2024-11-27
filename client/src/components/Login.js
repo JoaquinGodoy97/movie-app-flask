@@ -29,8 +29,7 @@ function Login() {
         const fetchData = async () => {
             setLoading(true)
             
-            const apiBaseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : process.env.REACT_APP_BACKEND_URL;
-
+            const apiBaseUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
             const options = {
                 method: "GET",
                 headers: {
@@ -84,7 +83,7 @@ function Login() {
         const loginData = { username, password };
 
 
-        const apiBaseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : process.env.REACT_APP_BACKEND_URL;
+        const apiBaseUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
         console.log(apiBaseUrl)
         const url = `${apiBaseUrl}/login`;
         const options = {

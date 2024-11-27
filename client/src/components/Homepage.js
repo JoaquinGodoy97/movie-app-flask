@@ -30,7 +30,7 @@ function Homepage() {
 
         setLoading(true)
         try {
-            const apiBaseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : process.env.REACT_APP_BACKEND_URL;
+            const apiBaseUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
             const token = localStorage.getItem('token');
             const response = await fetch(`${apiBaseUrl}/search`, {
                 method: 'POST',

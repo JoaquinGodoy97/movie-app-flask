@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const fetchWithDelay = async () => {
-    const apiBaseUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : process.env.REACT_APP_BACKEND_URL;
+    const apiBaseUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
     // await new Promise(resolve => setTimeout(resolve, 1000));  // Delay of 1 second
     return fetch(`${apiBaseUrl}/@me`, { headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
