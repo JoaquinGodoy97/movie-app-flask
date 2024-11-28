@@ -139,7 +139,7 @@ Response - 440 : SESSION_EXPIRED or UNAUTHORIZED
 Redirect - /login
 
 ---
-### POST: /wishlist/add/{movie_id}>/{movie_name}
+### POST: /wishlist/add/{movie_id}/{movie_name}
 
 _Adds a movie to the user's wishlist._
 
