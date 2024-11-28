@@ -1,3 +1,4 @@
+
 # movie-app-flask
 
 The project is a Movie App built using Flask framwork that takes data from a movie API. Using an MVC architecture, the app will allow you to Sig-up, Log-in and have a set of basic functionalities exploring movies and save them into a wishlist.
@@ -52,10 +53,11 @@ _Authenticates the user and issues a JWT token if credentials are valid._
 
 Request
 Body - JSON ex.: 
-{
-   "username": "string",
-   "password": "string"
-}
+
+    {
+       "username": "string",
+       "password": "string"
+    }
 
 Response - 200 OK
 Headers - TOKEN
@@ -73,15 +75,15 @@ Redirect - /login.
 Response - 440 : SESSION_EXPIRED or UNAUTHORIZED
 Redirects - /login.
 
-
-### POST: /LOGOUT
-
+---
+### POST: /logout
+ 
 _Logs the user out by invalidating their session._
 
 Response - 200 OK
 Redirect - /login
 
-
+---
 ### GET: /@me
 
 _Retrieves details of the currently authenticated user._
@@ -97,6 +99,7 @@ Redirect - /login
 Response - 440 : SESSION_EXPIRED or UNAUTHORIZED
 Redirect - /login
 
+---
 ### GET: /results/search
 
 _Searches and retrieves movie results._
@@ -116,6 +119,7 @@ Response - 404 : Page not found.
 Response - 440 : SESSION_EXPIRED or UNAUTHORIZED
 Redirect - /login
 
+---
 ### GET: /wishlist
 
 _Fetches the user's wishlist._
@@ -134,7 +138,7 @@ Response - 404 : Page not found.
 Response - 440 : SESSION_EXPIRED or UNAUTHORIZED
 Redirect - /login
 
-
+---
 ### POST: /wishlist/add/{movie_id}>/{movie_name}
 
 _Adds a movie to the user's wishlist._
@@ -157,6 +161,7 @@ Response - 409 : Movie already added.
 
 Response - 403 : Movies limit reached. - Max. 50 per user
 
+---
 ### POST: /wishlist/remove/{movie_id}
 
 _Removes a movie to the user's wishlist._
@@ -179,6 +184,7 @@ Response - 409 : Movie already added.
 
 Response - 403 : Movies limit reached. - Max. 50 per user
 
+---
 ### GET: /wishlist/search
 
 _Searches and retrieves movie results inside wishlist's user page._
@@ -197,6 +203,7 @@ Response - 404 : Page not found.
 Response - 440 : SESSION_EXPIRED or UNAUTHORIZED
 Redirect - /login
 
+---
 ### POST: /wishlist-status
 
 _Updates movies statuses to those movies which are already on the wishlist for visual purposes._
