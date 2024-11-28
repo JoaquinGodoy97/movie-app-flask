@@ -1,6 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
-from decouple import config
 
 metadata = MetaData(
     naming_convention={
@@ -12,7 +11,6 @@ metadata = MetaData(
     }
 )
 
-db= SQLAlchemy(metadata=metadata)
+db=SQLAlchemy(metadata=metadata)
 
 # db = SQLAlchemy()
-DB_NAME = config('DB_NAME')

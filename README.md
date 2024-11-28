@@ -37,25 +37,184 @@ The main idea is to keep track of your all-time discoveries.
 
 **Setup Instructions**
 
-Run dockerfile with the following settings:
-------------------------------------------
+To run the app locally using Docker, follow these steps:
 
-FROM python:3.12.4
+1. **Build and Start the Containers**:
+   ```bash
+   docker-compose build
+   docker-compose up -d
 
-WORKDIR /api-movies
+## API DOCUMENTATION
 
-COPY requirements.txt .
-COPY . /api-movies
+POST: /login
 
-RUN pip install --no-cache-dir -r requirements.txt
+Authenticates the user and issues a JWT token if credentials are valid.
 
-CMD ["python", "app.py"]
+Request
+Body - JSON ex.: 
+{
+   "username": "string",
+   "password": "string"
+}
+
+Response - 200 OK
+Headers - TOKEN
+Redirect - /search
+Body - JSON ex.:
+   {
+      "message": MSG_WELCOME_MSG or MSG_NEW_USER_CREATED,
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+   }
+
+Response - 401 : Unauthorized: INVALID CREDENTIALS. 
+Redirect - /login.
+
+Response - 440 : SESSION_EXPIRED or UNAUTHORIZED
+Redirects - /login.
+
+
+POST: /LOGOUT
+
+Logs the user out by invalidating their session.
+
+Response - 200 OK
+Redirect - /login
+
+
+GET: /@me
+
+Retrieves details of the currently authenticated user.
+
+Hearders - Authorization TOKEN
+
+Response - 200 OK
+Redirect - /search
+
+Response - 401 : Unauthorized: INVALID CREDENTIALS. 
+Redirect - /login
+
+Response - 440 : SESSION_EXPIRED or UNAUTHORIZED
+Redirect - /login
+
+GET: /results/search
+
+Searches and retrieves movie results.
+
+Response - 200 OK
+Body - JSON ex.:
+{
+   "results": "dict", // By sets of 5 movies
+   "total_pages": "int",
+   "redirect": "/results"
+}
+
+Response - 404 : Page not found.
+
+Response - 440 : SESSION_EXPIRED or UNAUTHORIZED
+Redirect - /login
+
+GET: /wishlist
+
+Fetches the user's wishlist.
+
+Response - 200 OK
+Body - JSON ex.:
+{
+   "results": "dict", - By sets of 5 movies in DB
+   "total_pages": "int",
+   "redirect": "/wishlist"
+}
+
+Response - 404 : Page not found.
+
+Response - 440 : SESSION_EXPIRED or UNAUTHORIZED
+Redirect - /login
+
+
+POST: /wishlist/add/{movie_id}>/{movie_name}
+
+Adds a movie to the user's wishlist.
+
+Request 
+Headers - Bearer token
+PathParam - {movie_id: int, movie_name: str}
+
+Response - 200 OK 
+Body - JSON: {
+   "message": "Movie added."
+   "method": "add"
+}
+
+Response - 400 : Bad movie request - Invalid movie_id or movie_name
+
+Response - 409 : Movie already added.
+
+Response - 403 : Movies limit reached. - Max. 50 per user
+
+POST: /wishlist/remove/{movie_id}
+
+Removes a movie to the user's wishlist.
+
+Request
+Headers - Bearer token
+PathParam - {movie_id: int}
+
+Response - 200 OK 
+Body - JSON: {
+   "message": "Movie removed."
+   "method": "remove"
+}
+
+Response - 400 : Bad movie request. - Invalid movie_id
+
+Response - 409 : Movie already added.
+
+Response - 403 : Movies limit reached. - Max. 50 per user
+
+GET: /wishlist/search
+
+Searches and retrieves movie results inside wishlist's user page.
+
+Response - 200 OK
+Body - JSON ex.:
+{
+   "results": "dict", // By sets of 5 movies
+   "total_pages": "int",
+   "redirect": "/wishlist"
+}
+
+Response - 404 : Page not found.
+
+Response - 440 : SESSION_EXPIRED or UNAUTHORIZED
+Redirect - /login
+
+   POST: /wishlist-status
+
+   Updates movies statuses to those movies which are already on the wishlist for visual purposes.
+
+   Request
+   Headers - Bearer token
+   Body - JSON: No body
+
+   Response - 200 OK 
+   Body - JSON: {
+      "statuses": {
+         "movie_id": "boolean",
+         "movie_id": "boolean"
+      }
+   }
+
+   Example
+   {
+      "statuses": {
+         "101": true,
+         "102": false
+      }
+   }
+
+   Response - 440 : SESSION_EXPIRED or UNAUTHORIZED
 
 --------------------------------------------
-
-You can also download the requirements in requirements.txt:
-
-pip install -r requirements.txt
 
 ## Techs
 

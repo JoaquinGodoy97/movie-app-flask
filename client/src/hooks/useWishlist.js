@@ -24,8 +24,6 @@ export const useWishlist = (showToast, setMovies) => {
             // Update with wishlist status
             const data = await response.json();
 
-            console.log("Movie data status: ", data)
-
             setMovies(movies.map(movie => ({
                 ...movie,
                 inWishlist: data.statuses[movie.mv_id] || false // Default to false if not found

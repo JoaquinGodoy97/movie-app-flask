@@ -1,7 +1,7 @@
 from flask import session, jsonify, request
 from server.models.user_model import User
 from server.utils.db import db
-from server.view.view import homepage_search_redirect, password_reminder_alert, database_save_error_alert, welcome_user_login
+from server.view.view import homepage_search_redirect, database_save_error_alert
 from functools import wraps
 from server.utils.settings import Messages
 import jwt 
@@ -84,7 +84,8 @@ def open_session(user):
     session['username'] = user
     session['loggged_in'] = True
 
-    return Messages.welcome_back_user(user)
+def close_session():
+    session.pop('username', None)
 
 def close_session():
     session.pop('username', None)
@@ -108,3 +109,4 @@ def user_to_dict(user):
         "id": user.id,
         # Add more fields as needed
     }
+

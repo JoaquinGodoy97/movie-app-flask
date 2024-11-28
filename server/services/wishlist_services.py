@@ -2,7 +2,7 @@ from server.utils.settings import BASE_URL, API_KEY
 from flask import request, session, jsonify
 from server.utils.db import db
 from server.models.wishlist_user_model import Wishlist_user
-from server.view.view import database_save_error_alert, database_wishlist_delete_erorr_alert, database_delete_error_alert
+from server.view.view import movie_removed_success, database_save_error_alert, database_wishlist_delete_erorr_alert, database_delete_error_alert
 import requests, re
 
 
@@ -75,7 +75,7 @@ def remove_from_wishlist_db(found_movie_to_delete):
                 db.session.delete(found_movie_to_delete)
                 db.session.commit()
                 database_wishlist_delete_erorr_alert(found_movie_to_delete.title, found_movie_to_delete.mv_id)
-                return jsonify({ "message": "Movie removed successfuly", "method": 'remove'})
+                return movie_removed_success()
 
         except Exception as e:
                 db.session.rollback()

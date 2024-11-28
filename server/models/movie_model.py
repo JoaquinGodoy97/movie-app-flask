@@ -1,4 +1,4 @@
-from server.view.view import page_not_found_warning, page_not_found_wishlist_warning
+from server.view.view import page_not_found, page_not_found_wishlist_warning
 
 class Movies:
     def __init__(self, movie_list):
@@ -21,4 +21,4 @@ class Movies:
         else:
             if current_service == "wishlist":
                 return page_not_found_wishlist_warning()
-            return page_not_found_warning()
+            return page_not_found()

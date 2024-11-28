@@ -39,7 +39,6 @@ const WishlistPage = () => {
         const fetchInitialMovies = () => {
 
             setLoadingComponent(true);
-            console.log("Current page: ", currentPage)
             if (currentPage === 1 && searchQuery.length > 0) {
                 setMovies([]);  // Reset movies for the first page
             }
@@ -67,7 +66,7 @@ const WishlistPage = () => {
     const handlePageChange = (newPage) => {
 
         if (atWishlistPage && newPage > 0 && !loading) {
-            console.log(`handlePagechange => Changing to page: ${newPage}`);
+            // console.log(`handlePagechange => Changing to page: ${newPage}`);
             setCurrentPage(newPage)
 
             if (!scrollMode) {
@@ -85,8 +84,6 @@ const WishlistPage = () => {
     };
 
     const classNames = `main-item ${!loading ? 'fade-in' : ''}`
-
-    console.log('Scroll Mode:', scrollMode);
 
     // if (sessionLoading && totalPages === 1 && scrollMode) {
     //     return <LoadingPage />

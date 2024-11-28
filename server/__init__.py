@@ -1,10 +1,9 @@
 from flask import Flask, send_from_directory
-from flask_sqlalchemy import SQLAlchemy
-from server.utils.db import db, DB_NAME
-from os import path, environ #operating system
+from server.utils.db import db
+from server.utils.settings import FRONTEND_URL, Config, DB_NAME
+from os import path
 from flask_migrate import Migrate
 from flask_cors import CORS
-from decouple import config
 
 migrate = Migrate()
 
@@ -13,12 +12,13 @@ def create_app():
     app = Flask(__name__, static_folder='../client/public', static_url_path='')
     
     # Allow CORS from local and production frontends 
-    frontend_url = environ.get('FRONTEND_URL', 'http://localhost:3000') 
-    CORS(app, supports_credentials=True, resources={r"/*": {"origins": frontend_url}})
+    print(f"Loaded FRONTEND_URL: {FRONTEND_URL}")
+    # frontend_url = environ.get('FRONTEND_URL', 'http://localhost:3000')
+    CORS(app, supports_credentials=True, resources={r"/*": {"origins": FRONTEND_URL}})
 
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SECRET_KEY']= config('SECRET_KEY')
+    app.config['SECRET_KEY']=Config.SECRET_KEY
     
     # Initialize the SQLAlchemy instance with the app
     db.init_app(app)

@@ -36,3 +36,5 @@ database_backup.db
 favicon/
 
 .env
+.env.production
+.env.local

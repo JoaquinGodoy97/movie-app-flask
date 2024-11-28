@@ -13,7 +13,7 @@ export const MovieList = ({ movies = [], loading, onWishlist, currentPage, onPag
 
     observer.current = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && !loading && currentPage < totalPages) {
-        console.log("Triggering onPageChange with new page:", currentPage + 1);
+        // console.log("Triggering onPageChange with new page:", currentPage + 1);
         onPageChange(currentPage + 1)
       }
     }, {

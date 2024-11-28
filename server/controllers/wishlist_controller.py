@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, request, url_for, redirect, session, jsonify, json
 from .results_controller import handle_form, get_set_of_movies
 from server.models.wishlist_user_model import Wishlist_user
-from server.view.view import (session_logout_warning, logout_redirect, display_movies, wishlist_redirect, 
-                    alert_no_movie_added_wishlist, alert_movie_already_added, render_wishlist_template,
-                    database_wishlist_save_success_alert, display_current_results)
+from server.view.view import (invalid_token, display_movies, wrong_movie_request, 
+                    movies_limit_reached_database, movie_already_added, render_wishlist_template,
+                    movie_added_success, get_movies_status)
 from server.services.auth_services import Security
 from server.services.wishlist_services import (get_results_by_movie_id, add_to_wishlist_db, remove_from_wishlist_db,
                                                 filter_by_usersession_and_movieid, filter_by_usersession, is_wishlist_user_limit_reached,
@@ -18,7 +18,7 @@ def wishlist_pages():
     has_acess = Security.verify_token(request.headers)
     
     if not has_acess:
-        return jsonify({ "message": "Unauthorized."})
+        return invalid_token()
     
     search_result = request.args.get('query', '')
     current_page = request.args.get('page', 1, type=int)
@@ -32,7 +32,6 @@ def wishlist_pages():
     
     results = get_results_by_movie_id(results)
 
-    # search_result = query_search()
     current_service = 'wishlist'
     search_result = ""
     movie_results = get_set_of_movies(results, current_page, search_result, current_service)
@@ -42,31 +41,21 @@ def wishlist_pages():
 @wishlist.route('/wishlist/add/<int:movie_id>/<movie_name>', methods=["POST"])
 # @login_required
 def add_to_wishlist(movie_id, movie_name):
-    # return jsonify({ "message": "Added to wishlist"})
 
     """
     Adds a movie to the user's wishlist if it doesn't already exist.
-
-    Args:
-        search_result (str): The search query.
-        current_page (int): The current page number.
-        movie_name (str): The name of the movie.
-        movie_id (int): The ID of the movie.
 
     Returns:
         Response: Rendered template with the updated results.
     """
 
-    print(movie_id, movie_name)
-
     has_acess = Security.verify_token(request.headers)
     
     if not has_acess:
-        return jsonify({ "message": "Unauthorized."})
+        return invalid_token()
     
     if not movie_id or not movie_name:
-        return jsonify ({ "error": "Could not process it."}), 400
-    
+        return wrong_movie_request()
 
     user = has_acess['username']
     # return jsonify({ "message": f"{session['username']} added {movie_name} to wishlist"})
@@ -76,17 +65,15 @@ def add_to_wishlist(movie_id, movie_name):
     if movie_exists:
         remove_from_wishlist_db(movie_exists)
         # alert_movie_already_added(movie_name, movie_id)
-        return jsonify({ "error": "Movie already added."})
+        return movie_already_added()
     else:
 
         if is_wishlist_user_limit_reached(user):
-            return jsonify({ "error": "Limit 50 movies per user. Server in development." }), 403
+            return movies_limit_reached_database()
         
-        # database_wishlist_save_success_alert(movie_name, movie_id)
         add_to_wishlist_db(movie_id, movie_name, username=user)
     
-    return jsonify({ "message": f"{user} you added {movie_name} to your Wishlist!", 'method': 'add'})
-    # return display_current_results(search_result, current_page)
+    return movie_added_success(user, movie_name)
 
 @wishlist.route('/wishlist/remove/<int:movie_id>', methods=["POST"])
 # @login_required
@@ -106,14 +93,14 @@ def remove_from_wishlist(movie_id):
     has_acess = Security.verify_token(request.headers)
 
     if not has_acess:
-        return jsonify({ "message": "Unauthorized."})
+        return invalid_token()
     
     found_movie_to_delete = Wishlist_user.query.filter_by(mv_id=movie_id).first()
 
     if found_movie_to_delete:
         return remove_from_wishlist_db(found_movie_to_delete)
     else:
-        return jsonify({ "error": "Movie not found."}), 400
+        return wrong_movie_request()
     # return redirect(url_for("wishlist.wishlist_pages", current_page=current_page))
 
 @wishlist.route('/wishlist/search', methods=["GET"])
@@ -123,13 +110,11 @@ def wishlist_search():
     has_acess = Security.verify_token(request.headers)
     
     if not has_acess:
-        return jsonify({ "message": "Unauthorized."})
+        return invalid_token()
 
     search_result = request.args.get('query', '')
     current_page = request.args.get('page', 1, type=int)
     
-    print("Whats the token again?", has_acess['username'])
-
     results = filter_by_usersession(has_acess['username'])
     # return jsonify({ "message": results})
     results = get_results_by_movie_id(results)
@@ -141,17 +126,6 @@ def wishlist_search():
     if movie_results['movie_set'] == None:
         movie_results['movie_set'] = ''
     
-    # if request.method == 'POST':
-    #     response = handle_form(movie_results)
-
-    #     if response:
-    #         return response
-
-    #     #LOG OUT
-    #     if request.form.get('logout') == 'Log Out':
-    #         session_logout_warning(session['username'])
-    #         return logout_redirect()
-        
     return display_movies(movie_results, render_success="/wishlist/search", render_error="/wishlist")
     # return redirect(url_for("wishlist.wishlist_search", current_page=current_page, search_result=search_result))
 
@@ -164,6 +138,10 @@ def wishlist_search():
 # @login_required
 def wishlist_status():
     token = Security.verify_token(request.headers)
+
+    if not token:
+        return invalid_token()
+    
     user = token['username']
 
     movie_ids = request.json.get('movie_ids')  # Accept a list of movie IDs
@@ -172,4 +150,4 @@ def wishlist_status():
     
     # is_in_wishlist = bring_single_movie_by_user(user, movie_id)
     # return jsonify({'in_wishlist': is_in_wishlist})
-    return jsonify({'statuses': statuses})
+    return get_movies_status(statuses)

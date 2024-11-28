@@ -20,13 +20,14 @@ export const useCheckUserSession = () => {
             try {
                 const response = await fetchWithDelay();
                 const data = await response.json();
-                if (response.status === 401) {
+                if (response.ok) {
+                    setUser(data.username)
+                }
+
+                if (response.status === 401 || response.status === 440) {
                     navigate(data.redirect);
                 } 
-                else {
-                    console.log("User data: ", data)
-                    setUser(data);
-                }
+                
             } catch (error) {
                 console.error('Error during user session check:', error);
                 navigate('/login')

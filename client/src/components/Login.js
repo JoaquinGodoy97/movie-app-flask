@@ -19,10 +19,9 @@ function Login() {
 
         const token = localStorage.getItem('token');
         if (!token) {
-            // If there's no token, redirect to login or handle accordingly
             console.log('No token found, redirecting to login.');
+            showToast("Access denied.")
             navigate("/login")
-            // Redirect logic here, e.g. navigate('/login');
             return;
         }
 
@@ -40,10 +39,12 @@ function Login() {
             };
             try {
                 const response = await fetch(apiBaseUrl, options);
+                const data = await response.json();
 
                 if (response.status === 401) {
                     // If the token is invalid or expired, remove it and redirect to login
                     console.log('Invalid or expired token, logging out.');
+                    console.log(data.message)
                     localStorage.removeItem('token');
                     navigate('/login');
                     return;
@@ -53,7 +54,6 @@ function Login() {
                 console.log('Error fetching data:', error);
             } finally {
                 setLoading(false)
-
             }
         };
 
@@ -99,10 +99,6 @@ function Login() {
             const response = await fetch(url, options);
             const data = await response.json();
 
-            if (data.error) {
-                navigate(data.redirect);
-            }
-
             if (response.ok) {
 
                 localStorage.setItem('token', data.token)
@@ -116,7 +112,7 @@ function Login() {
                 }
 
             } else {
-                alert(data.error);
+                showToast(data.message);
                 }
         } catch (error) {
             console.error("Error submitting form:", error);
