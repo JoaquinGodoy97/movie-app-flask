@@ -3,7 +3,13 @@
 
 The project is a Movie App built using Flask framwork that takes data from a movie API. Using an MVC architecture, the app will allow you to Sig-up, Log-in and have a set of basic functionalities exploring movies and save them into a wishlist.
 
-You can check the App on the following link: https://movie-app-flask.onrender.com/
+You can check the App on the following link: [https://movie-app-flask.onrender.com/](https://movie-app-flask.vercel.app/)
+
+To test the app you can use the following user -otherwise you can sign up with a new user:
+{
+   "user": "admin",
+   "password": "ADMIN"
+}
 
 ## Purpose
 
