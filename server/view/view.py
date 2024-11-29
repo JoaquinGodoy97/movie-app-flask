@@ -118,7 +118,7 @@ def has_valid_access(username):
 """LOGOUT"""
 
 def session_logout_success():
-    jsonify({'message': 'Logged out successfully', 'redirect': '/login'}), 200
+    return jsonify({'message': 'Logged out successfully', 'redirect': '/login'}), 200
 
 """LOGIN"""
 
