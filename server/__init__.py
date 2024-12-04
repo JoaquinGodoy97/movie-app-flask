@@ -58,9 +58,9 @@ def create_database(app):
             db.create_all()
         print('Created Database!')
 
-if __name__ == "__main__":
-    app = create_app()
-    create_database(app)
-    app.run()
+# if __name__ == "__main__":
+#     app = create_app()
+#     create_database(app)
+#     app.run()
 
 

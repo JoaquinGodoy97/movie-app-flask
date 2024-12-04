@@ -1,10 +1,10 @@
 from server.utils.settings import BASE_URL, API_KEY
-from flask import request, session, jsonify
 from server.utils.db import db
 from server.models.wishlist_user_model import Wishlist_user
 from server.view.view import movie_removed_success, database_save_error_alert, database_wishlist_delete_erorr_alert, database_delete_error_alert
 import requests, re
-
+from server.utils.db_pool import get_db_connection
+from mysql import connector
 
 def get_results_by_movie_id(results):
         updated_results = [] 
@@ -31,17 +31,6 @@ def get_results_by_movie_id(results):
 
         return updated_results
 
-def filter_by_usersession_and_movieid(user, movie_id):
-        return Wishlist_user.query.filter_by(username=user, mv_id=movie_id).first()
-
-def filter_by_usersession(username):
-        
-        movies = Wishlist_user.query.filter_by(username=username).all()
-        return [movie_to_dict(movie) for movie in movies]
-
-def bring_single_movie_by_user(user, movie_id):
-        return Wishlist_user.query.filter_by(username=user, mv_id=movie_id).first() is not None
-
 def movie_to_dict(movie):
         return {
                 'id': movie.id,
@@ -49,6 +38,41 @@ def movie_to_dict(movie):
                 'title': movie.title,
                 'username': movie.username # change the front end
         }
+
+def is_wishlist_user_limit_reached(username):
+        list = filer_movies_by_username(username)
+        list_length = len(list)
+        return list_length >= 50
+
+def filter_movies_by_search_if_any(movies, search_result):
+        if search_result:
+                pattern = re.compile(f".*?{re.escape(search_result)}.*?", re.IGNORECASE)
+                filtered_movies = filter(lambda movie: pattern.search(movie['title']), movies)
+
+                return list(filtered_movies)
+        return movies
+
+def filter_by_usersession(username):
+        
+        movies = filer_movies_by_username(username)
+        return [movie_to_dict(movie) for movie in movies]
+
+def bring_multiple_movies_by_user(user, movie_ids):
+        # Assuming you have a User and a Wishlist model
+        # Query the wishlist table for this user and the provided movie IDs
+        wishlist_items = bring_movies_by_user_and_movie_id(user, movie_ids)
+        # Create a dictionary with movie_id as keys and True/False as values
+        wishlist_statuses = {mv_id: False for mv_id in movie_ids}  # Initialize all to False
+        
+        for item in wishlist_items:
+                wishlist_statuses[item.mv_id] = True  # Set to True for movies in the wishlist
+        
+        return wishlist_statuses
+
+
+"""
+DB SERVICES
+"""
 
 def add_to_wishlist_db(movie_id, movie_name, username):
 
@@ -65,11 +89,6 @@ def add_to_wishlist_db(movie_id, movie_name, username):
         finally:
                 db.session.close()
 
-def is_wishlist_user_limit_reached(user):
-        list = Wishlist_user.query.filter_by(username=user).all()
-        list_length = len(list)
-        return list_length >= 50
-
 def remove_from_wishlist_db(found_movie_to_delete):
         try:
                 db.session.delete(found_movie_to_delete)
@@ -83,22 +102,92 @@ def remove_from_wishlist_db(found_movie_to_delete):
         finally:
                 db.session.close()
 
-def filter_movies_by_search_if_any(movies, search_result):
-        if search_result:
-                pattern = re.compile(f".*?{re.escape(search_result)}.*?", re.IGNORECASE)
-                filtered_movies = filter(lambda movie: pattern.search(movie['title']), movies)
+# def filer_movies_by_username(username):
+#         return Wishlist_user.query.filter_by(username=username).all()
 
-                return list(filtered_movies)
-        return movies
+def filer_movies_by_username(username):
+        query = "SELECT * FROM wishlist_users WHERE username = %s"
 
-def bring_multiple_movies_by_user(user, movie_ids):
-        # Assuming you have a User and a Wishlist model
-        # Query the wishlist table for this user and the provided movie IDs
-        wishlist_items = Wishlist_user.query.filter(Wishlist_user.username == user, Wishlist_user.mv_id.in_(movie_ids)).all()
-        # Create a dictionary with movie_id as keys and True/False as values
-        wishlist_statuses = {mv_id: False for mv_id in movie_ids}  # Initialize all to False
-        
-        for item in wishlist_items:
-                wishlist_statuses[item.mv_id] = True  # Set to True for movies in the wishlist
-        
-        return wishlist_statuses
+        try:
+                connection = get_db_connection()
+                cursor = connection.cursor(dictionary=True)
+                cursor.executable(query, (username))
+                username = cursor.fetchall()
+                return username
+        except connector.Error as e:
+                print(f"Error bringing username from Wishlist db: {e}")
+        finally:
+                cursor.close()
+                connection.close()
+
+# def filter_by_usersession_and_movieid(user, movie_id):
+#         return Wishlist_user.query.filter_by(username=user, mv_id=movie_id).first()
+
+def filter_by_usersession_and_movieid(user, movie_id):
+        query = """
+                SELECT * 
+                FROM wishlist_users
+                WHERE username = %s AND mv_id = %s
+                LIMIT 1
+        """
+
+        try:
+                connection = get_db_connection()
+                cursor = connection.cursor(dictionary=True)
+                cursor.execute(query, (user, movie_id))
+                result = cursor.fetch_one()
+                return result
+        except connector.Error as e:
+                print(f"Error filtering wishlist: {e}")
+                return None
+        finally:
+                cursor.close()
+                connection.close()
+
+# def bring_single_movie_by_user(user, movie_id):
+#         return Wishlist_user.query.filter_by(username=user, mv_id=movie_id).first() is not None
+
+def bring_single_movie_by_user(user, movie_id):
+        query = """
+                SELECT 1 
+                FROM wishlist_users
+                WHERE username = %s AND mv_id = %s
+                LIMIT 1
+        """
+
+        try:
+                connection = get_db_connection()
+                cursor = connection.cursor(dictionary=True)
+                cursor.execute(query, (user, movie_id))
+                result = cursor.fetch_one()
+                return result is not None
+        except connector.Error as e:
+                print(f"Error checking single movie: {e}")
+                return None
+        finally:
+                cursor.close()
+                connection.close()
+
+# def bring_movies_by_user_and_movie_id(user, movie_ids):
+#         return Wishlist_user.query.filter(Wishlist_user.username == user, Wishlist_user.mv_id.in_(movie_ids)).all()
+
+def bring_movies_by_user_and_movie_id(user: str, movie_ids: list):
+        placeholders = ', '.join(['%s'] * len(movie_ids))
+        query = f"""
+                SELECT *
+                FROM wishlist_users
+                WHERE username = %s AND mv_id IN ({placeholders})
+        """
+
+        try:
+                connection = get_db_connection()
+                cursor = connection.cursor(dictionary=True)
+                cursor.execute(query, [user] + movie_ids )
+                results = cursor.fetchall()
+                return results
+        except connector.Error as e:
+                print(f"Error bringin movies: {e}")
+                return []
+        finally:
+                cursor.close()
+                connection.close()

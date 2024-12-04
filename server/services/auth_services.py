@@ -1,12 +1,12 @@
 from flask import session, jsonify, request
 from server.models.user_model import User
 from server.utils.db import db
-from server.view.view import homepage_search_redirect, database_save_error_alert
 from functools import wraps
-from server.utils.settings import Messages
 import jwt 
 from datetime import datetime, timedelta, timezone
 from decouple import config
+from server.utils.db_pool import get_db_connection
+from mysql import connector
 # from app import ap
 
 def login_required(f):
@@ -49,36 +49,37 @@ class Security():
                 return False
         return False
 
-def add_user_to_db(user, email, password):
-    """
-    Adds user to the database.
+def add_user_to_db(user, password, email=""):
+    query = "INSERT INTO users (username, password) VALUES (%s, %s)"
 
-    Args:
-        user (str): The search query. No restrictions yet.
-        email (int): The current page number. Optional, not functional yet.
-        password (str): The name of the movie. 5-9 characters long no spaces and contain only alphanumeric characters.
-
-    Returns:
-        Response: Rendered template with the updated results.
-    """
-    print(user, password)
     try:
-        
-        user_db = User(user, email, password)
-        db.session.add(user_db)
-        db.session.commit()
-
-        # password_reminder_alert(user, password) # routing alert // business logic
-        # return homepage_search_redirect()
-    
-    except Exception as e:
-        db.session.rollback()
-        # database_save_error_alert(e)
-        print('failed to create user')
-
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute(query, (user, password))
+        connection.commit()
+        print("User added successfully.")
+    except connector.Error as e:
+        print(f"Error adding user: {e}")
+        connection.rollback()
+        close_session() # Not REAlly Sure
     finally:
-        close_session()
+        cursor.close()
+        connection.close()
 
+def user_query_filter_by_name(user):
+    query = "SELECT * FROM users WHERE user = %s"
+
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+        cursor.executable(query, (user))
+        user = cursor.fetch_one()
+        return user
+    except connector.Error as e:
+        print(f"Error finding user: {e}")
+    finally:
+        cursor.close()
+        connection.close()
 
 def open_session(user):
     session['username'] = user
@@ -99,9 +100,7 @@ def validate_credentials(username, password):
     validated_password = User.validate_password(password)
     return validated_user, validated_password
 
-def user_query_filter_by_name(user):
-    found_user = User.query.filter_by(username=user).first() # modificar
-    return found_user
+
 
 def user_to_dict(user):
     return {

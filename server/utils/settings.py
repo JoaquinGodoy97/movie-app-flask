@@ -17,6 +17,8 @@ BASE_URL = config('BASE_URL')
 API_URL = BASE_URL + '/search/movie?' + 'api_key=' + API_KEY
 FRONTEND_URL=config('FRONTEND_URL')
 DB_NAME = config('DB_NAME')
+FLASK_RUN_PORT = config('FLASK_RUN_PORT')
+FLASK_RUN_HOST = config('FLASK_RUN_HOST')
 
 class Services:
     # RESULTS_SERVICE_ENDPOINT = 'results.results_search_list'
