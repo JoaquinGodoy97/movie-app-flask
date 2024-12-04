@@ -74,31 +74,43 @@ def bring_multiple_movies_by_user(user, movie_ids):
 DB SERVICES
 """
 
+# def add_to_wishlist_db(movie_id, movie_name, username):
+
+#         try:
+#                 user_data = Wishlist_user(mv_id=movie_id, title=movie_name, username=username)
+
+#                 db.session.add(user_data)
+#                 db.session.commit()
+
+#         except Exception as e:
+#                 db.session.rollback()
+#         finally:
+#                 db.session.close()
+
 def add_to_wishlist_db(movie_id, movie_name, username):
-
+        query = "INSERT INTO wishlist_user (mv_id, title, username) VALUES (%s, %s, %s)"
         try:
-                user_data = Wishlist_user(mv_id=movie_id, title=movie_name, username=username)
-
-                db.session.add(user_data)
-                db.session.commit()
-
-        except Exception as e:
-                db.session.rollback()
-                database_save_error_alert(e)
-
+                connection = get_db_connection()
+                cursor = connection.cursor()
+                cursor.execute(query, (movie_id, movie_name, username))
+                connection.commit()
+                print("Wishlist user added successfully.")
+        except connector.Error as e:
+                print(f"Error adding wishlist user: {e}")
+                connection.rollback()
         finally:
-                db.session.close()
+                cursor.close()
+                connection.close()
+
 
 def remove_from_wishlist_db(found_movie_to_delete):
         try:
                 db.session.delete(found_movie_to_delete)
                 db.session.commit()
-                database_wishlist_delete_erorr_alert(found_movie_to_delete.title, found_movie_to_delete.mv_id)
                 return movie_removed_success()
 
         except Exception as e:
                 db.session.rollback()
-                database_delete_error_alert(e)
         finally:
                 db.session.close()
 

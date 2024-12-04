@@ -49,6 +49,36 @@ class Security():
                 return False
         return False
 
+
+def open_session(user):
+    session['username'] = user
+    session['loggged_in'] = True
+
+def close_session():
+    session.pop('username', None)
+
+def close_session():
+    session.pop('username', None)
+
+def is_user_logged_in(session):
+    return 'username' in session
+
+def validate_credentials(username, password):
+    """Helper function to validate username and password."""
+    validated_user = User.validate_user(username)
+    validated_password = User.validate_password(password)
+    return validated_user, validated_password
+
+
+
+def user_to_dict(user):
+    return {
+        "username": user.username,
+        "id": user.id,
+        # Add more fields as needed
+    }
+
+
 def add_user_to_db(user, password, email=""):
     query = "INSERT INTO users (username, password) VALUES (%s, %s)"
 
@@ -80,32 +110,3 @@ def user_query_filter_by_name(user):
     finally:
         cursor.close()
         connection.close()
-
-def open_session(user):
-    session['username'] = user
-    session['loggged_in'] = True
-
-def close_session():
-    session.pop('username', None)
-
-def close_session():
-    session.pop('username', None)
-
-def is_user_logged_in(session):
-    return 'username' in session
-
-def validate_credentials(username, password):
-    """Helper function to validate username and password."""
-    validated_user = User.validate_user(username)
-    validated_password = User.validate_password(password)
-    return validated_user, validated_password
-
-
-
-def user_to_dict(user):
-    return {
-        "username": user.username,
-        "id": user.id,
-        # Add more fields as needed
-    }
-

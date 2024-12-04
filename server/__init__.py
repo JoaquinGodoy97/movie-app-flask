@@ -4,6 +4,7 @@ from server.utils.settings import FRONTEND_URL, Config, DB_NAME
 from os import path
 from flask_migrate import Migrate
 from flask_cors import CORS
+from server.utils.db_pool import create_users_table
 
 migrate = Migrate()
 
@@ -52,11 +53,12 @@ def create_app():
     
     return app
 
-def create_database(app):
-    if not path.exists('server/' + DB_NAME):
-        with app.app_context():  # Ensure app context is available
-            db.create_all()
-        print('Created Database!')
+# def create_database(app):
+#     if not path.exists('server/' + DB_NAME):
+#         with app.app_context():  # Ensure app context is available
+#             # db.create_all()
+#             create_users_table()
+#         print('Created Database!')
 
 # if __name__ == "__main__":
 #     app = create_app()
