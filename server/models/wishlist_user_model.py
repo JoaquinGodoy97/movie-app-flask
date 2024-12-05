@@ -8,9 +8,8 @@ class Wishlist_user(db.Model):
     mv_id = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String(150), nullable=False)
     username = db.Column(db.String(15), db.ForeignKey('user.username'), nullable=False)
-    # IMPORTANT USER ID IS WRONGLY NAME AS ID, WHEN ITS ACUTALLY A USERNAME
+    # IMPORTANT USER ID WAS WRONGLY NAME AS ID, WHEN ITS ACUTALLY A USERNAME
 
-    #how to add lists
 
     def __init__(self, mv_id ,title, username):
         self.mv_id = mv_id

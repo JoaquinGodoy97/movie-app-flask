@@ -1,35 +1,34 @@
 from mysql.connector import pooling, connect
 from server.utils.settings import FLASK_RUN_HOST
 
-
-
-# Function to create the database if it doesn't exist
 def create_database():
 
-    connection = connect(
-        host='localhost',
-        user="root",
-        password="root"
-    )
-    # First, check if the database exists
-    cursor = connection.cursor()
-    cursor.execute("SHOW DATABASES LIKE 'movies_db';")
-    result = cursor.fetchone()
+    try:
+        connection = connect(
+            host='localhost',
+            user="root",
+            password="root"
+        )
+        
+        cursor = connection.cursor()
+        cursor.execute("SHOW DATABASES LIKE 'movies_db';")
+        result = cursor.fetchone()
 
-    if not result:  # If the database doesn't exist, create it
-        cursor.execute("CREATE DATABASE movies_db;")
-        connection.commit()
-        print('Created database `movies_db`.')
-    else:
-        print('Database `movies_db` already exists.')
-
-    cursor.close()
-    connection.close()
+        if not result:  
+            cursor.execute("CREATE DATABASE movies_db;")
+            connection.commit()
+            print('Created database `movies_db`.')
+        else:
+            print('Database `movies_db` already exists.')
+    except Exception as e:
+        print(f"Error creating database: {e}")
+    finally:
+        cursor.close()
+        connection.close()
 
 def create_users_table():
 
-    # Define the table creation query
-    create_table_query = """
+    create_users_table_query = """
     CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
         username VARCHAR(10) NOT NULL UNIQUE,
@@ -41,9 +40,43 @@ def create_users_table():
     try:
         connection = get_db_connection()
         cursor = connection.cursor()
-        cursor.execute(create_table_query)
-        connection.commit()
-        print("Table `users` created successfully.")
+        cursor.execute("SHOW TABLES LIKE 'users';")
+        result = cursor.fetchone()
+        if not result:
+            cursor.execute(create_users_table_query)
+            connection.commit()
+            print("Table users created successfully.")
+        else:
+            print("Table users already exists.")
+    except Exception as e:
+        print(f"Error creating table: {e}")
+    finally:
+        cursor.close()
+        connection.close()
+
+def create_wishlist_user_table():
+
+    create_wishlist_user_table = """
+    CREATE TABLE IF NOT EXISTS wishlist_user (
+        id	INT AUTO_INCREMENT PRIMARY KEY,
+        mv_id	INT NOT NULL,
+        title	VARCHAR(150) NOT NULL,
+        username	VARCHAR(10) NOT NULL,
+	    CONSTRAINT fk_wishlist_user_username_user FOREIGN KEY(username) REFERENCES users (username)
+    );
+    """
+
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute("SHOW TABLES LIKE 'users';")
+        result = cursor.fetchone()
+        if not result:
+            cursor.execute(create_wishlist_user_table)
+            connection.commit()
+            print("Table wishlist_user created successfully.")
+        else:
+            print("Table wishlist_user already exists.")
     except Exception as e:
         print(f"Error creating table: {e}")
     finally:
