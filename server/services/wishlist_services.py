@@ -103,16 +103,33 @@ def add_to_wishlist_db(movie_id, movie_name, username):
                 connection.close()
 
 
-def remove_from_wishlist_db(found_movie_to_delete):
-        try:
-                db.session.delete(found_movie_to_delete)
-                db.session.commit()
-                return movie_removed_success()
+# def remove_from_wishlist_db(found_movie_to_delete):
+#         try:
+#                 db.session.delete(found_movie_to_delete)
+#                 db.session.commit()
+#                 return movie_removed_success()
 
+#         except Exception as e:
+#                 db.session.rollback()
+#         finally:
+#                 db.session.close()
+
+def remove_from_wishlist_db(movie_id):
+        query = """
+                DELETE FROM wishlist_user 
+                WHERE mv_id = %s AND username = %s
+                """
+        try:
+                connection = get_db_connection()
+                cursor = connection.cursor()
+                cursor.execute(query, (movie_id))
+                connection.commit()
+                print("Wishlist movie removed successfully.")
         except Exception as e:
-                db.session.rollback()
+                print(f"Error removing movie: {e}")
         finally:
-                db.session.close()
+                cursor.close()
+                connection.close()
 
 # def filer_movies_by_username(username):
 #         return Wishlist_user.query.filter_by(username=username).all()
@@ -147,7 +164,7 @@ def filter_by_usersession_and_movieid(user, movie_id):
                 connection = get_db_connection()
                 cursor = connection.cursor(dictionary=True)
                 cursor.execute(query, (user, movie_id))
-                result = cursor.fetch_one()
+                result = cursor.fetchone()
                 return result
         except connector.Error as e:
                 print(f"Error filtering wishlist: {e}")
@@ -171,7 +188,7 @@ def bring_single_movie_by_user(user, movie_id):
                 connection = get_db_connection()
                 cursor = connection.cursor(dictionary=True)
                 cursor.execute(query, (user, movie_id))
-                result = cursor.fetch_one()
+                result = cursor.fetchone()
                 return result is not None
         except connector.Error as e:
                 print(f"Error checking single movie: {e}")
@@ -203,3 +220,21 @@ def bring_movies_by_user_and_movie_id(user: str, movie_ids: list):
         finally:
                 cursor.close()
                 connection.close()
+
+# Wishlist_user.query.filter_by(mv_id=movie_id).first()
+
+def wishlist_filter_query_by_movie_id(movie_id):
+        query = "SELECT * FROM wishlist_user WHERE mv_id = %s"
+
+        try:
+                connection = get_db_connection()
+                cursor = connection.cursor()
+                cursor.execute(query, (movie_id))
+                movie = cursor.fetchone()
+                return movie
+        except Exception as e:
+                print(f"Error finding movie by id: {e}")
+        finally:
+                cursor.close()
+                connection.close()
+

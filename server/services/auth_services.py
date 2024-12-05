@@ -103,8 +103,8 @@ def user_query_filter_by_name(user):
         connection = get_db_connection()
         cursor = connection.cursor(dictionary=True)
         cursor.executable(query, (user))
-        user = cursor.fetch_one()
-        return user
+        found_user = cursor.fetchone()
+        return found_user
     except connector.Error as e:
         print(f"Error finding user: {e}")
     finally:
