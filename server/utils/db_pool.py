@@ -83,17 +83,14 @@ def create_wishlist_user_table():
         cursor.close()
         connection.close()
 
-def init_connection_pool():
-    connection_pool = pooling.MySQLConnectionPool(
-        pool_name='apimovies-pool',
-        pool_size=5,
-        host='localhost',
-        user="root",
-        password="root",
-        database="movies_db"
-    )
-    return connection_pool
+connection_pool = pooling.MySQLConnectionPool(
+    pool_name='apimovies-pool',
+    pool_size=5,
+    host='localhost',
+    user="root",
+    password="root",
+    database="movies_db"
+)
 
 def get_db_connection():
-    connection_pool = init_connection_pool()
     return connection_pool.get_connection()
