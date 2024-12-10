@@ -25,14 +25,18 @@ def login():
         return user_already_loggedin()
 
     session.permanent = True
-    user, email, password = (request.json.get(data) for data in ['username', 'email', 'password'])
+    # user, email, password = (request.json.get(data) for data in ['username', 'email', 'password'])
 
-    print("user:", user, "password:", password)
+    user = request.json.get("username", "").strip()
+    email = request.json.get("email", "").strip()
+    password = request.json.get("password", "").strip()
 
     found_user = user_query_filter_by_name(user)
     validated_user, validated_password = validate_credentials(user, password)
+    print(validated_password, validated_user, "=> Check if is validations are ok.")
     
     if found_user: # If found in DB
+        print(found_user.compare_password(password), "comparing password ")
         if found_user.compare_password(password):
             open_session(found_user.username)
             encoded_token = Security.generate_token(found_user)
@@ -51,7 +55,8 @@ def login():
             return invalid_pass_not_registered_user()
             
         else:
-            add_user_to_db(user, email, password)
+            print(user, email, password, "User, email, pass")
+            add_user_to_db(user, password, email) # Email at the end because is optional CAREFUL
             found_user = user_query_filter_by_name(user)
 
             if found_user:
@@ -85,7 +90,6 @@ def get_current_user():
     try:
         username = user_data.get('username')
         if username:
-            print('sucess')
             return has_valid_access(username)
         else:
             return invalid_token()
