@@ -69,8 +69,6 @@ def validate_credentials(username, password):
     validated_password = User.validate_password(password)
     return validated_user, validated_password
 
-
-
 def user_to_dict(user):
     return {
         "username": user.username,
@@ -79,13 +77,15 @@ def user_to_dict(user):
     }
 
 
-def add_user_to_db(user, password, email=""):
-    query = "INSERT INTO users (username, password) VALUES (%s, %s)"
+def add_user_to_db(username, password, email=""):
+    query = "INSERT INTO users (username, email, password) VALUES ( %s, %s, %s)"
 
+    email = email if email else None
+    
     try:
         connection = get_db_connection()
         cursor = connection.cursor()
-        cursor.execute(query, (user, password))
+        cursor.execute(query, (username, email, password))
         connection.commit()
         print("User added successfully.")
     except connector.Error as e:
@@ -97,14 +97,20 @@ def add_user_to_db(user, password, email=""):
         connection.close()
 
 def user_query_filter_by_name(user):
-    query = "SELECT * FROM users WHERE user = %s"
+    query = "SELECT * FROM users WHERE username = %s"
 
     try:
         connection = get_db_connection()
-        cursor = connection.cursor(dictionary=True)
-        cursor.executable(query, (user))
+        cursor = connection.cursor()
+        cursor.execute(query, (user,))
         found_user = cursor.fetchone()
-        return found_user
+
+        if found_user:
+            instanced_user = User(found_user[1], found_user[2], found_user[3]) # User, Email, Pass
+            return instanced_user
+        else:
+            return None
+        
     except connector.Error as e:
         print(f"Error finding user: {e}")
     finally:
