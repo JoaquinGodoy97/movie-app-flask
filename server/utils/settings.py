@@ -28,7 +28,7 @@ class Services:
 class Messages:
     MSG_USER_LOGGEDIN = "User already logged in"
     ERROR_MSG_PASSINVALID = 'Invalid Password. Write a password between 5-9 characters long no spaces.'
-    ERROR_MSG_INVALIDUSERNAME = 'Invalid username.'
+    ERROR_MSG_INVALIDPASSWORD = 'Invalid password.'
     ERROR_MSG_INVALIDUSERNAME_NOTREGISTERED = 'Invalid username. Write a username between 5-9 characters long no spaces.'
     ERROR_MSG_INVALIDPASS_NOTREGISTERED = 'Invalid password. Write a password between 5-9 characters long no spaces.'
     ERROR_MSG_AUTHINVALIDFORMAT = 'Invalid format. Write a username and passowrd between 5-9 characters long no spaces.'

@@ -32,6 +32,7 @@ def get_results_by_movie_id(results):
         return updated_results
 
 def movie_to_dict(movie):
+        print("PRINTING MOVIE: ", movie)
         return {
                 'id': movie.id,
                 'mv_id': movie.mv_id,
@@ -55,7 +56,8 @@ def filter_movies_by_search_if_any(movies, search_result):
 def filter_by_usersession(username):
         
         movies = filer_movies_by_username(username)
-        return [movie_to_dict(movie) for movie in movies]
+        # return [movie_to_dict(movie) for movie in movies] # Apparently not needed with Mysql
+        return movies
 
 def bring_multiple_movies_by_user(user, movie_ids):
         # Assuming you have a User and a Wishlist model
@@ -65,7 +67,7 @@ def bring_multiple_movies_by_user(user, movie_ids):
         wishlist_statuses = {mv_id: False for mv_id in movie_ids}  # Initialize all to False
         
         for item in wishlist_items:
-                wishlist_statuses[item.mv_id] = True  # Set to True for movies in the wishlist
+                wishlist_statuses[item['mv_id']] = True  # Set to True for movies in the wishlist
         
         return wishlist_statuses
 
@@ -117,12 +119,12 @@ def add_to_wishlist_db(movie_id, movie_name, username):
 def remove_from_wishlist_db(movie_id):
         query = """
                 DELETE FROM wishlist_user 
-                WHERE mv_id = %s AND username = %s
+                WHERE mv_id = %s
                 """
         try:
                 connection = get_db_connection()
                 cursor = connection.cursor()
-                cursor.execute(query, (movie_id))
+                cursor.execute(query, (movie_id,))
                 connection.commit()
                 print("Wishlist movie removed successfully.")
         except Exception as e:
@@ -135,13 +137,14 @@ def remove_from_wishlist_db(movie_id):
 #         return Wishlist_user.query.filter_by(username=username).all()
 
 def filer_movies_by_username(username):
-        query = "SELECT * FROM wishlist_users WHERE username = %s"
+        query = "SELECT * FROM wishlist_user WHERE username = %s"
 
         try:
                 connection = get_db_connection()
                 cursor = connection.cursor(dictionary=True)
-                cursor.executable(query, (username))
+                cursor.execute(query, (username,))
                 username = cursor.fetchall()
+                
                 return username
         except connector.Error as e:
                 print(f"Error bringing username from Wishlist db: {e}")
@@ -155,14 +158,14 @@ def filer_movies_by_username(username):
 def filter_by_usersession_and_movieid(user, movie_id):
         query = """
                 SELECT * 
-                FROM wishlist_users
+                FROM wishlist_user
                 WHERE username = %s AND mv_id = %s
                 LIMIT 1
         """
 
         try:
                 connection = get_db_connection()
-                cursor = connection.cursor(dictionary=True)
+                cursor = connection.cursor()
                 cursor.execute(query, (user, movie_id))
                 result = cursor.fetchone()
                 return result
@@ -179,7 +182,7 @@ def filter_by_usersession_and_movieid(user, movie_id):
 def bring_single_movie_by_user(user, movie_id):
         query = """
                 SELECT 1 
-                FROM wishlist_users
+                FROM wishlist_user
                 WHERE username = %s AND mv_id = %s
                 LIMIT 1
         """
@@ -204,7 +207,7 @@ def bring_movies_by_user_and_movie_id(user: str, movie_ids: list):
         placeholders = ', '.join(['%s'] * len(movie_ids))
         query = f"""
                 SELECT *
-                FROM wishlist_users
+                FROM wishlist_user
                 WHERE username = %s AND mv_id IN ({placeholders})
         """
 
@@ -229,7 +232,7 @@ def wishlist_filter_query_by_movie_id(movie_id):
         try:
                 connection = get_db_connection()
                 cursor = connection.cursor()
-                cursor.execute(query, (movie_id))
+                cursor.execute(query, (movie_id,))
                 movie = cursor.fetchone()
                 return movie
         except Exception as e:

@@ -123,7 +123,7 @@ def session_logout_success():
 """LOGIN"""
 
 def invalid_username_registered_user():
-    return jsonify({ "error": Messages.ERROR_MSG_INVALIDUSERNAME, "redirect": "/login" }), 401
+    return jsonify({ "message": Messages.ERROR_MSG_INVALIDPASSWORD, "redirect": "/login" }), 401
 
 def invalid_pass_registered_user():
     return jsonify({"message": Messages.ERROR_MSG_PASSINVALID, "redirect": "/login"}), 401

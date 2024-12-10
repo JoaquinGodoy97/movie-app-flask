@@ -96,13 +96,13 @@ def add_user_to_db(username, password, email=""):
         cursor.close()
         connection.close()
 
-def user_query_filter_by_name(user):
+def user_query_filter_by_name(username):
     query = "SELECT * FROM users WHERE username = %s"
 
     try:
         connection = get_db_connection()
         cursor = connection.cursor()
-        cursor.execute(query, (user,))
+        cursor.execute(query, (username,))
         found_user = cursor.fetchone()
 
         if found_user:

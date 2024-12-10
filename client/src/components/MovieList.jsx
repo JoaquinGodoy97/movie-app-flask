@@ -46,7 +46,7 @@ export const MovieList = ({ movies = [], loading, onWishlist, currentPage, onPag
         </div>
       ) : (
         <>
-          {movies.length <= 1 && !movies ? <div>No Movies Found.</div> : null}
+          {movies.length <= 1 ? <div>No Movies Found.</div> : null}
         </>
       )}
       
