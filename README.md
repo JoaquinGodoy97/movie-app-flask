@@ -1,11 +1,15 @@
 
 # movie-app-flask
 
-The project is a Movie App built using Flask framwork that takes data from a movie API. Using an MVC architecture, the app will allow you to Sig-up, Log-in and have a set of basic functionalities exploring movies and save them into a wishlist.
+The project is a Movie App built using the Flask framework that takes data from a movie API. Using an MVC architecture, the app will allow you to Sign-up, Log-in and have a set of basic functionalities exploring movies and saving them into a wishlist.
 
-You can check the App on the following link: [Go to the website!](https://movie-app-flask.vercel.app/)
+You can check the App using the following link: [Go to the website!](https://movie-app-flask.vercel.app/)
 
-To test the app you can use the following user -otherwise you can sign up with a new user:
+The project is also managed in a way that I can track the updates that were made not only through Git but also with the use of Trello:
+
+![trello-image-movie-app](https://dl.dropboxusercontent.com/scl/fi/ncmicrk7xjx6kk7q6w8nf/trello-api-movies-preview.png?rlkey=xxsitax54kiyikn68ajpny0z9&st=zave2pu9&dl=1)
+
+To test the app you can use the following user -otherwise, you can sign up with a new user:
 {
    "user": "admin",
    "password": "ADMIN"
@@ -13,7 +17,7 @@ To test the app you can use the following user -otherwise you can sign up with a
 
 ## Purpose
 
-The movie App runs to provide a user-friendly platform for cinema lovers to explore and save list of movies.
+The movie App provides a user-friendly platform for cinema lovers to explore and save list of movies.
 The main idea is to keep track of your all-time discoveries.
 
 ## Responsabilidades
@@ -21,23 +25,23 @@ The main idea is to keep track of your all-time discoveries.
 1. **User management**:
    - Handle user registration and authentication:
 
-      - A pretty basic sign-up with username and password.
+      - A pretty basic sign-up with a username and password.
       - Sign-up includes password reminder
       - Validation checks for username and password length.
 
 2. **Movie search**:
    - Allow to search movies by name.
-      - Homepage landing page working as search engine of the website.
+      - Homepage working as the search engine of the website.
       - Results are fetched from the movie API.
 
 3. **Movies visualization**:
-   - Show basic details as overview, poster picture and title.
-      - Show determined number of movies per page.
+   - Show basic details such as overview, poster picture, and title.
+      - Show a determined number of movies per page.
       - Navigation controls for browsing through pages.
       - Alert system for navigation, like when reaching the first or last page.
    
 4. **Save/unsave movies**: 
-   - Manage list of movies.
+   - Manage a list of movies.
       - Add or remove movies from a personalized wishlist.
       - Add/delete button functionality for individual display.
       - Communication between movie results service and Wishlist service.
@@ -249,3 +253,4 @@ Response - 440 : SESSION_EXPIRED or UNAUTHORIZED
 • React
 • Jwt
 • Docker
+• MySql
