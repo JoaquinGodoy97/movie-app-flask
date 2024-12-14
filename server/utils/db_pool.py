@@ -1,5 +1,8 @@
-from mysql.connector import pooling, connect
+from mysql.connector import connect
 from server.utils.settings import FLASK_RUN_HOST
+from server.services.auth_services import add_user_to_db, user_query_filter_by_name
+from server.utils.settings import SUPER_ADMIN_PASSWORD, SUPER_ADMIN_USERNAME
+from server.utils.db_connection import get_db_connection
 
 def create_database():
 
@@ -33,7 +36,8 @@ def create_users_table():
         id INT AUTO_INCREMENT PRIMARY KEY,
         username VARCHAR(10) NOT NULL UNIQUE,
         email VARCHAR(30),
-        password VARCHAR(10) NOT NULL
+        password VARCHAR(10) NOT NULL,
+        is_admin BOOLEAN DEFAULT FALSE
     );
     """
 
@@ -46,6 +50,7 @@ def create_users_table():
             cursor.execute(create_users_table_query)
             connection.commit()
             print("Table users created successfully.")
+            initialize_super_admin()
         else:
             print("Table users already exists.")
     except Exception as e:
@@ -83,14 +88,16 @@ def create_wishlist_user_table():
         cursor.close()
         connection.close()
 
-connection_pool = pooling.MySQLConnectionPool(
-    pool_name='apimovies-pool',
-    pool_size=5,
-    host='localhost',
-    user="root",
-    password="root",
-    database="movies_db"
-)
+def initialize_super_admin():
 
-def get_db_connection():
-    return connection_pool.get_connection()
+    if not SUPER_ADMIN_USERNAME or not SUPER_ADMIN_PASSWORD:
+        raise Exception('Super admin credentials are not set in environment variables.')
+    
+    super_admin = user_query_filter_by_name(SUPER_ADMIN_USERNAME)
+
+    if not super_admin:
+        add_user_to_db(SUPER_ADMIN_USERNAME, SUPER_ADMIN_PASSWORD, None, True)
+        print("Super admin created.")
+    else:
+        print("Super admin already in DB.")
+

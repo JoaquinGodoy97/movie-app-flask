@@ -19,6 +19,8 @@ FRONTEND_URL=config('FRONTEND_URL')
 DB_NAME = config('DB_NAME')
 FLASK_RUN_PORT = config('FLASK_RUN_PORT')
 FLASK_RUN_HOST = config('FLASK_RUN_HOST')
+SUPER_ADMIN_USERNAME = config('SUPER_ADMIN_USERNAME')
+SUPER_ADMIN_PASSWORD = config('SUPER_ADMIN_PASSWORD')
 
 class Services:
     # RESULTS_SERVICE_ENDPOINT = 'results.results_search_list'
@@ -36,6 +38,7 @@ class Messages:
     MOVIES_NOT_FOUND = "No movies found."
     PAGE_NOT_FOUND = "Page not found."
     USER_CREATED = "User created successfuly."
+    SUPERADMIN_WELCOME_MSG = "Welcome back. You have the Super Admin privileges. Feel free to read the documentation for a better understanding."
     # HOMEPAGE_REDIRECT = "User created successfuly."
     
     @staticmethod

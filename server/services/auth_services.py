@@ -1,11 +1,11 @@
-from flask import session, jsonify, request
+from flask import session, jsonify
 from server.models.user_model import User
-from server.utils.db import db
 from functools import wraps
 import jwt 
 from datetime import datetime, timedelta, timezone
 from decouple import config
-from server.utils.db_pool import get_db_connection
+from server.utils.db_connection import get_db_connection
+from server.utils.settings import SUPER_ADMIN_USERNAME
 from mysql import connector
 # from app import ap
 
@@ -77,15 +77,15 @@ def user_to_dict(user):
     }
 
 
-def add_user_to_db(username, password, email=""):
-    query = "INSERT INTO users (username, email, password) VALUES ( %s, %s, %s)"
+def add_user_to_db(username: str, password: str, email="", is_admin=False):
+    query = "INSERT INTO users (username, email, password, is_admin) VALUES ( %s, %s, %s, %s)"
 
     email = email if email else None
     
     try:
         connection = get_db_connection()
         cursor = connection.cursor()
-        cursor.execute(query, (username, email, password))
+        cursor.execute(query, (username, email, password, is_admin))
         connection.commit()
         print("User added successfully.")
     except connector.Error as e:
@@ -105,14 +105,35 @@ def user_query_filter_by_name(username):
         cursor.execute(query, (username,))
         found_user = cursor.fetchone()
 
-        if found_user:
-            instanced_user = User(found_user[1], found_user[2], found_user[3]) # User, Email, Pass
+        if found_user and found_user[1] == SUPER_ADMIN_USERNAME and found_user[4] == False: 
+            update_super_admin_rights(found_user[1])
+        elif found_user:
+            instanced_user = User(found_user[1], found_user[2], found_user[3], found_user[4]) # User, Email, Pass
             return instanced_user
         else:
             return None
         
     except connector.Error as e:
         print(f"Error finding user: {e}")
+    finally:
+        cursor.close()
+        connection.close()
+
+def update_super_admin_rights(username):
+
+    update_query = """
+        UPDATE users 
+        SET is_admin = TRUE 
+        WHERE username = %s;
+        """
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute(update_query, (username,))
+        connection.commit()
+        print("Admin privileges updated successfuly.")
+    except:
+        print("Could not add super admin privileges.")
     finally:
         cursor.close()
         connection.close()

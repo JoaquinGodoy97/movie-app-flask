@@ -1,9 +1,6 @@
 from server.utils.settings import BASE_URL, API_KEY
-from server.utils.db import db
-from server.models.wishlist_user_model import Wishlist_user
-from server.view.view import movie_removed_success, database_save_error_alert, database_wishlist_delete_erorr_alert, database_delete_error_alert
 import requests, re
-from server.utils.db_pool import get_db_connection
+from server.utils.db_connection import get_db_connection
 from mysql import connector
 
 def get_results_by_movie_id(results):

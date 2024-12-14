@@ -103,7 +103,14 @@ function Login() {
 
                 localStorage.setItem('token', data.token)
 
+                if (data.is_admin === 1){
+                    localStorage.setItem('adminStatus', true)
+                } else {
+                    localStorage.setItem('adminStatus', false)
+                }
+
                 if (data.token) {
+                    
                     showToast(data.message)
                     navigate(data.redirect) // Home page
 

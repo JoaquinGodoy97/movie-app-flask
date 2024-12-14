@@ -10,10 +10,11 @@ class User:
         # wishlist_user = db.relationship('Wishlist_user', backref='user_wishlist_username', lazy=True)
 
 
-    def __init__(self, username, email, password):
+    def __init__(self, username, email, password, admin_status):
         self.username = username
         self.email = email
         self.password = password
+        self.admin_status = admin_status
         
     @staticmethod
     def validate_password(password):

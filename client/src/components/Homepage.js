@@ -11,6 +11,7 @@ function Homepage() {
 
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
+    const [adminStatus, setAdminStatus] = useState(false)
     const [loading, setLoading] = useState(false);
     const { loading: sessionLoading, user: sessionUser } = useCheckUserSession();
 
@@ -49,6 +50,7 @@ function Homepage() {
 
             const result = await response.json();
             setUser(result.username)
+            
 
             if (result.redirect) {
                 navigate(`/results/search?query=${query}&page=1`)
@@ -59,6 +61,22 @@ function Homepage() {
             setLoading(false)
         }
     }
+
+    useEffect(() => { 
+        const storedStatus = localStorage.getItem('adminStatus') === 'true'; 
+        setAdminStatus(storedStatus); 
+    }, [])
+
+
+    useEffect(() => {
+
+        if(adminStatus){
+            console.log(adminStatus, "Log the status of admin")
+        } else {
+            console.log(adminStatus, "Admin status is false.")
+        }
+
+    }, [adminStatus])
 
     const classNames = `main-item ${!loading ? 'fade-in' : ''}`
     const { theme, toggleTheme } = useContext(ThemeContext);
@@ -103,6 +121,9 @@ function Homepage() {
                 </div>
 
             </div>
+
+            {
+                adminStatus ? 
 
             <div className='admin-panel'>
                 <div className='admin-panel-item'>
@@ -201,7 +222,7 @@ function Homepage() {
 
 
 
-            </div>
+            </div> : null }
 
         </div>
     )

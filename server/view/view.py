@@ -38,6 +38,9 @@ def render_page_not_found():
 def redirect_login_auth():
     return jsonify({ "message": "Could not create user.", "redirect": "/login"})
 
+def redirect_superadmin_failed_connection():
+    return jsonify({ "message": "Could not connect to the account.", "redirect": "/login"})
+
 def logout_redirect(message=""):
     return jsonify({ "message": message, "redirect": "/logout" })
 
@@ -73,6 +76,9 @@ def homepage_search_redirect_movies_not_found(token="", user_loggedin=None):
 
 def homepage_search_redirect_page_not_found(token="", user_loggedin=None):
     return jsonify({ 'message': Messages.PAGE_NOT_FOUND}), 404
+
+def homepage_superadmin_redirect(admin_status, token=""):
+    return jsonify({ 'message': Messages.SUPERADMIN_WELCOME_MSG, 'is_admin': admin_status, "redirect": "/search", 'token': token}), 200
 
 
 
