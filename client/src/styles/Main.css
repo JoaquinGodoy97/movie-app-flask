@@ -576,7 +576,7 @@ ul.pagination li.active {
 
 /* BUtton inside admin-panel */
 /* From Uiverse.io by vinodjangid07 */
-div>.button {
+.admin-btn {
     width: 30px;
     height: 30px;
     border-radius: 50%;
@@ -595,32 +595,12 @@ div>.button {
     gap: 2px;
 }
 
-.svgIcon {
-    width: 12px;
-    transition-duration: 0.3s;
-}
-
-.svgIcon path {
-    fill: white;
-}
-
-.button:hover {
+.admin-btn:hover {
     transition-duration: 0.3s;
     background-color: rgb(255, 69, 69);
     align-items: center;
     gap: 0;
 }
-
-.bin-top {
-    transform-origin: bottom right;
-}
-
-.button:hover .bin-top {
-    transition-duration: 0.5s;
-    transform: rotate(160deg);
-}
-
-
 
 /* .wishlist-btn-container */
 /* From Uiverse.io by KSAplay */ 

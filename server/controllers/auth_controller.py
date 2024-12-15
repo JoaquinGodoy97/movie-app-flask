@@ -1,9 +1,10 @@
-from flask import Blueprint, request, session
+from flask import Blueprint, request, session, jsonify
 from server.services.auth_services import add_user_to_db, open_session, close_session, validate_credentials, user_query_filter_by_name, login_required
 from server.view.view import (homepage_superadmin_redirect, user_already_loggedin, homepage_search_redirect_welcome_message, session_logout_success, has_valid_access, unauthorized_access_missing_token, homepage_search_redirect_new_user, invalid_pass_not_registered_user, invalid_token, invalid_format_auth, invalid_username_not_registered_user, invalid_username_registered_user, homepage_search_redirect, invalid_pass_registered_user,
                             redirect_login_auth)
-from server.services.auth_services import Security
+from server.services.auth_services import Security, user_query_all_users
 from server.utils.settings import SUPER_ADMIN_USERNAME
+
 
 auth = Blueprint("auth", __name__)
 
@@ -99,5 +100,20 @@ def get_current_user():
         print(f"Exception during token verification: {e}")  # Log any unexpected exceptions
         return unauthorized_access_missing_token()
     
+@auth.route('/user-list')
+def bring_users_list():
+
+    user_data = Security.verify_token(request.headers)
+    # If the token is invalid (user_data is False), return 401 Unauthorized
+    if not user_data:
+        return invalid_token()
+    
+    users_list = user_query_all_users()
+
+    if users_list:
+        return jsonify ({ 'users_list': users_list, 'message': 'user list successfully fetched.'}), 200
+    else:
+        return jsonify ({"message": "Unable to fetch userlist."}), 400
+
 
 

@@ -1,4 +1,4 @@
-import { useCallback, useRef, useEffect, useState } from "react";
+import { useCallback, useRef } from "react";
 import MovieCard from "./MovieCard"
 import { LoadingPage } from '../utils/LoadingPage';
 

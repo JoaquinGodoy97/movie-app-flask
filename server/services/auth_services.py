@@ -105,10 +105,10 @@ def user_query_filter_by_name(username):
         cursor.execute(query, (username,))
         found_user = cursor.fetchone()
 
-        if found_user and found_user[1] == SUPER_ADMIN_USERNAME and found_user[4] == False: 
-            update_super_admin_rights(found_user[1])
+        if found_user and found_user[1] == SUPER_ADMIN_USERNAME and found_user[4] == 0: # In case admin rights were not given
+            update_super_admin_rights(found_user[1]) # Turning admin rights True
         elif found_user:
-            instanced_user = User(found_user[1], found_user[2], found_user[3], found_user[4]) # User, Email, Pass
+            instanced_user = User(found_user[1], found_user[2], found_user[3], found_user[4]) # User, Email, Pass, admin rights
             return instanced_user
         else:
             return None
@@ -134,6 +134,38 @@ def update_super_admin_rights(username):
         print("Admin privileges updated successfuly.")
     except:
         print("Could not add super admin privileges.")
+    finally:
+        cursor.close()
+        connection.close()
+
+def user_query_all_users():
+    query = "SELECT * FROM users;"
+
+    users_list = []
+
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute(query)
+        found_users = cursor.fetchall()
+
+        for user in found_users:
+            instanced_user = User(user[1], user[2], user[3], user[4])  # User, Email, Pass, admin rights
+
+            users_list.append({
+                
+                "username": instanced_user.username,
+                "email": instanced_user.email,
+                "password": instanced_user.password,
+                "adminStatus": instanced_user.admin_status
+
+            })
+        
+        return users_list
+    
+    except:
+        print("Coul not bring list of users")
+        return None
     finally:
         cursor.close()
         connection.close()
