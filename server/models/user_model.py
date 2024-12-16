@@ -10,7 +10,8 @@ class User:
         # wishlist_user = db.relationship('Wishlist_user', backref='user_wishlist_username', lazy=True)
 
 
-    def __init__(self, username, email, password, admin_status):
+    def __init__(self, id, username, email, password, admin_status):
+        self.id = id
         self.username = username
         self.email = email
         self.password = password

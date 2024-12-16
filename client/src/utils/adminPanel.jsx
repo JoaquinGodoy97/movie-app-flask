@@ -1,49 +1,43 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { OnUserAdminAction } from "./adminActions";
+
+export const fetchUsers = async (setUsersList) => {
+    try {
+        // request for a user list
+        const apiBaseUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+        const url = `${apiBaseUrl}/admin-action/user-list`
+        const token = localStorage.getItem('token')
+        const options = {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            credentials: 'include'
+        }
+        const response = await fetch(url, options)
+    
+        if (response.ok) {
+            console.log('Users received.')
+            const usersData = await response.json()
+            setUsersList(usersData.users_list)
+        }
+    
+        
+    } catch (error) {
+        console.log(error)
+    }
+} 
 
 export const AdminPanel = () => {
 
-    const [ usersList, setUsersList ] = useState([])
+    const [ usersList, setUsersList ] = useState([]);
+    const { handleAdminRights, handleUserDelete } = OnUserAdminAction();
 
     useEffect(() => {
-
-        const fetchUsers = async () => {
-            try {
-                // request for a user list
-                const apiBaseUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
-                const url = `${apiBaseUrl}/user-list`
-                const token = localStorage.getItem('token')
-                const options = {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    },
-                    credentials: 'include'
-                }
-                const response = await fetch(url, options)
-            
-                if (response.ok) {
-                    console.log('Users received.')
-                    const usersData = await response.json()
-                    setUsersList(usersData.users_list)
-
-                }
-            
-                
-            } catch (error) {
-                console.log(error)
-            }
-        }
-        
-        //     console.log("Showing list of users: ", usersData)
-        // } catch (err) {
-        //     console.log("Could not fetch users list.")
-        // }
-
-        // setUsersList([{id: 1, username: 'pedro'},{id: 2, username: 'juan'},{id: 3, username: 'raul'} ])
-
-        fetchUsers();
-
+    
+        fetchUsers(setUsersList);
     }, [])
+
     
     return (
 
@@ -58,19 +52,19 @@ export const AdminPanel = () => {
 
                             <div className='admin-panel-btn-container'>
                                 <div>
-                                    <button id="admin-delete-btn" className="admin-btn" style={{color: 'white'}} title="delete">
+                                    <button onClick={ () => handleUserDelete(user.id)} id="admin-delete-btn" className="admin-btn" style={{color: 'white'}} title="delete">
                                         X
                                     </button>
 
                                 </div>
                                 <div>
-                                    <button id="admin-change-plan-btn" className="admin-btn" style={{color: 'white'}} title="change-plan">
+                                    <button onClick={ () => {}} id="admin-change-plan-btn" className="admin-btn" style={{color: 'white'}} title="change-plan">
                                         o
                                     </button>   
 
                                 </div>
                                 <div>
-                                    <button id="admin-admin-rights-btn" className="admin-btn" style={{color: 'white'}} title="admin-rights">
+                                    <button onClick={ () => handleAdminRights(user.id)} id="admin-admin-rights-btn" className="admin-btn" style={{color: 'white'}} title="admin-rights">
                                         I
                                     </button>   
 
