@@ -31,14 +31,17 @@ export const fetchUsers = async (setUsersList) => {
 export const AdminPanel = () => {
 
     const [ usersList, setUsersList ] = useState([]);
-    const { handleAdminRights, handleUserDelete } = OnUserAdminAction();
+
+    const refreshUserList = useCallback(() => {
+        fetchUsers(setUsersList);
+    }, []);
+
+    const { handleAdminRights, handleUserDelete } = OnUserAdminAction(refreshUserList);
 
     useEffect(() => {
-    
-        fetchUsers(setUsersList);
-    }, [])
+        refreshUserList();
+    }, [refreshUserList]);
 
-    
     return (
 
         <div className='admin-panel'>

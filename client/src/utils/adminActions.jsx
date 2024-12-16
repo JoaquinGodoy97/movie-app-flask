@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { fetchUsers } from "./adminPanel";
 
 
-export const OnUserAdminAction = () => {
+export const OnUserAdminAction = (fetchUsers) => {
 
     const handleUserDelete = useCallback(async (user_id, validation=false) => {
 
@@ -34,7 +34,9 @@ export const OnUserAdminAction = () => {
                         alert("User will not be deleted.")
                     }
                 }
-                // setUserInDatabase(false)
+
+                fetchUsers();
+
             } else {
                 console.log("reponse other than 200..", response.status)
             }
