@@ -6,7 +6,7 @@ from datetime import datetime, timedelta, timezone
 from decouple import config
 from server.utils.db_connection import get_db_connection
 from server.services.admin_services import update_super_admin_rights
-from server.utils.settings import SUPER_ADMIN_USERNAME
+from server.utils.settings import SUPER_ADMIN_USERNAME, MAX_USERS
 from mysql import connector
 
 def login_required(f):
@@ -24,7 +24,7 @@ class Security():
     def generate_token(cls, authenticated_user):
         payload = {
             "iat": datetime.now(timezone.utc),
-            'exp': datetime.now(timezone.utc) + timedelta(minutes=20),
+            'exp': datetime.now(timezone.utc) + timedelta(minutes=10),
             'username': authenticated_user.username
         }
         return jwt.encode(payload, cls.secret, algorithm="HS256")
@@ -100,21 +100,41 @@ def user_query_filter_by_name(username):
         connection.close()
 
 def add_user_to_db(username: str, password: str, email="", is_admin=False, user_plan=1):
-    query = "INSERT INTO users (username, email, password, is_admin, user_plan) VALUES ( %s, %s, %s, %s, %s)"
 
-    email = email if email else None
-    
+    if not is_over_user_limit():
+        query = "INSERT INTO users (username, email, password, is_admin, user_plan) VALUES ( %s, %s, %s, %s, %s)"
+        email = email if email else None
+        
+        try:
+            connection = get_db_connection()
+            cursor = connection.cursor()
+            cursor.execute(query, (username, email, password, is_admin, user_plan))
+            connection.commit()
+            print("User added successfully.")
+        except connector.Error as e:
+            print(f"Error adding user: {e}")
+            connection.rollback()
+            close_session() # Not REAlly Sure
+        finally:
+            cursor.close()
+            connection.close()
+    else:
+        raise Exception('DB user limit reached.')
+
+
+def is_over_user_limit():
     try:
         connection = get_db_connection()
-        cursor = connection.cursor()
-        cursor.execute(query, (username, email, password, is_admin, user_plan))
-        connection.commit()
-        print("User added successfully.")
-    except connector.Error as e:
-        print(f"Error adding user: {e}")
-        connection.rollback()
-        close_session() # Not REAlly Sure
+        cursor =  connection.cursor()
+
+        cursor.execute("SELECT COUNT(*) FROM users;")
+        user_count = int(cursor.fetchone()[0])
+
+        if user_count >= int(MAX_USERS):
+            print(user_count)
+            return True
+    except Exception as e:
+        return False
     finally:
         cursor.close()
         connection.close()
-

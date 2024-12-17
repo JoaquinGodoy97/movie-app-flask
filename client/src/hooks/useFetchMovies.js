@@ -56,10 +56,8 @@ export const useFetchMovies = () => {
             // }
         } catch (error) {
             if (error.name === 'AbortError') {
-                // Suppress AbortError logs as they are expected
-                console.log('Fetch aborted: A new request was started or component unmounted.');
+                // console.log('Fetch aborted: A new request was started or component unmounted.');
             } else {
-                // Log unexpected errors only
                 console.error('Error fetching movies:', error);
             }
         }

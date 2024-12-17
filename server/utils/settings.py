@@ -10,7 +10,7 @@ class DevelopmentConfig():
 # }
 
 class Config():
-    SECRET_KEY = config('SECRET_KEY');
+    SECRET_KEY=config('SECRET_KEY');
 
 API_KEY = config('API_KEY')
 BASE_URL = config('BASE_URL')
@@ -21,6 +21,13 @@ FLASK_RUN_PORT = config('FLASK_RUN_PORT')
 FLASK_RUN_HOST = config('FLASK_RUN_HOST')
 SUPER_ADMIN_USERNAME = config('SUPER_ADMIN_USERNAME')
 SUPER_ADMIN_PASSWORD = config('SUPER_ADMIN_PASSWORD')
+
+DB_HOST=config('DB_HOST')
+DB_USER=config('DB_USER')
+DB_PASSWORD=config('DB_PASSWORD')
+DB_NAME=config('DB_NAME')
+MAX_USERS=config('MAX_USERS')
+
 
 class Services:
     # RESULTS_SERVICE_ENDPOINT = 'results.results_search_list'

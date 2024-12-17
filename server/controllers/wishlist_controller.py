@@ -6,7 +6,7 @@ from server.view.view import (invalid_token, display_movies, wrong_movie_request
                     movie_added_success, get_movies_status)
 from server.services.auth_services import Security
 from server.services.wishlist_services import (get_results_by_movie_id, add_to_wishlist_db, remove_from_wishlist_db,
-                                                filter_by_usersession_and_movieid, filter_by_usersession, is_wishlist_user_limit_reached,
+                                                filter_by_usersession_and_movieid, filter_by_usersession,
                                                 bring_single_movie_by_user, filter_movies_by_search_if_any, bring_multiple_movies_by_user, wishlist_filter_query_by_movie_id)
 wishlist = Blueprint('wishlist', __name__)
 
@@ -62,17 +62,15 @@ def add_to_wishlist(movie_id, movie_name):
 
     movie_exists = filter_by_usersession_and_movieid(user, movie_id)
 
-    print(movie_exists, "CHeck if movie exists")
     if movie_exists:
         remove_from_wishlist_db(movie_exists)
         # alert_movie_already_added(movie_name, movie_id)
         return movie_already_added()
     else:
-
-        if is_wishlist_user_limit_reached(user):
-            return movies_limit_reached_database()
-        
-        add_to_wishlist_db(movie_id, movie_name, username=user)
+        try:
+            add_to_wishlist_db(movie_id, movie_name, username=user)
+        except Exception as e:
+            return movies_limit_reached_database(e)
     
     return movie_added_success(user, movie_name)
 

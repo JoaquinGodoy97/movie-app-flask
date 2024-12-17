@@ -7,7 +7,6 @@ import Switch from 'react-switch'
 import { ThemeContext } from '../App';
 import '../styles/Main.css';
 import { AdminPanel } from '../utils/adminPanel';
-import { fetchUsers } from '../utils/adminPanel';
 
 function Homepage() {
 
@@ -16,13 +15,6 @@ function Homepage() {
     const [adminStatus, setAdminStatus] = useState(false)
     const [loading, setLoading] = useState(false);
     const { loading: sessionLoading, user: sessionUser } = useCheckUserSession();
-
-    // useEffect(() => {
-
-    //     if (!sessionUser) return null
-
-    // //     }
-    // }, [sessionUser]);
 
     const handleSearch = async (query) => {
 
@@ -81,13 +73,10 @@ function Homepage() {
     if (sessionLoading) {
         return <LoadingPage />
     }
+
     if (!sessionUser) {
         return null
     }
-
-    // if (!user) {
-    //     return null; 
-    // }
 
     return (
 

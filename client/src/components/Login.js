@@ -20,7 +20,7 @@ function Login() {
         const token = localStorage.getItem('token');
         if (!token) {
             // console.log('No token found, redirecting to login.');
-            showToast("Access denied.")
+            // showToast("Session expired.")
             navigate("/login")
             return;
         }
@@ -114,7 +114,8 @@ function Login() {
                     navigate(data.redirect) // Home page
 
                 } else {
-                    console.log('Login failed:', data.message);
+                    // console.log('Login failed:', data.message);
+                    showToast(data.message)
                 }
 
             } else {

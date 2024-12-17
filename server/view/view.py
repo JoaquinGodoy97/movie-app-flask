@@ -171,8 +171,8 @@ def movie_already_added():
 def wrong_movie_request():
     return jsonify ({ "message": "Could not process the movie request."}), 400
 
-def movies_limit_reached_database():
-    return jsonify({ "message": "Limit reached. 50 Movies per user. Server in development." }), 403
+def movies_limit_reached_database(e):
+    return jsonify({ "message": f"{e}. Server in development" }), 403
 
 def movie_added_success(user, movie_name):
     return jsonify({ "message": f"{user} you added {movie_name} to your Wishlist!", 'method': 'add'}), 200

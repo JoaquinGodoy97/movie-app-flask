@@ -15,12 +15,3 @@ class Wishlist_user(db.Model):
         self.mv_id = mv_id
         self.title = title
         self.username = username
-        # self.search_results = ""
-
-    # def filter_movies_by_search_if_any(self, movie_list, search_result):
-    #     if search_result:
-    #         pattern = re.compile(f".*?{re.escape(search_result)}.*?", re.IGNORECASE)
-    #         matches = [movie for movie in movie_list if pattern.search(movie.get('title'))]
-    #         return matches
-    #     else:
-    #         return movie_list

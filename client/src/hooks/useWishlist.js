@@ -82,6 +82,8 @@ export const useWishlist = (showToast, setMovies) => {
                     ));
                 }
                 showToast(data.message)
+            } else {
+                showToast(data.message)
             }
         } catch (error) {
             console.error("Unable to add:", error)

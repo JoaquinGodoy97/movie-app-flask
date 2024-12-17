@@ -121,7 +121,7 @@ export const OnUserAdminAction = (fetchUsers, setAdminStatus) => {
                 fetchUsers();
 
             } else {
-                console.log("reponse other than 200..", response.status)
+                // console.log("Could not bring data.", response.status)
             }
 
         } catch (err) {

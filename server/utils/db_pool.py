@@ -1,23 +1,29 @@
 from mysql.connector import connect
-from server.utils.settings import FLASK_RUN_HOST
 from server.services.auth_services import add_user_to_db, user_query_filter_by_name
-from server.utils.settings import SUPER_ADMIN_PASSWORD, SUPER_ADMIN_USERNAME
+from server.utils.settings import SUPER_ADMIN_PASSWORD, SUPER_ADMIN_USERNAME, DB_HOST, DB_PASSWORD, DB_USER
 from server.utils.db_connection import get_db_connection
 
 def create_database():
+    connection = None 
+    cursor = None
 
     try:
         connection = connect(
-            host='localhost',
-            user="root",
-            password="root"
+            host=DB_HOST,
+            user=DB_USER,
+            password=DB_PASSWORD
         )
         
         cursor = connection.cursor()
+        # cursor.execute(f"GRANT CREATE ON *.* TO {DB_USER}@'%';")
+        # connection.commit()
+        # cursor.execute("FLUSH PRIVILEGES;")
+
         cursor.execute("SHOW DATABASES LIKE 'movies_db';")
         result = cursor.fetchone()
 
-        if not result:  
+        if not result:
+            print("Database not found, creating...")
             cursor.execute("CREATE DATABASE movies_db;")
             connection.commit()
             print('Created database `movies_db`.')
@@ -26,8 +32,10 @@ def create_database():
     except Exception as e:
         print(f"Error creating database: {e}")
     finally:
-        cursor.close()
-        connection.close()
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
 
 def create_users_table():
 
@@ -75,7 +83,7 @@ def create_wishlist_user_table():
     try:
         connection = get_db_connection()
         cursor = connection.cursor()
-        cursor.execute("SHOW TABLES LIKE 'users';")
+        cursor.execute("SHOW TABLES LIKE 'wishlist_user';")
         result = cursor.fetchone()
         if not result:
             cursor.execute(create_wishlist_user_table)

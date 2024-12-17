@@ -57,14 +57,18 @@ def login():
             return invalid_pass_not_registered_user()
             
         else:
-            add_user_to_db(user, password, email) # Email at the end because is optional CAREFUL
-            found_user = user_query_filter_by_name(user)
 
-            if found_user:
-                token = Security.generate_token(found_user)
-                return homepage_search_redirect_new_user(token=token)
+            try:
+                add_user_to_db(user, password, email) # Email at the end because is optional CAREFUL
+                found_user = user_query_filter_by_name(user)
 
-            return redirect_login_auth()
+                if found_user:
+                    token = Security.generate_token(found_user)
+                    return homepage_search_redirect_new_user(token=token)
+            except Exception as e:
+                print(e)
+
+                return redirect_login_auth()
 
 @auth.route('/logout', methods=['POST'])
 def logout():
@@ -79,9 +83,9 @@ def logout():
 @auth.route('/@me')
 def get_current_user():
 
-    auth_header = request.headers.get('Authorization')
-    if not auth_header:
-        return unauthorized_access_missing_token()
+    # auth_header = request.headers.get('Authorization')
+    # if not auth_header:
+    #     return unauthorized_access_missing_token()
 
     user_data = Security.verify_token(request.headers)
     # If the token is invalid (user_data is False), return 401 Unauthorized

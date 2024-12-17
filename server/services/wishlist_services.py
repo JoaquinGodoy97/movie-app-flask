@@ -29,7 +29,7 @@ def get_results_by_movie_id(results):
         return updated_results
 
 def movie_to_dict(movie):
-        print("PRINTING MOVIE: ", movie)
+
         return {
                 'id': movie.id,
                 'mv_id': movie.mv_id,
@@ -37,10 +37,10 @@ def movie_to_dict(movie):
                 'username': movie.username # change the front end
         }
 
-def is_wishlist_user_limit_reached(username):
-        list = filer_movies_by_username(username)
-        list_length = len(list)
-        return list_length >= 50
+# def is_wishlist_user_limit_reached(username):
+#         list = filer_movies_by_username(username)
+#         list_length = len(list)
+#         return list_length >= 50
 
 def filter_movies_by_search_if_any(movies, search_result):
         if search_result:
@@ -87,21 +87,61 @@ DB SERVICES
 #                 db.session.close()
 
 def add_to_wishlist_db(movie_id, movie_name, username):
-        query = "INSERT INTO wishlist_user (mv_id, title, username) VALUES (%s, %s, %s)"
+
+        user_plan = get_user_plan_by_username(username)
+
+        if bring_movie_count_per_user(username) >= user_plan:
+                raise Exception("User plan limit reached.")
+        else:
+                query = "INSERT INTO wishlist_user (mv_id, title, username) VALUES (%s, %s, %s)"
+                try:
+                        connection = get_db_connection()
+                        cursor = connection.cursor()
+                        cursor.execute(query, (movie_id, movie_name, username))
+                        connection.commit()
+                        print("Wishlist user added successfully.")
+                except connector.Error as e:
+                        print(f"Error adding wishlist user: {e}")
+                        connection.rollback()
+                finally:
+                        cursor.close()
+                        connection.close()
+
+def bring_movie_count_per_user(username):
+        query = """
+                SELECT COUNT(*) FROM wishlist_user
+                WHERE username = %s;
+                """
+
         try:
                 connection = get_db_connection()
                 cursor = connection.cursor()
-                cursor.execute(query, (movie_id, movie_name, username))
-                connection.commit()
-                print("Wishlist user added successfully.")
-        except connector.Error as e:
-                print(f"Error adding wishlist user: {e}")
-                connection.rollback()
+                cursor.execute(query, (username,))
+                movie_per_user_count = cursor.fetchone()[0]
+                return movie_per_user_count
+        except:
+                print("Could not bring movie per user count.")
+                return None
         finally:
                 cursor.close()
                 connection.close()
 
+def get_user_plan_by_username(username):
+        query = "SELECT user_plan FROM users WHERE username = %s;"
 
+        try:
+                connection = get_db_connection()
+                cursor = connection.cursor()
+                cursor.execute(query, (username,))
+                user_plan = cursor.fetchone()[0]
+
+                user_plan = 10 if user_plan == 1 else (20 if user_plan == 2 else 30)
+                return user_plan
+        except:
+                print("Could not bring movie per user count.")
+        finally:
+                cursor.close()
+                connection.close()
 # def remove_from_wishlist_db(found_movie_to_delete):
 #         try:
 #                 db.session.delete(found_movie_to_delete)
