@@ -112,7 +112,6 @@ export const OnUserAdminAction = (fetchUsers, setAdminStatus) => {
             
             if (response.ok) {
 
-                console.log("change user admin rights")
                 const data = await response.json()
 
                 const adminStatus = data.adminStatus

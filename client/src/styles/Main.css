@@ -682,6 +682,19 @@ ul.pagination li.active {
     }
 }
 
+#admin-change-plan-btn{
+    background-color: rgb(59, 107, 59);
+}
+
+#admin-admin-rights-btn{
+    background-color: rgb(59, 61, 107);
+
+}
+
+#admin-delete-btn{
+    background-color: rgb(111, 53, 53);
+}
+
 /* MODALS */
 
 .modal-overlay {
@@ -709,7 +722,7 @@ ul.pagination li.active {
     background: white;
     padding: 20px;
     border-radius: 8px;
-    width: 50%;
+    width: 40%;
     text-align: center;
 }
 
@@ -719,6 +732,7 @@ ul.pagination li.active {
     margin: 10px;
     padding: 5px 20px;
     border-radius: 20px;
+    border: 0px;
 }
 
 .plan-buttons button:disabled {
@@ -726,6 +740,13 @@ ul.pagination li.active {
 }
 
 .modal-close-btn{
+    color: #090909;
+    font-size: 18px;
+    border-radius: 0.5em;
+    background: #e8e8e8;
+    cursor: pointer;
+    border: 1px solid #e8e8e8;
+    box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
     justify-content: center;
     width: 30%;
     margin: auto;
