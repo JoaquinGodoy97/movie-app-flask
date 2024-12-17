@@ -102,11 +102,13 @@ function Login() {
             if (response.ok) {
 
                 localStorage.setItem('token', data.token)
+                console.log(data.user_id, " whats this value?")
+                localStorage.setItem('currentUserId', data.user_id)
 
-                if (data.is_admin === 1){
-                    localStorage.setItem('adminStatus', true)
+                if (data.adminStatus === 1){
+                    localStorage.setItem('adminStatus', 'true')
                 } else {
-                    localStorage.setItem('adminStatus', false)
+                    localStorage.setItem('adminStatus', 'false')
                 }
 
                 if (data.token) {

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { OnUserAdminAction } from "./adminActions";
+import { PlanModal } from "./PlanModal"
 
 export const fetchUsers = async (setUsersList) => {
     try {
@@ -17,30 +18,47 @@ export const fetchUsers = async (setUsersList) => {
         const response = await fetch(url, options)
     
         if (response.ok) {
-            console.log('Users received.')
             const usersData = await response.json()
             setUsersList(usersData.users_list)
         }
-    
         
     } catch (error) {
         console.log(error)
     }
 } 
 
-export const AdminPanel = () => {
+export const AdminPanel = ({setHomePageAdminStatus}) => {
 
     const [ usersList, setUsersList ] = useState([]);
+    const [ adminStatus, setAdminStatus] = useState(null);
+    const [processingAction, setProcessingAction] = useState(false);
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [currentUser, setCurrentUser] = useState(null); // modal information
 
-    const refreshUserList = useCallback(() => {
-        fetchUsers(setUsersList);
-    }, []);
 
-    const { handleAdminRights, handleUserDelete } = OnUserAdminAction(refreshUserList);
+    const { handleAdminRights, handleUserDelete, handleChangePlan } = OnUserAdminAction(() => fetchUsers(setUsersList), setAdminStatus);
 
     useEffect(() => {
-        refreshUserList();
-    }, [refreshUserList]);
+        fetchUsers(setUsersList);
+        
+    }, [fetchUsers]);
+
+    const adminRightsStyle = (status) => {
+        return {
+            color: 'white',
+            backgroundColor: status ? 'red' : "green",
+        };
+    }
+
+    const handleOpenModal = (user) => {
+        setCurrentUser(user);
+        setModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setModalOpen(false);
+        setCurrentUser(null);
+    };
 
     return (
 
@@ -61,13 +79,15 @@ export const AdminPanel = () => {
 
                                 </div>
                                 <div>
-                                    <button onClick={ () => {}} id="admin-change-plan-btn" className="admin-btn" style={{color: 'white'}} title="change-plan">
+                                    <button onClick={ () => handleOpenModal(user)} id="admin-change-plan-btn" className="admin-btn" style={{color: 'white'}} title="change-plan">
                                         o
                                     </button>   
 
                                 </div>
                                 <div>
-                                    <button onClick={ () => handleAdminRights(user.id)} id="admin-admin-rights-btn" className="admin-btn" style={{color: 'white'}} title="admin-rights">
+                                    <button onClick={ 
+                                        async () => {await handleAdminRights(user.id, setProcessingAction, setHomePageAdminStatus);
+                                        }} id="admin-admin-rights-btn" className="admin-btn" style={user.adminStatus ? adminRightsStyle(user.adminStatus) :null} title="admin-rights" disabled={processingAction}>
                                         I
                                     </button>   
 
@@ -80,6 +100,15 @@ export const AdminPanel = () => {
                     )
                 })
             }
+
+            {isModalOpen && (
+                        <PlanModal 
+                            isOpen={isModalOpen}
+                            currentPlan={currentUser?.user_plan}
+                            onClose={handleCloseModal}
+                            onPlanChange={(newPlan) => handleChangePlan(currentUser.id, newPlan, handleCloseModal)}
+                        />
+                    )}
                 
 
             </div>

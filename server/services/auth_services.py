@@ -5,9 +5,9 @@ import jwt
 from datetime import datetime, timedelta, timezone
 from decouple import config
 from server.utils.db_connection import get_db_connection
+from server.services.admin_services import update_super_admin_rights
 from server.utils.settings import SUPER_ADMIN_USERNAME
 from mysql import connector
-# from app import ap
 
 def login_required(f):
     @wraps(f)
@@ -76,26 +76,6 @@ def user_to_dict(user):
         # Add more fields as needed
     }
 
-
-def add_user_to_db(username: str, password: str, email="", is_admin=False):
-    query = "INSERT INTO users (username, email, password, is_admin) VALUES ( %s, %s, %s, %s)"
-
-    email = email if email else None
-    
-    try:
-        connection = get_db_connection()
-        cursor = connection.cursor()
-        cursor.execute(query, (username, email, password, is_admin))
-        connection.commit()
-        print("User added successfully.")
-    except connector.Error as e:
-        print(f"Error adding user: {e}")
-        connection.rollback()
-        close_session() # Not REAlly Sure
-    finally:
-        cursor.close()
-        connection.close()
-
 def user_query_filter_by_name(username):
     query = "SELECT * FROM users WHERE username = %s"
 
@@ -108,7 +88,7 @@ def user_query_filter_by_name(username):
         if found_user and found_user[1] == SUPER_ADMIN_USERNAME and found_user[4] == 0: # In case admin rights were not given
             update_super_admin_rights(found_user[1]) # Turning admin rights True
         elif found_user:
-            instanced_user = User(found_user[0], found_user[1], found_user[2], found_user[3], found_user[4]) # ID, User, Email, Pass, admin rights
+            instanced_user = User(found_user[0], found_user[1], found_user[2], found_user[3], found_user[4], found_user[5]) # ID, User, Email, Pass, admin rights, user_plan
             return instanced_user
         else:
             return None
@@ -119,185 +99,22 @@ def user_query_filter_by_name(username):
         cursor.close()
         connection.close()
 
-def update_super_admin_rights(username):
+def add_user_to_db(username: str, password: str, email="", is_admin=False, user_plan=1):
+    query = "INSERT INTO users (username, email, password, is_admin, user_plan) VALUES ( %s, %s, %s, %s, %s)"
 
-    update_query = """
-        UPDATE users 
-        SET is_admin = TRUE 
-        WHERE username = %s;
-        """
-    try:
-        connection = get_db_connection()
-        cursor = connection.cursor()
-        cursor.execute(update_query, (username,))
-        connection.commit()
-        print("Admin privileges updated successfuly.")
-    except:
-        print("Could not add super admin privileges.")
-    finally:
-        cursor.close()
-        connection.close()
-
-def user_query_all_users():
-    query = "SELECT * FROM users;"
-
-    users_list = []
-
-    try:
-        connection = get_db_connection()
-        cursor = connection.cursor()
-        cursor.execute(query)
-        found_users = cursor.fetchall()
-
-        for user in found_users:
-            instanced_user = User(user[0], user[1], user[2], user[3], user[4])  # ID, User, Email, Pass, admin rights
-
-            users_list.append({
-                "id": instanced_user.id,
-                "username": instanced_user.username,
-                "email": instanced_user.email,
-                "password": instanced_user.password,
-                "adminStatus": instanced_user.admin_status
-
-            })
-        
-        return users_list
+    email = email if email else None
     
-    except:
-        print("Coul not bring list of users")
-        return None
-    finally:
-        cursor.close()
-        connection.close()
-
-def delete_user_by_user_id(user_id):
-
-    username = get_username_by_id(user_id)
-
-    if not username: 
-        print(f"User with ID {user_id} not found.") 
-        return
-
-    query = """
-        DELETE FROM wishlist_user
-        WHERE username = %s"""
-
     try:
         connection = get_db_connection()
         cursor = connection.cursor()
-        cursor.execute(query, (username,))
+        cursor.execute(query, (username, email, password, is_admin, user_plan))
         connection.commit()
-        print(f"Movies from {user_id} were deleted correctly.")
-    except Exception as e:
-        print("Failed to delete user:", e)
-        return None
-    finally:
-        cursor.close()
-        connection.close()
-    
-    return delete_empty_users(user_id)
-
-def delete_empty_users(user_id):
-    query = """
-            DELETE FROM users
-            WHERE id = %s"""
-        
-    try:
-        connection = get_db_connection()
-        cursor = connection.cursor()
-        cursor.execute(query, (user_id,))
-        connection.commit()
-        print(f"User id {user_id} deleted correctly.")
-
-        return jsonify({"message": f"User {user_id} deleted."}), 200
-    except:
-        print("Failed to delete user")
-        return jsonify({ "message": f"The user {user_id} have movies saved. Would you like to delete it anyways?"}), 206
-        
-    finally:
-        cursor.close()
-        connection.close()
-
-def is_user_in_db_by_user_id(user_id):
-    query = "SELECT * FROM users WHERE id = %s"
-
-    try:
-        connection = get_db_connection()
-        cursor = connection.cursor()
-        cursor.execute(query, (user_id,))
-        found_user = cursor.fetchone()
-
-        if found_user:
-            return True
-        else:
-            return False
-        
+        print("User added successfully.")
     except connector.Error as e:
-        print(f"Could not find user: {e}")
+        print(f"Error adding user: {e}")
+        connection.rollback()
+        close_session() # Not REAlly Sure
     finally:
         cursor.close()
         connection.close()
 
-def update_admin_rights_with_id(user_id):
-        update_admin_status = "TRUE" if get_admin_status_by_id(user_id) else 'FALSE'
-
-        update_query = f"""
-        UPDATE users 
-        SET is_admin =  {update_admin_status}
-        WHERE username = %s;
-        """
-
-        try:
-            connection = get_db_connection()
-            cursor = connection.cursor()
-            cursor.execute(update_query, (user_id,))
-            found_user = cursor.fetchone()
-            admin_status = found_user[4]
-
-            return admin_status
-        except:
-            print("Coul not update admin status.")
-            return None
-        finally:
-            cursor.close()
-            connection.close()
-
-
-def get_admin_status_by_id(user_id):
-    query = "SELECT * FROM users WHERE id = %s;"
-
-    try:
-        connection = get_db_connection()
-        cursor = connection.cursor()
-        cursor.execute(query, (user_id,))
-        found_user = cursor.fetchone()
-        admin_status = found_user[4]
-
-        print("GET ADMIN STATUS IT SHOULDNT BE 1", admin_status)
-        return admin_status
-    
-    except:
-        print("Coul not bring admin status.")
-        return None
-    finally:
-        cursor.close()
-        connection.close()
-
-def get_username_by_id(user_id):
-    query = "SELECT * FROM users WHERE id = %s;"
-
-    try:
-        connection = get_db_connection()
-        cursor = connection.cursor()
-        cursor.execute(query, (user_id,))
-        found_user = cursor.fetchone()
-        username = found_user[1]
-
-        return username
-    
-    except:
-        print("Coul not bring username.")
-        return None
-    finally:
-        cursor.close()
-        connection.close()

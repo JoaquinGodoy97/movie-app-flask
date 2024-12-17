@@ -65,8 +65,8 @@ def results_pages_redirect(current_page, search_result):
 def homepage_search_redirect(token="", user_loggedin=None):
     return jsonify({ "redirect": "/search", 'token': token}), 200
 
-def homepage_search_redirect_welcome_message(user, token="", user_loggedin=None):
-    return jsonify({ 'message': Messages.welcome_back_user(user), "redirect": "/search", 'token': token}), 200
+def homepage_search_redirect_welcome_message(user, admin_status, user_id, token="", user_loggedin=None):
+    return jsonify({ 'message': Messages.welcome_back_user(user), 'adminStatus': admin_status, "user_id": user_id, "redirect": "/search", 'token': token}), 200
 
 def homepage_search_redirect_new_user(token="", user_loggedin=None):
     return jsonify({ 'message': Messages.USER_CREATED, "redirect": "/search", 'token': token}), 200
@@ -78,10 +78,7 @@ def homepage_search_redirect_page_not_found(token="", user_loggedin=None):
     return jsonify({ 'message': Messages.PAGE_NOT_FOUND}), 404
 
 def homepage_superadmin_redirect(admin_status, token=""):
-    return jsonify({ 'message': Messages.SUPERADMIN_WELCOME_MSG, 'is_admin': admin_status, "redirect": "/search", 'token': token}), 200
-
-
-
+    return jsonify({ 'message': Messages.SUPERADMIN_WELCOME_MSG, 'adminStatus': admin_status, "redirect": "/search", 'token': token}), 200
 
 
 def wishlist_redirect():

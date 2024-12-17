@@ -1,4 +1,3 @@
-from server.utils.db import db
 import re
 
 class User:
@@ -10,12 +9,13 @@ class User:
         # wishlist_user = db.relationship('Wishlist_user', backref='user_wishlist_username', lazy=True)
 
 
-    def __init__(self, id, username, email, password, admin_status):
+    def __init__(self, id, username, email, password, admin_status, user_plan):
         self.id = id
         self.username = username
         self.email = email
         self.password = password
         self.admin_status = admin_status
+        self.user_plan = user_plan
         
     @staticmethod
     def validate_password(password):
@@ -39,30 +39,3 @@ class User:
 
     def compare_user(self, user):
         return self.username == user
-
-
-# from sqlalchemy.orm import Mapped
-# from sqlalchemy.orm import mapped_column
-#limitaciones de caracteres
-#back limitacion de caracteres
-#usuario fantasma
-
-# ----------------------------------------------------------- another way of declaring models
-# class User(db.Model):
-#     __tablename__ = "user"
-
-#     id = mapped_column(Integer, primary_key=True)
-#     name = mapped_column(String(15), nullable=False)
-#     email = mapped_column(String(100))
-#     password = mapped_column(String(50), nullable=False)
-    
-#     # username = db.Column(db.String(100), unique=True, nullable=False)
-#     # email = db.Column(db.String(150), unique=True, nullable=False)
-#     # password = db.Column(db.String(100))
-
-#     #how to add lists
-
-#     def __init__(self, username, email, password):
-#         self.username = username
-#         self.email = email
-#         self.password = password

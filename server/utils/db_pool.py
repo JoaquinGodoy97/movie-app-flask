@@ -37,7 +37,8 @@ def create_users_table():
         username VARCHAR(10) NOT NULL UNIQUE,
         email VARCHAR(30),
         password VARCHAR(10) NOT NULL,
-        is_admin BOOLEAN DEFAULT FALSE
+        is_admin BOOLEAN DEFAULT FALSE,
+        user_plan INT DEFAULT 1
     );
     """
 
@@ -50,7 +51,7 @@ def create_users_table():
             cursor.execute(create_users_table_query)
             connection.commit()
             print("Table users created successfully.")
-            initialize_super_admin()
+            initialize_super_admin() # INITIALIZE SUPER ADMIN when creating DB
         else:
             print("Table users already exists.")
     except Exception as e:

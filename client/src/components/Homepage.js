@@ -7,6 +7,7 @@ import Switch from 'react-switch'
 import { ThemeContext } from '../App';
 import '../styles/Main.css';
 import { AdminPanel } from '../utils/adminPanel';
+import { fetchUsers } from '../utils/adminPanel';
 
 function Homepage() {
 
@@ -45,7 +46,6 @@ function Homepage() {
             });
 
             if (response.status === 401) {
-                console.log('Passed through')
                 navigate('/login');
             }
 
@@ -64,18 +64,14 @@ function Homepage() {
     }
 
     useEffect(() => { 
-        const storedStatus = localStorage.getItem('adminStatus') === 'true'; 
-        setAdminStatus(storedStatus); 
+        
+        const storedStatus = localStorage.getItem('adminStatus') === 'true';
+        setAdminStatus(storedStatus);
+        
     }, [])
 
 
     useEffect(() => {
-
-        if(adminStatus){
-            console.log(adminStatus, "Log the status of admin")
-        } else {
-            console.log(adminStatus, "Admin status is false.")
-        }
 
     }, [adminStatus])
 
@@ -124,9 +120,11 @@ function Homepage() {
             </div>
 
             {
-            adminStatus ? 
+            adminStatus && (
+                <AdminPanel setHomePageAdminStatus={setAdminStatus}/>
+            )
 
-            <AdminPanel/> : null }
+            }
 
         </div>
     )

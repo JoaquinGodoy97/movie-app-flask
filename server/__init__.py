@@ -29,11 +29,13 @@ def create_app():
     from .controllers.search_controller import homepage
     from .controllers.results_controller import results
     from .controllers.auth_controller import auth
+    from .controllers.admin_controller import admin_panel
 
     app.register_blueprint(wishlist, url_prefix="/")
     app.register_blueprint(results, url_prefix="/")
     app.register_blueprint(homepage, url_prefix="/")
     app.register_blueprint(auth, url_prefix="/")
+    app.register_blueprint(admin_panel, url_prefix="/")
 
     @app.route('/')
     def serve():

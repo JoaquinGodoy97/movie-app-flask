@@ -49,9 +49,11 @@ export const useFetchMovies = () => {
                     setMovies((prevMovies) => [...prevMovies, ...data.results]);
                 }
 
-            } else {
-                console.log("No more results. Last page.");
-            }
+            } 
+            
+            // else {
+            //     console.log("No more results. Last page.");
+            // }
         } catch (error) {
             if (error.name === 'AbortError') {
                 // Suppress AbortError logs as they are expected
