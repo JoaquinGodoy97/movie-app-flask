@@ -1,13 +1,13 @@
-from flask import session, jsonify, request
+from flask import session, jsonify
 from server.models.user_model import User
-from server.utils.db import db
-from server.view.view import homepage_search_redirect, database_save_error_alert
 from functools import wraps
-from server.utils.settings import Messages
 import jwt 
 from datetime import datetime, timedelta, timezone
 from decouple import config
-# from app import ap
+from server.utils.db_connection import get_db_connection
+from server.services.admin_services import update_super_admin_rights
+from server.utils.settings import SUPER_ADMIN_USERNAME, MAX_USERS
+from mysql import connector
 
 def login_required(f):
     @wraps(f)
@@ -24,7 +24,7 @@ class Security():
     def generate_token(cls, authenticated_user):
         payload = {
             "iat": datetime.now(timezone.utc),
-            'exp': datetime.now(timezone.utc) + timedelta(minutes=20),
+            'exp': datetime.now(timezone.utc) + timedelta(minutes=10),
             'username': authenticated_user.username
         }
         return jwt.encode(payload, cls.secret, algorithm="HS256")
@@ -49,36 +49,6 @@ class Security():
                 return False
         return False
 
-def add_user_to_db(user, email, password):
-    """
-    Adds user to the database.
-
-    Args:
-        user (str): The search query. No restrictions yet.
-        email (int): The current page number. Optional, not functional yet.
-        password (str): The name of the movie. 5-9 characters long no spaces and contain only alphanumeric characters.
-
-    Returns:
-        Response: Rendered template with the updated results.
-    """
-    print(user, password)
-    try:
-        
-        user_db = User(user, email, password)
-        db.session.add(user_db)
-        db.session.commit()
-
-        # password_reminder_alert(user, password) # routing alert // business logic
-        # return homepage_search_redirect()
-    
-    except Exception as e:
-        db.session.rollback()
-        # database_save_error_alert(e)
-        print('failed to create user')
-
-    finally:
-        close_session()
-
 
 def open_session(user):
     session['username'] = user
@@ -99,10 +69,6 @@ def validate_credentials(username, password):
     validated_password = User.validate_password(password)
     return validated_user, validated_password
 
-def user_query_filter_by_name(user):
-    found_user = User.query.filter_by(username=user).first() # modificar
-    return found_user
-
 def user_to_dict(user):
     return {
         "username": user.username,
@@ -110,3 +76,65 @@ def user_to_dict(user):
         # Add more fields as needed
     }
 
+def user_query_filter_by_name(username):
+    query = "SELECT * FROM users WHERE username = %s"
+
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute(query, (username,))
+        found_user = cursor.fetchone()
+
+        if found_user and found_user[1] == SUPER_ADMIN_USERNAME and found_user[4] == 0: # In case admin rights were not given
+            update_super_admin_rights(found_user[1]) # Turning admin rights True
+        elif found_user:
+            instanced_user = User(found_user[0], found_user[1], found_user[2], found_user[3], found_user[4], found_user[5]) # ID, User, Email, Pass, admin rights, user_plan
+            return instanced_user
+        else:
+            return None
+        
+    except connector.Error as e:
+        print(f"Error finding user: {e}")
+    finally:
+        cursor.close()
+        connection.close()
+
+def add_user_to_db(username: str, password: str, email="", is_admin=False, user_plan=1):
+
+    if not is_over_user_limit():
+        query = "INSERT INTO users (username, email, password, is_admin, user_plan) VALUES ( %s, %s, %s, %s, %s)"
+        email = email if email else None
+        
+        try:
+            connection = get_db_connection()
+            cursor = connection.cursor()
+            cursor.execute(query, (username, email, password, is_admin, user_plan))
+            connection.commit()
+            print("User added successfully.")
+        except connector.Error as e:
+            print(f"Error adding user: {e}")
+            connection.rollback()
+            close_session() # Not REAlly Sure
+        finally:
+            cursor.close()
+            connection.close()
+    else:
+        raise Exception('DB user limit reached.')
+
+
+def is_over_user_limit():
+    try:
+        connection = get_db_connection()
+        cursor =  connection.cursor()
+
+        cursor.execute("SELECT COUNT(*) FROM users;")
+        user_count = int(cursor.fetchone()[0])
+
+        if user_count >= int(MAX_USERS):
+            print(user_count)
+            return True
+    except Exception as e:
+        return False
+    finally:
+        cursor.close()
+        connection.close()

@@ -2,13 +2,12 @@ from flask import Blueprint, render_template, request, url_for, redirect, sessio
 from .results_controller import handle_form, get_set_of_movies
 from server.models.wishlist_user_model import Wishlist_user
 from server.view.view import (invalid_token, display_movies, wrong_movie_request, 
-                    movies_limit_reached_database, movie_already_added, render_wishlist_template,
+                    movies_limit_reached_database, movie_already_added, movie_removed_success,
                     movie_added_success, get_movies_status)
 from server.services.auth_services import Security
 from server.services.wishlist_services import (get_results_by_movie_id, add_to_wishlist_db, remove_from_wishlist_db,
-                                                filter_by_usersession_and_movieid, filter_by_usersession, is_wishlist_user_limit_reached,
-                                                bring_single_movie_by_user, filter_movies_by_search_if_any, bring_multiple_movies_by_user)
-
+                                                filter_by_usersession_and_movieid, filter_by_usersession,
+                                                bring_single_movie_by_user, filter_movies_by_search_if_any, bring_multiple_movies_by_user, wishlist_filter_query_by_movie_id)
 wishlist = Blueprint('wishlist', __name__)
 
 @wishlist.route('/wishlist', methods=["GET"])
@@ -31,6 +30,7 @@ def wishlist_pages():
     # return jsonify({ "message": results })
     
     results = get_results_by_movie_id(results)
+    # print("2st results filter:",results)
 
     current_service = 'wishlist'
     search_result = ""
@@ -67,11 +67,10 @@ def add_to_wishlist(movie_id, movie_name):
         # alert_movie_already_added(movie_name, movie_id)
         return movie_already_added()
     else:
-
-        if is_wishlist_user_limit_reached(user):
-            return movies_limit_reached_database()
-        
-        add_to_wishlist_db(movie_id, movie_name, username=user)
+        try:
+            add_to_wishlist_db(movie_id, movie_name, username=user)
+        except Exception as e:
+            return movies_limit_reached_database(e)
     
     return movie_added_success(user, movie_name)
 
@@ -95,10 +94,13 @@ def remove_from_wishlist(movie_id):
     if not has_acess:
         return invalid_token()
     
-    found_movie_to_delete = Wishlist_user.query.filter_by(mv_id=movie_id).first()
+    # found_movie_to_delete = Wishlist_user.query.filter_by(mv_id=movie_id).first()
+    found_movie_to_delete = wishlist_filter_query_by_movie_id(movie_id)
 
+    print(found_movie_to_delete, "found movie to delete? no? yes?")
     if found_movie_to_delete:
-        return remove_from_wishlist_db(found_movie_to_delete)
+        remove_from_wishlist_db(movie_id)
+        return movie_removed_success()
     else:
         return wrong_movie_request()
     # return redirect(url_for("wishlist.wishlist_pages", current_page=current_page))

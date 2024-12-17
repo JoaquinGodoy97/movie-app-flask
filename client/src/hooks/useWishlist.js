@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 export const useWishlist = (showToast, setMovies) => {
 
-    const apiBaseUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';;
+    const apiBaseUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
     const atWishlistPage = window.location.pathname.includes("/wishlist");
 
     const fetchWishlistStatuses = useCallback(async (movies) => {
@@ -81,6 +81,8 @@ export const useWishlist = (showToast, setMovies) => {
                         movie.mv_id === id ? { ...movie, inWishlist: !currentInWishlist } : movie
                     ));
                 }
+                showToast(data.message)
+            } else {
                 showToast(data.message)
             }
         } catch (error) {

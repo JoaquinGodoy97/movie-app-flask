@@ -49,15 +49,15 @@ export const useFetchMovies = () => {
                     setMovies((prevMovies) => [...prevMovies, ...data.results]);
                 }
 
-            } else {
-                console.log("No more results. Last page.");
-            }
+            } 
+            
+            // else {
+            //     console.log("No more results. Last page.");
+            // }
         } catch (error) {
             if (error.name === 'AbortError') {
-                // Suppress AbortError logs as they are expected
-                console.log('Fetch aborted: A new request was started or component unmounted.');
+                // console.log('Fetch aborted: A new request was started or component unmounted.');
             } else {
-                // Log unexpected errors only
                 console.error('Error fetching movies:', error);
             }
         }

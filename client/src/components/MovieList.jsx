@@ -1,4 +1,4 @@
-import { useCallback, useRef, useEffect, useState } from "react";
+import { useCallback, useRef } from "react";
 import MovieCard from "./MovieCard"
 import { LoadingPage } from '../utils/LoadingPage';
 
@@ -46,7 +46,7 @@ export const MovieList = ({ movies = [], loading, onWishlist, currentPage, onPag
         </div>
       ) : (
         <>
-          {movies.length <= 1 && !movies ? <div>No Movies Found.</div> : null}
+          {movies.length <= 1 ? <div>No Movies Found.</div> : null}
         </>
       )}
       

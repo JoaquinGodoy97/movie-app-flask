@@ -38,6 +38,9 @@ def render_page_not_found():
 def redirect_login_auth():
     return jsonify({ "message": "Could not create user.", "redirect": "/login"})
 
+def redirect_superadmin_failed_connection():
+    return jsonify({ "message": "Could not connect to the account.", "redirect": "/login"})
+
 def logout_redirect(message=""):
     return jsonify({ "message": message, "redirect": "/logout" })
 
@@ -62,8 +65,8 @@ def results_pages_redirect(current_page, search_result):
 def homepage_search_redirect(token="", user_loggedin=None):
     return jsonify({ "redirect": "/search", 'token': token}), 200
 
-def homepage_search_redirect_welcome_message(user, token="", user_loggedin=None):
-    return jsonify({ 'message': Messages.welcome_back_user(user), "redirect": "/search", 'token': token}), 200
+def homepage_search_redirect_welcome_message(user, admin_status, user_id, token="", user_loggedin=None):
+    return jsonify({ 'message': Messages.welcome_back_user(user), 'adminStatus': admin_status, "user_id": user_id, "redirect": "/search", 'token': token}), 200
 
 def homepage_search_redirect_new_user(token="", user_loggedin=None):
     return jsonify({ 'message': Messages.USER_CREATED, "redirect": "/search", 'token': token}), 200
@@ -74,8 +77,8 @@ def homepage_search_redirect_movies_not_found(token="", user_loggedin=None):
 def homepage_search_redirect_page_not_found(token="", user_loggedin=None):
     return jsonify({ 'message': Messages.PAGE_NOT_FOUND}), 404
 
-
-
+def homepage_superadmin_redirect(admin_status, token=""):
+    return jsonify({ 'message': Messages.SUPERADMIN_WELCOME_MSG, 'adminStatus': admin_status, "redirect": "/search", 'token': token}), 200
 
 
 def wishlist_redirect():
@@ -123,7 +126,7 @@ def session_logout_success():
 """LOGIN"""
 
 def invalid_username_registered_user():
-    return jsonify({ "error": Messages.ERROR_MSG_INVALIDUSERNAME, "redirect": "/login" }), 401
+    return jsonify({ "message": Messages.ERROR_MSG_INVALIDPASSWORD, "redirect": "/login" }), 401
 
 def invalid_pass_registered_user():
     return jsonify({"message": Messages.ERROR_MSG_PASSINVALID, "redirect": "/login"}), 401
@@ -168,8 +171,8 @@ def movie_already_added():
 def wrong_movie_request():
     return jsonify ({ "message": "Could not process the movie request."}), 400
 
-def movies_limit_reached_database():
-    return jsonify({ "message": "Limit reached. 50 Movies per user. Server in development." }), 403
+def movies_limit_reached_database(e):
+    return jsonify({ "message": f"{e}. Server in development" }), 403
 
 def movie_added_success(user, movie_name):
     return jsonify({ "message": f"{user} you added {movie_name} to your Wishlist!", 'method': 'add'}), 200

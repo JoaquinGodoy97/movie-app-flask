@@ -1,9 +1,9 @@
-from flask import Blueprint, request, render_template, jsonify, send_from_directory, session
-from server.services.auth_services import add_user_to_db, user_to_dict, open_session, close_session, validate_credentials, user_query_filter_by_name, login_required
-from server.view.view import (user_already_loggedin, homepage_search_redirect_welcome_message, session_logout_success, has_valid_access, unauthorized_access_missing_token, homepage_search_redirect_new_user, invalid_pass_not_registered_user, invalid_token, invalid_format_auth, invalid_username_not_registered_user, invalid_username_registered_user, homepage_search_redirect, invalid_pass_registered_user,
+from flask import Blueprint, request, session
+from server.services.auth_services import Security, add_user_to_db, open_session, close_session, validate_credentials, user_query_filter_by_name
+from server.view.view import (homepage_superadmin_redirect, user_already_loggedin, homepage_search_redirect_welcome_message, session_logout_success, has_valid_access, unauthorized_access_missing_token, homepage_search_redirect_new_user, invalid_pass_not_registered_user, invalid_token, invalid_format_auth, invalid_username_not_registered_user, invalid_username_registered_user, homepage_search_redirect, invalid_pass_registered_user,
                             redirect_login_auth)
-from server.utils.settings import Messages
-from server.services.auth_services import Security
+from server.utils.settings import SUPER_ADMIN_USERNAME
+
 
 auth = Blueprint("auth", __name__)
 
@@ -25,9 +25,11 @@ def login():
         return user_already_loggedin()
 
     session.permanent = True
-    user, email, password = (request.json.get(data) for data in ['username', 'email', 'password'])
+    # user, email, password = (request.json.get(data) for data in ['username', 'email', 'password'])
 
-    print("user:", user, "password:", password)
+    user = request.json.get("username", "").strip()
+    email = request.json.get("email", "").strip()
+    password = request.json.get("password", "").strip()
 
     found_user = user_query_filter_by_name(user)
     validated_user, validated_password = validate_credentials(user, password)
@@ -36,7 +38,11 @@ def login():
         if found_user.compare_password(password):
             open_session(found_user.username)
             encoded_token = Security.generate_token(found_user)
-            return homepage_search_redirect_welcome_message(found_user.username, encoded_token)
+
+            if found_user.username == SUPER_ADMIN_USERNAME:
+                return homepage_superadmin_redirect(found_user.admin_status, encoded_token)
+            
+            return homepage_search_redirect_welcome_message(found_user.username, found_user.admin_status, found_user.id, encoded_token)
         
         else:
             return invalid_username_registered_user()
@@ -51,14 +57,18 @@ def login():
             return invalid_pass_not_registered_user()
             
         else:
-            add_user_to_db(user, email, password)
-            found_user = user_query_filter_by_name(user)
 
-            if found_user:
-                token = Security.generate_token(found_user)
-                return homepage_search_redirect_new_user(token=token)
+            try:
+                add_user_to_db(user, password, email) # Email at the end because is optional CAREFUL
+                found_user = user_query_filter_by_name(user)
 
-            return redirect_login_auth()
+                if found_user:
+                    token = Security.generate_token(found_user)
+                    return homepage_search_redirect_new_user(token=token)
+            except Exception as e:
+                print(e)
+
+                return redirect_login_auth()
 
 @auth.route('/logout', methods=['POST'])
 def logout():
@@ -73,9 +83,9 @@ def logout():
 @auth.route('/@me')
 def get_current_user():
 
-    auth_header = request.headers.get('Authorization')
-    if not auth_header:
-        return unauthorized_access_missing_token()
+    # auth_header = request.headers.get('Authorization')
+    # if not auth_header:
+    #     return unauthorized_access_missing_token()
 
     user_data = Security.verify_token(request.headers)
     # If the token is invalid (user_data is False), return 401 Unauthorized
@@ -85,7 +95,6 @@ def get_current_user():
     try:
         username = user_data.get('username')
         if username:
-            print('sucess')
             return has_valid_access(username)
         else:
             return invalid_token()

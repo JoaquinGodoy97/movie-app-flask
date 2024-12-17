@@ -576,7 +576,7 @@ ul.pagination li.active {
 
 /* BUtton inside admin-panel */
 /* From Uiverse.io by vinodjangid07 */
-div>.button {
+.admin-btn {
     width: 30px;
     height: 30px;
     border-radius: 50%;
@@ -589,38 +589,24 @@ div>.button {
     justify-content: center;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.164);
     cursor: pointer;
-    transition-duration: 0.3s;
     overflow: hidden;
     position: relative;
     gap: 2px;
+    color: white;
 }
 
-.svgIcon {
-    width: 12px;
-    transition-duration: 0.3s;
-}
-
-.svgIcon path {
-    fill: white;
-}
-
-.button:hover {
+/* .admin-btn:disabled{
+    background-color: rgb(59, 59, 59);
+} */
+/* .admin-btn:hover {
     transition-duration: 0.3s;
     background-color: rgb(255, 69, 69);
     align-items: center;
-    gap: 0;
-}
+    gap: 0; */
+/* } */
 
-.bin-top {
-    transform-origin: bottom right;
-}
-
-.button:hover .bin-top {
-    transition-duration: 0.5s;
-    transform: rotate(160deg);
-}
-
-
+/* #admin-admin-rights-btn{
+} */
 
 /* .wishlist-btn-container */
 /* From Uiverse.io by KSAplay */ 
@@ -694,6 +680,82 @@ div>.button {
     100% {
         transform: scale(1);
     }
+}
+
+#admin-change-plan-btn{
+    background-color: rgb(59, 107, 59);
+}
+
+#admin-admin-rights-btn{
+    background-color: rgb(59, 61, 107);
+
+}
+
+#admin-delete-btn{
+    background-color: rgb(111, 53, 53);
+}
+
+/* MODALS */
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    /* display: flex; */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 5s ease-in;
+}
+
+.modal-overlay.show {
+    display: flex;
+    opacity: 1; /* Fade in */
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 40%;
+    text-align: center;
+}
+
+.plan-buttons button {
+    background-color: black;
+    color: white;
+    margin: 10px;
+    padding: 5px 20px;
+    border-radius: 20px;
+    border: 0px;
+}
+
+.plan-buttons button:disabled {
+    background-color: rgb(69, 69, 69);
+}
+
+.modal-close-btn{
+    color: #090909;
+    font-size: 18px;
+    border-radius: 0.5em;
+    background: #e8e8e8;
+    cursor: pointer;
+    border: 1px solid #e8e8e8;
+    box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
+    justify-content: center;
+    width: 30%;
+    margin: auto;
+    margin-top: 20px;
+    border-radius: 20px;
+}
+
+.modal-content h3 {
+    color: black;
 }
 
 

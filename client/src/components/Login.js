@@ -19,8 +19,8 @@ function Login() {
 
         const token = localStorage.getItem('token');
         if (!token) {
-            console.log('No token found, redirecting to login.');
-            showToast("Access denied.")
+            // console.log('No token found, redirecting to login.');
+            // showToast("Session expired.")
             navigate("/login")
             return;
         }
@@ -43,8 +43,6 @@ function Login() {
 
                 if (response.status === 401) {
                     // If the token is invalid or expired, remove it and redirect to login
-                    console.log('Invalid or expired token, logging out.');
-                    console.log(data.message)
                     localStorage.removeItem('token');
                     navigate('/login');
                     return;
@@ -102,13 +100,22 @@ function Login() {
             if (response.ok) {
 
                 localStorage.setItem('token', data.token)
+                localStorage.setItem('currentUserId', data.user_id)
+
+                if (data.adminStatus === 1){
+                    localStorage.setItem('adminStatus', 'true')
+                } else {
+                    localStorage.setItem('adminStatus', 'false')
+                }
 
                 if (data.token) {
+                    
                     showToast(data.message)
                     navigate(data.redirect) // Home page
 
                 } else {
-                    console.log('Login failed:', data.message);
+                    // console.log('Login failed:', data.message);
+                    showToast(data.message)
                 }
 
             } else {
