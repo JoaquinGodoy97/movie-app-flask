@@ -1,11 +1,12 @@
 import { useCallback, useState } from "react";
 import { useToast } from "./ToastMessage";
-
-
+import { useNavigate } from "react-router-dom";
 
 export const OnUserAdminAction = (fetchUsers, setAdminStatus) => {
 
     const { showToast } = useToast();
+    const navigate = useNavigate();
+    const [planModalLoading, setPlanModalLoading] = useState(false)
 
     const handleUserDelete = useCallback(async (user_id, validation=false) => {
 
@@ -22,27 +23,32 @@ export const OnUserAdminAction = (fetchUsers, setAdminStatus) => {
                 body: JSON.stringify({ validation })
             }
             const response = await fetch(`${ApiBaseUrl}/admin-action/delete-user/${user_id}`, options)
+            const data = await response.json();
             
             if (response.ok) {
 
-                const data = await response.json();
                 
                 // in case user has movies saved.
                 if (data.message && response.status === 206){ 
                     const userRespose = window.confirm(data.message)
 
                     if (userRespose) {
-                        await handleUserDelete(user_id, true)
+                        handleUserDelete(user_id, true)
                         alert("User deleted.")
                     } else {
                         alert("User will not be deleted.")
                     }
                 }
 
+                const currentUserId = localStorage.getItem('currentUserId')
+                if (user_id == currentUserId){
+                    navigate('/logout');
+                }
+
                 fetchUsers();
 
             } else {
-                console.log("reponse other than 200..", response.status)
+                showToast(data.message)
             }
         } catch (err) {
             console.log(err)
@@ -50,28 +56,33 @@ export const OnUserAdminAction = (fetchUsers, setAdminStatus) => {
         } 
         
 
-    }, [fetchUsers]);
+    }, [fetchUsers, navigate]);
 
     const handleChangePlan = useCallback(async (user_id, new_plan, handleCloseModal) => {
 
-        const token = localStorage.getItem('token')
-        const ApiBaseUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
-        const options = {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json"
-            },
-            credentials: "include",
-        }
-        const response = await fetch(`${ApiBaseUrl}/admin-action/change-plan/${user_id}/${new_plan}`, options)
-        
-        if (response.ok) {
-
-            const data = await response.json()
-            fetchUsers();
-            handleCloseModal();
-            showToast(data.message)
+        setPlanModalLoading(true)
+        try {
+            const token = localStorage.getItem('token')
+            const ApiBaseUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+            const options = {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+            }
+            const response = await fetch(`${ApiBaseUrl}/admin-action/change-plan/${user_id}/${new_plan}`, options)
+            
+            if (response.ok) {
+    
+                const data = await response.json()
+                fetchUsers();
+                handleCloseModal();
+                showToast(data.message)
+            }
+        } finally {
+            setPlanModalLoading(false)
         }
 
     }, []);
@@ -133,6 +144,6 @@ export const OnUserAdminAction = (fetchUsers, setAdminStatus) => {
 
     }, []);
 
-    return {handleAdminRights, handleUserDelete, handleChangePlan};
+    return {handleAdminRights, handleUserDelete, handleChangePlan, planModalLoading};
 
 }

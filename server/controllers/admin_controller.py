@@ -3,6 +3,7 @@ from server.services.auth_services import Security
 from server.services.admin_services import (get_user_plan, user_query_all_users, is_user_in_db_by_user_id, delete_user_by_user_id, delete_empty_users,
                                 get_admin_status_by_id, update_admin_rights_with_id, get_username_by_id)
 from server.view.view import invalid_token
+from server.utils.settings import SUPER_ADMIN_USERNAME
 
 admin_panel = Blueprint('admin_panel', __name__)
 
@@ -28,6 +29,11 @@ def delete_user_from_db(user_id):
     # If the token is invalid (user_data is False), return 401 Unauthorized
     if not user_data:
         return invalid_token()
+    
+    username = get_username_by_id(user_id)
+    
+    if  username == SUPER_ADMIN_USERNAME:
+        return jsonify({"message": "Cannot delete SUPER ADMIN."}), 401
 
     if is_user_in_db_by_user_id(user_id):
 

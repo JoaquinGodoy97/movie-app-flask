@@ -121,7 +121,6 @@ def add_user_to_db(username: str, password: str, email="", is_admin=False, user_
     else:
         raise Exception('DB user limit reached.')
 
-
 def is_over_user_limit():
     try:
         connection = get_db_connection()

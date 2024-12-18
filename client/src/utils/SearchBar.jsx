@@ -4,7 +4,9 @@ import { useNavigate } from 'react-router-dom';
 export const SearchBar = ({ onSearch, initialQuery }) => {
     const [ searchQuery, setSearchQuery ] = useState(initialQuery || "");
     const navigate = useNavigate();
-    
+    const atResultsPage = window.location.pathname.includes("/results/search")
+    const atWishlist = window.location.pathname.includes("/wishlist")
+
     const handleSubmit = (e) => {
         e.preventDefault();
         const atResultsPage = window.location.pathname.includes("/results/search")
@@ -21,6 +23,7 @@ export const SearchBar = ({ onSearch, initialQuery }) => {
     };
 
     return (
+
         <form onSubmit={handleSubmit}>
             {/* <label htmlFor="search">Search Movies</label> */}
             <div className="input-group mb-3 search-bar">
@@ -30,9 +33,9 @@ export const SearchBar = ({ onSearch, initialQuery }) => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="form-control"
-                    placeholder="Search"
+                    placeholder={ atResultsPage ? "Go to Homepage =>" : ( atWishlist ? "Search in Wishlist . . . " : "Search . . .")}
                 />
-                <button type="submit" className="btn btn-dark search-btn">Search</button>
+                <button type="submit" className="btn btn-dark search-btn">{ searchQuery === "" && atResultsPage ? "Go to Homepage" : "Search"}</button>
             </div>
         </form>
     )

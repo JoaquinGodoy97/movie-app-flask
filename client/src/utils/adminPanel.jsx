@@ -36,7 +36,7 @@ export const AdminPanel = ({setHomePageAdminStatus}) => {
     const [currentUser, setCurrentUser] = useState(null); // modal information
 
 
-    const { handleAdminRights, handleUserDelete, handleChangePlan } = OnUserAdminAction(() => fetchUsers(setUsersList), setAdminStatus);
+    const { handleAdminRights, handleUserDelete, handleChangePlan, planModalLoading } = OnUserAdminAction(() => fetchUsers(setUsersList), setAdminStatus);
 
     useEffect(() => {
         fetchUsers(setUsersList);
@@ -67,6 +67,7 @@ export const AdminPanel = ({setHomePageAdminStatus}) => {
             {usersList.map((user, key) => {
 
                     return (
+
                         <div key={key} className='admin-panel-item'>
                             <span id='user'>{user.username}</span>
                             <span>Created</span>
@@ -108,14 +109,15 @@ export const AdminPanel = ({setHomePageAdminStatus}) => {
             }
 
             {isModalOpen && (
-                        <PlanModal 
+                    <PlanModal 
                             isOpen={isModalOpen}
                             currentPlan={currentUser?.user_plan}
                             onClose={handleCloseModal}
                             onPlanChange={(newPlan) => handleChangePlan(currentUser.id, newPlan, handleCloseModal)}
-                        />
-                    )}
-                
+                            modalLoading={planModalLoading}
+                        /> 
+                    
+            )}
 
             </div>
 
