@@ -96,8 +96,7 @@ def delete_empty_users(user_id):
 
         return jsonify({"message": f"User {user_id} deleted."}), 200
     except:
-        print("Failed to delete user")
-        return jsonify({ "message": f"The user {user_id} have movies saved. Would you like to delete it anyways?"}), 206
+        return jsonify({ "message": f"The user {user_id} has movies saved. Would you like to delete it anyways?"}), 206
         
     finally:
         cursor.close()
