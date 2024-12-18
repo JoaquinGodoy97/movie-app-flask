@@ -102,3 +102,7 @@ def get_current_user():
     except Exception as e:
         print(f"Exception during token verification: {e}") 
         return unauthorized_access_missing_token()
+
+@auth.route('/ping', methods=['GET'])
+def ping():
+    return "Server is active!", 200
