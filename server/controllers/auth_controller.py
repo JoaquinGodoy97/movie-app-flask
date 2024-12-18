@@ -100,5 +100,5 @@ def get_current_user():
             return invalid_token()
 
     except Exception as e:
-        print(f"Exception during token verification: {e}")  # Log any unexpected exceptions
+        print(f"Exception during token verification: {e}") 
         return unauthorized_access_missing_token()
