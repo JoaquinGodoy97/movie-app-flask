@@ -1,9 +1,9 @@
 from decouple import config
 
-class DevelopmentConfig():
-    DEBUG = config('DEBUG')
-    SQLALCHEMY_TRACK_MODIFICATIONS = config('SQLALCHEMY_TRACK_MODIFICATIONS')
-    SQLALCHEMY_DATABASE_URI = config('SQLALCHEMY_DATABASE_URI')
+# class DevelopmentConfig():
+#     DEBUG = config('DEBUG')
+    # SQLALCHEMY_TRACK_MODIFICATIONS = config('SQLALCHEMY_TRACK_MODIFICATIONS')
+    # SQLALCHEMY_DATABASE_URI = config('SQLALCHEMY_DATABASE_URI')
 
 # config = {
 #     'development': DevelopmentConfig # environment //
