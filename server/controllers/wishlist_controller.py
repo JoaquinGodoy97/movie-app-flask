@@ -1,6 +1,5 @@
-from flask import Blueprint, render_template, request, url_for, redirect, session, jsonify, json
-from .results_controller import handle_form, get_set_of_movies
-from server.models.wishlist_user_model import Wishlist_user
+from flask import Blueprint, request
+from .results_controller import get_set_of_movies
 from server.view.view import (invalid_token, display_movies, wrong_movie_request, 
                     movies_limit_reached_database, movie_already_added, movie_removed_success,
                     movie_added_success, get_movies_status)
